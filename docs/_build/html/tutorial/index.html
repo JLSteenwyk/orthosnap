@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial &#8212; mipypro  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/flavicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="About" href="../about/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <a class="reference external image-reference" href="https://jlsteenwyk.com/mipypro"><img alt="../_images/mipypro_logo_no_text1.jpg" class="align-center" src="../_images/mipypro_logo_no_text1.jpg" style="width: 55%;" /></a>
+<div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p><strong>MiPyP</strong> provides researchers with the foundation to build their own
+command line bioinformatic toolkits. In this tutorial, we will build a</p>
+<ol class="arabic simple">
+<li><p>command line toolkit that says ‘hello world’,</p></li>
+<li><p>construct Sphinx-based documentation, and</p></li>
+<li><p>enable the software to be downloaded from PyPi.</p></li>
+</ol>
+<p>In this example, we will call our command line tool, mipyp.</p>
+<div class="section" id="setting-up-your-working-environment">
+<h2>0. Setting up your working environment<a class="headerlink" href="#setting-up-your-working-environment" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>Create a new project directory and <em>cd</em> into it.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ mkdir my_project
+$ <span class="nb">cd</span> my_project
+</pre></div>
+</div>
+<p>Create a virtual environment, which is an isolated environment for your
+python project.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ python3 -m venv .venv
+</pre></div>
+</div>
+<p>Activate your virtual environment</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">source</span> .venv/bin/activate
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-up-your-new-project-directory">
+<h2>1. Set up your new project directory<a class="headerlink" href="#set-up-your-new-project-directory" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>Download a copy of MiPyP and move it to the present directory. Note,
+change your path accordingly for the move command.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip3 install mipyp
+$ mv venv/lib/python3.8/site-packages/mipyp/* .
+</pre></div>
+</div>
+<p>Next, examine the contents of the directory</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ls
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><link href='http://fonts.googleapis.com/css?family=Oxygen:300,400,700' rel='stylesheet'>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+<div id="logo">
+    <center>
+        <a href="../index.html"><img src="../_static/img/logo.jpg" height="150" alt="mipypro logo"/></a>
+    </center>
+</div>
+
+<div id="gh-buttons">
+    <a class="github-button" href="https://github.com/jlsteenwyk/mipypro" aria-label="View jlsteenwyk/mipypro on GitHub" data-style="mega">Source</a>
+    <a class="github-button" href="https://github.com/jlsteenwyk/mipypro/issues" data-icon="octicon-issue-opened" aria-label="Issue jlsteenwyk/mipypro on GitHub" data-style="mega">Issue</a>
+</div><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-your-working-environment">0. Setting up your working environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set-up-your-new-project-directory">1. Set up your new project directory</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../about/index.html" title="previous chapter">About</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020 Jacob L. Steenwyk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/tutorial/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
