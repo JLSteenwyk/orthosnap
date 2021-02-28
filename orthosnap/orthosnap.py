@@ -124,28 +124,6 @@ def execute(
                             Phylo.draw_ascii(newtree)
                         for term in inter.get_terminals():
                             assigned_tips.append(term.name)
-            
-            # for inter in newtree.get_nonterminals():
-            #     if inter.is_preterminal():
-            #         terms_from_sub = []
-            #         taxa_from_terms_from_sub = []
-            #         for term in inter.get_terminals():
-            #             terms_from_sub.append(term.name)
-            #             taxa_from_terms_from_sub.append(term.name.split('|', 1)[0])
-            #         counts_of_taxa_from_terms_from_sub = Counter(taxa_from_terms)
-            #         for i in counts_of_taxa_from_terms_from_sub:
-            #             if counts_of_taxa_from_terms_from_sub[i] > 1:
-            #                 dups_in_polytomy = ([v for v in terms_from_sub if i in v])
-            #                 if len(dups_in_polytomy) > 1:
-            #                     newtree.prune(dups_in_polytomy[0])
-            #                     should_get_fasta = True
-            #                 elif len(dups_in_polytomy) == 1:
-            #                     should_get_fasta = False
-            #     for term in inter.get_terminals():
-            #         assigned_tips.append(term.name)
-
-
-
 
 def main(argv=None):
     """
