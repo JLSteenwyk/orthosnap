@@ -1,6 +1,8 @@
 from os import path
 from setuptools import setup
 
+from orthofisher.version import __version__
+
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
@@ -16,11 +18,11 @@ CLASSIFIERS = [
     "Topic :: Scientific/Engineering",
 ]
 
-REQUIRES = [""]
+REQUIRES = ["biopython==1.78"]
 
 setup(
     name="orthosnap",
-    description="Minimum Python Project.",
+    description="orthosnap, identify orthologous subgroups of genes in large orthologous groups of genes.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Jacob L. Steenwyk",
@@ -29,7 +31,7 @@ setup(
     packages=["orthosnap"],
     classifiers=CLASSIFIERS,
     entry_points={"console_scripts": ["orthosnap = orthosnap.orthosnap:main"]},
-    version="0.0.0",
+    version=__version__,
     include_package_data=True,
     install_requires=REQUIRES,
 )
