@@ -10,6 +10,7 @@ from argparse import (
 
 from .version import __version__
 
+
 def create_parser():
     parser = ArgumentParser(
         add_help=False,
@@ -104,11 +105,18 @@ def create_parser():
     )
 
     optional.add_argument(
-        "-h", "--help", action="help", help=SUPPRESS,
+        "-h",
+        "--help",
+        action="help",
+        help=SUPPRESS,
     )
 
     optional.add_argument(
-        "-v", "--version", action="version", version=f"clipkit {__version__}", help=SUPPRESS,
+        "-v",
+        "--version",
+        action="version",
+        version=f"clipkit {__version__}",
+        help=SUPPRESS,
     )
 
     return parser

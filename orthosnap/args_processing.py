@@ -23,9 +23,4 @@ def process_args(args) -> dict:
     support = args.support if args.support is not None else 80
     occupancy = args.occupancy if args.occupancy is not None else 0.5
 
-    return dict(
-        tree=tree,
-        fasta=fasta,
-        support=support,
-        occupancy=occupancy
-    )
+    return dict(tree=tree, fasta=fasta, support=support, occupancy=occupancy)
