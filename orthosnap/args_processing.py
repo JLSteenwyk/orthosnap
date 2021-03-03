@@ -21,6 +21,6 @@ def process_args(args) -> dict:
 
     # assign optional arguments
     support = args.support if args.support is not None else 80
-    occupancy = args.occupancy if args.occupancy is not None else 0.5
+    occupancy = args.occupancy if args.occupancy is not None else 1.0
 
     return dict(tree=tree, fasta=fasta, support=support, occupancy=occupancy)

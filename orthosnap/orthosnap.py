@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 import copy
+import itertools
 import sys
+
+from Bio import Phylo
 
 from .args_processing import process_args
 from .helper import (
@@ -24,7 +27,10 @@ def execute(tree: str, fasta: int, support: float, occupancy: float):
 
     # read input files and midpoint root ree
     tree, fasta_dict = read_input_files(tree, fasta)
-
+    for inter in tree.get_nonterminals():
+        inter.branch_length = 1
+    for inter in tree.get_terminals():
+        inter.branch_length = 1
     # get list of all tip names and taxa names
     taxa, all_tips = get_all_tips_and_taxa_names(tree)
 
@@ -83,6 +89,7 @@ def execute(tree: str, fasta: int, support: float, occupancy: float):
                 )
 
     print(f"orthosnap identified {subgroup_counter} subgroups of orthologous genes")
+    
 
 
 def main(argv=None):

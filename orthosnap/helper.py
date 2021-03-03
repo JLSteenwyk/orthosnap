@@ -96,6 +96,14 @@ def get_subtree_tips(terms: list, name: str, tree):
     return subtree_tips, dups
 
 
+def all_parents(tree):
+    parents = {}
+    for clade in tree.find_clades(order="level"):
+        for child in clade:
+            parents[child] = clade
+    return parents
+
+
 def handle_multi_copy_subtree(
     all_tips: list,
     terms: list,
@@ -117,6 +125,9 @@ def handle_multi_copy_subtree(
     # collapse bipartition with low support
     newtree = collapse_low_support_bipartitions(newtree, support)
 
+    # get a look up of parents
+    parents = all_parents(tree) 
+
     # for each taxon represented in the subtree
     for name in counts_of_taxa_from_terms:
         # if the taxon is represented by more than one sequence
@@ -132,14 +143,17 @@ def handle_multi_copy_subtree(
                 # trim short sequences and keep long sequences in newtree
                 newtree, terms = keep_long_sequences(newtree, fasta_dict, dups, terms)
 
-                (
-                    subgroup_counter,
-                    assigned_tips,
-                ) = write_output_fasta_and_account_for_assigned_tips(
-                    fasta, subgroup_counter, terms, fasta_dict, assigned_tips
-                )
-
-                Phylo.draw_ascii(newtree)
+    # if the resulting subtree has only single copy genes
+    # create a fasta file with sequences from tip labels
+    _, _, _, counts = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(newtree)
+    if set(counts) == set([1]):
+        (
+            subgroup_counter,
+            assigned_tips,
+        ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
+            fasta, subgroup_counter, terms, fasta_dict, assigned_tips
+        )
+        Phylo.draw_ascii(newtree)
 
     return subgroup_counter, assigned_tips
 
@@ -165,7 +179,7 @@ def handle_single_copy_subtree(
 
     # add list of terms to assigned_tips list
     # and create subgroup fasta files
-    subgroup_counter, assigned_tips = write_output_fasta_and_account_for_assigned_tips(
+    subgroup_counter, assigned_tips = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
         fasta, subgroup_counter, terms, fasta_dict, assigned_tips
     )
 
@@ -219,7 +233,7 @@ def read_input_files(tree: str, fasta: str):
     return tree, fasta
 
 
-def write_output_fasta_and_account_for_assigned_tips(
+def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     fasta: str,
     subgroup_counter: int,
     terms: list,
