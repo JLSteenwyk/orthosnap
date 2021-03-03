@@ -225,7 +225,7 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     fasta_dict: dict,
     assigned_tips: list,
 ):
-    print(assigned_tips)
+
     # write output
     output_file_name = f"{fasta}.orthosnap.{subgroup_counter}.fa"
     with open(output_file_name, "w") as output_handle:
