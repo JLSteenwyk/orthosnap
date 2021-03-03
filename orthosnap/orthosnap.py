@@ -3,8 +3,9 @@
 import copy
 import itertools
 import sys
+import time
 
-from Bio import Phylo
+from tqdm import tqdm
 
 from .args_processing import process_args
 from .helper import (
@@ -15,9 +16,13 @@ from .helper import (
     read_input_files,
 )
 from .parser import create_parser
+from .writer import (
+    write_user_args,
+    write_output_stats
+)
 
 
-def execute(tree: str, fasta: int, support: float, occupancy: float):
+def execute(tree: str, fasta: str, support: float, occupancy: float):
     """
     Master execute Function
     -----------------------
@@ -25,12 +30,15 @@ def execute(tree: str, fasta: int, support: float, occupancy: float):
     subfunctions to run quest
     """
 
+    # write user args to stdout
+    write_user_args(tree, fasta, support, occupancy)
+
+    # create start time logger
+    start_time = time.time()
+
     # read input files and midpoint root ree
     tree, fasta_dict = read_input_files(tree, fasta)
-    for inter in tree.get_nonterminals():
-        inter.branch_length = 1
-    for inter in tree.get_terminals():
-        inter.branch_length = 1
+
     # get list of all tip names and taxa names
     taxa, all_tips = get_all_tips_and_taxa_names(tree)
 
@@ -39,7 +47,7 @@ def execute(tree: str, fasta: int, support: float, occupancy: float):
     # to a subgroup as well as a counter for that subgroup
     assigned_tips = []
     subgroup_counter = 0
-    for inter in tree.get_nonterminals()[1:]:
+    for inter in tqdm(tree.get_nonterminals()[1:]):
 
         (
             taxa_from_terms,
@@ -88,7 +96,8 @@ def execute(tree: str, fasta: int, support: float, occupancy: float):
                     tree,
                 )
 
-    print(f"orthosnap identified {subgroup_counter} subgroups of orthologous genes")
+    write_output_stats(fasta, subgroup_counter, start_time)
+    
     
 
 

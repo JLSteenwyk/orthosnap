@@ -128,7 +128,8 @@ def handle_multi_copy_subtree(
     # get a look up of parents
     parents = all_parents(tree) 
 
-    # for each taxon represented in the subtree
+    # remove duplicate sequences if they are sister to one another
+    # following the approach in PhyloTreePruner
     for name in counts_of_taxa_from_terms:
         # if the taxon is represented by more than one sequence
         if counts_of_taxa_from_terms[name] > 1:
@@ -153,7 +154,6 @@ def handle_multi_copy_subtree(
         ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
             fasta, subgroup_counter, terms, fasta_dict, assigned_tips
         )
-        Phylo.draw_ascii(newtree)
 
     return subgroup_counter, assigned_tips
 
@@ -182,8 +182,6 @@ def handle_single_copy_subtree(
     subgroup_counter, assigned_tips = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
         fasta, subgroup_counter, terms, fasta_dict, assigned_tips
     )
-
-    Phylo.draw_ascii(newtree)
 
     return subgroup_counter, assigned_tips
 
@@ -241,7 +239,7 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     assigned_tips: list,
 ):
     # write output
-    output_file_name = f"{fasta}.orthosnap.{subgroup_counter}"
+    output_file_name = f"{fasta}.orthosnap.{subgroup_counter}.fa"
     with open(output_file_name, "w") as output_handle:
         for term in terms:
             SeqIO.write(fasta_dict[term], output_handle, "fasta")
