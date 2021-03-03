@@ -1,0 +1,10 @@
+comment: false
+coverage:
+  precision: 2
+  round: down
+  range: "70...95"
+ignore:
+  - "tests"
+  - "orthosnap-runner.py"
+  - "setup.py"
+  - "orthosnap/__main__.py"

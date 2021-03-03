@@ -1,13 +1,13 @@
 install:
-	# install quest
+	# install
 	python setup.py install
 
 test.unit:
-	# test units of quest
+	# test units
 	python -m pytest -m "not integration"
 
 test.integration:
-	# test end-to-end function of quest
+	# test end-to-end function
 	python -m pytest --basetemp=output -m "integration"
 
 test:
