@@ -26,8 +26,7 @@ def execute(tree: str, fasta: str, support: float, occupancy: float):
     """
     Master execute Function
     -----------------------
-    This function executes the main functions and calls other
-    subfunctions to run quest
+    This function executes the main functions and calls other subfunctions
     """
 
     # write user args to stdout

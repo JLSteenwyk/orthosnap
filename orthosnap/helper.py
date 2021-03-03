@@ -96,14 +96,6 @@ def get_subtree_tips(terms: list, name: str, tree):
     return subtree_tips, dups
 
 
-def all_parents(tree):
-    parents = {}
-    for clade in tree.find_clades(order="level"):
-        for child in clade:
-            parents[child] = clade
-    return parents
-
-
 def handle_multi_copy_subtree(
     all_tips: list,
     terms: list,
@@ -124,9 +116,6 @@ def handle_multi_copy_subtree(
 
     # collapse bipartition with low support
     newtree = collapse_low_support_bipartitions(newtree, support)
-
-    # get a look up of parents
-    parents = all_parents(tree) 
 
     # remove duplicate sequences if they are sister to one another
     # following the approach in PhyloTreePruner
@@ -207,6 +196,7 @@ def prune_subtree(all_tips: list, terms: list, newtree):
     """
     prune tips not of interest for subtree
     """
+
     tips_to_prune = [i for i in all_tips + terms if i not in all_tips or i not in terms]
 
     for tip in tips_to_prune:
@@ -217,10 +207,7 @@ def prune_subtree(all_tips: list, terms: list, newtree):
 
 def read_input_files(tree: str, fasta: str):
     """
-    create weights
-    --------------
-    to make each gene weigh the same (or contribute the same)
-    the signal of each quartet from a given gene will be weighted
+    read input files and midpoint root tree
     """
 
     tree = Phylo.read(tree, "newick")
@@ -238,6 +225,7 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     fasta_dict: dict,
     assigned_tips: list,
 ):
+    print(assigned_tips)
     # write output
     output_file_name = f"{fasta}.orthosnap.{subgroup_counter}.fa"
     with open(output_file_name, "w") as output_handle:
@@ -245,5 +233,5 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
             SeqIO.write(fasta_dict[term], output_handle, "fasta")
             assigned_tips.append(term)
     subgroup_counter += 1
-
+    
     return subgroup_counter, assigned_tips

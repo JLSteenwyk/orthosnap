@@ -29,4 +29,10 @@ def process_args(args) -> dict:
         logger.warning("For example, 0.5, 0.75, or 1.")
         sys.exit()
 
+    if support > 100 or support < 0:
+        logger.warning("Support threshold must range from 0 to 100.")
+        logger.warning("I recommend using a threshold of 80 for UFBoot.")
+        logger.warning("and 70 for classic bootstrap support.")
+        sys.exit()
+
     return dict(tree=tree, fasta=fasta, support=support, occupancy=occupancy)

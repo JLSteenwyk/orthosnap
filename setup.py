@@ -1,7 +1,7 @@
 from os import path
 from setuptools import setup
 
-from orthofisher.version import __version__
+from orthosnap.version import __version__
 
 here = path.abspath(path.dirname(__file__))
 
