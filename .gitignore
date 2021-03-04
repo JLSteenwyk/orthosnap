@@ -144,7 +144,6 @@ output/
 
 # testing output files
 venv
-samples
 
 # remove directions for how to submit to conda
 submitting_to_conda.txt
