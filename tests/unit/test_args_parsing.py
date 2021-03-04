@@ -37,11 +37,11 @@ class TestArgsProcessing(object):
             process_args(args)
 
     def test_process_args_support_above_range(self, args):
-        args.occupancy = 101
+        args.support = 101
         with pytest.raises(SystemExit):
             process_args(args)
 
     def test_process_args_support_below_range(self, args):
-        args.occupancy = -0.1
+        args.support = -0.1
         with pytest.raises(SystemExit):
             process_args(args)
