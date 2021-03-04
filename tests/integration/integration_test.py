@@ -182,3 +182,65 @@ class TestIntegration(object):
             output_content = out_file.read()
 
         assert expected_content == output_content
+
+
+    def test_support_value_60_OG0000010(self):
+        """
+        """
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=60,
+            occupancy=1,
+        )
+        execute(**kwargs)
+
+        with open(
+            f"{here.parent.parent}/expected/test_support_value_60_OG0000010/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_support_value_60_OG0000010/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_support_value_60_OG0000010/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_support_value_60_OG0000010/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_support_value_60_OG0000010/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content

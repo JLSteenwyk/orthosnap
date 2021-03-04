@@ -15,14 +15,11 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        # make CLI available for tests 
+        # make orthosnap CLI available for tests 
         make install
         # install deps for tests
         pip install pytest
         pip install pytest-cov
-    - name: Install HMMER
-      run: |
-        brew install hmmer
     - name: Run tests
       run: |
         make test.fast
@@ -39,14 +36,11 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        # make CLI available for tests 
+        # make orthosnap CLI available for tests 
         make install
         # install test dependencies
         pip install pytest
         pip install pytest-cov
-    - name: Install HMMER
-      run: |
-        brew install hmmer
     - name: Generate coverage report
       run: |
         make test.coverage
