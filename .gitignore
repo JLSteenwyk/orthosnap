@@ -139,7 +139,6 @@ cython_debug/
 
 # example output
 output/
-
 .vscode/
 
 # remove directions for how to submit to conda
