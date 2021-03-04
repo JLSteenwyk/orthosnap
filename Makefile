@@ -10,6 +10,10 @@ test.integration:
 	# test end-to-end function
 	python -m pytest --basetemp=output -m "integration"
 
+test.fast:
+	python -m pytest -m "not (integration or slow)"
+	python -m pytest --basetemp=output -m "integration and not slow"
+
 test:
 	## execute both integration and unit tests
 	# unit tests
@@ -17,9 +21,6 @@ test:
 	# integration tests
 	python -m pytest --basetemp=output -m "integration"
 
-test.fast:
-	python -m pytest -m "not (integration or slow)"
-	python -m pytest --basetemp=output -m "integration and not slow"
 
 # used by GitHub actions during CI workflow
 test.coverage: coverage.unit coverage.integration
