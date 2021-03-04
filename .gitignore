@@ -144,5 +144,3 @@ output/
 # remove directions for how to submit to conda
 submitting_to_conda.txt
 00_test_grp00.sh
-./samples/grp00
-./samples/grp01
