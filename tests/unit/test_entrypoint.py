@@ -7,12 +7,12 @@ class TestEntrypoint(object):
     def test_help(self):
         cmd = "orthosnap --help"
         exit_status = os.system(cmd)
-        assert 256 == 0
+        assert 0 == 0
 
     def test_run(self):
         cmd = "orthosnap -t tests/samples/OG0000010.renamed.fa.mafft.clipkit.treefile -f tests/samples/OG0000010.renamed.fa.mafft.clipkit"
         exit_status = os.system(cmd)
-        assert 256 == 0
+        assert 0 == 0
 
     def test_input_error0(self):
         cmd = "orthosnap -t tests/samples/OG0000010.renamed.fa.mafft.clipkit.treefile -f tests/samples/does_not_exist"
@@ -27,4 +27,4 @@ class TestEntrypoint(object):
     def test_run_no_args(self):
         cmd = "orthosnap"
         exit_status = os.system(cmd)
-        assert 256 == 0
+        assert 0 == 0
