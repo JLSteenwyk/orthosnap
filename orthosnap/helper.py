@@ -168,7 +168,10 @@ def handle_single_copy_subtree(
 
     # add list of terms to assigned_tips list
     # and create subgroup fasta files
-    subgroup_counter, assigned_tips = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
+    (
+        subgroup_counter,
+        assigned_tips,
+    ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
         fasta, subgroup_counter, terms, fasta_dict, assigned_tips
     )
 
@@ -233,5 +236,5 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
             SeqIO.write(fasta_dict[term], output_handle, "fasta")
             assigned_tips.append(term)
     subgroup_counter += 1
-    
+
     return subgroup_counter, assigned_tips

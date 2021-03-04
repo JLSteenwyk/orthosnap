@@ -1,9 +1,8 @@
 import textwrap
 import time
 
-def write_user_args(
-    tree: str, fasta: str, support: float, occupancy: float
-):
+
+def write_user_args(tree: str, fasta: str, support: float, occupancy: float):
     """
     Function to print user arguments to stdout
     """
@@ -20,6 +19,7 @@ def write_user_args(
     """
         )
     )
+
 
 def write_output_stats(fasta, subgroup_counter, start_time):
     """

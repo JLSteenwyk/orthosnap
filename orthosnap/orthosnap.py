@@ -16,10 +16,7 @@ from .helper import (
     read_input_files,
 )
 from .parser import create_parser
-from .writer import (
-    write_user_args,
-    write_output_stats
-)
+from .writer import write_user_args, write_output_stats
 
 
 def execute(tree: str, fasta: str, support: float, occupancy: float):
@@ -96,8 +93,6 @@ def execute(tree: str, fasta: str, support: float, occupancy: float):
                 )
 
     write_output_stats(fasta, subgroup_counter, start_time)
-    
-    
 
 
 def main(argv=None):

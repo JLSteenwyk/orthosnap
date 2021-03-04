@@ -3,6 +3,7 @@ from argparse import Namespace
 
 from orthosnap.args_processing import process_args
 
+
 @pytest.fixture
 def args():
     kwargs = dict(
@@ -24,7 +25,7 @@ class TestArgsProcessing(object):
         args.fasta = "some/file/that/doesnt/exist"
         with pytest.raises(SystemExit):
             process_args(args)
-    
+
     def test_process_args_occupancy_above_range(self, args):
         args.occupancy = 1.1
         with pytest.raises(SystemExit):
