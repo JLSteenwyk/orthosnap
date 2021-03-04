@@ -1,27 +1,72 @@
 import pytest
 import sys
 
-from datetime import date
-from mock import patch, call
 from pathlib import Path
 
-from mipypro.mipypro import main
+from orthosnap.orthosnap import execute
 
 here = Path(__file__)
 
 
 @pytest.mark.integration
 class TestIntegration(object):
-    @patch("builtins.print")
-    def test_integration(self, mocked_print):
+    def test_simple_no_change(self):
         """
-        test integration
         """
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=80,
+            occupancy=1,
+        )
+        execute(**kwargs)
 
-        today = date.today()
-        expected_content = f"Hello world. Today is {today}"
+        with open(
+            f"{here.parent.parent}/expected/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
 
-        with patch.object(sys, "argv"):
-            main()
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa", "r") as out_file:
+            output_content = out_file.read()
 
-        assert mocked_print.mock_calls == [call(expected_content)]
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa", "r"
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa", "r") as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content

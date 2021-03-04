@@ -188,7 +188,7 @@ class TestReadInputFiles(object):
             assert value.seq == expected_fasta[key].seq
 
 class TestWriteOutputFastaAndAccountForAssignedTipsSingleCopyCase(object):
-    def test_write_output_fasta_and_account_for_assigned_tips_single_copy_case(self, mocker):
+    def test_write_output_fasta_and_account_for_assigned_tips_single_copy_case(self):
         ## setup
         fasta = f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit"
         fasta_dict = SeqIO.to_dict(SeqIO.parse(f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit", "fasta"))
