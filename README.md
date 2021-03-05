@@ -1,1 +1,96 @@
-# orthosnap
+<p align="center">
+  <a href="https://github.com/jlsteenwyk/orthosnap">
+    <img src="https://raw.githubusercontent.com/JLSteenwyk/orthosnap/master/docs/_static/img/logo.jpg" alt="Logo" width="400">
+  </a>
+  <p align="center">
+    <a href="https://jlsteenwyk.com/orthosnap/">Docs</a>
+    ·
+    <a href="https://github.com/jlsteenwyk/orthosnap/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/jlsteenwyk/orthosnap/issues">Request Feature</a>
+  </p>
+    <p align="center">
+        <a href="https://lbesson.mit-license.org/" alt="License">
+            <img src="https://img.shields.io/badge/License-MIT-blue.svg">
+        </a>
+        <a href="https://pypi.org/project/orthosnap/" alt="PyPI - Python Version">
+            <img src="https://img.shields.io/pypi/pyversions/orthosnap">
+        </a>
+        <a href="https://github.com/JLSteenwyk/orthosnap/actions" alt="Build">
+            <img src="https://img.shields.io/github/workflow/status/jlsteenwyk/orthosnap/CI/master">
+        </a>
+        <a href="https://codecov.io/gh/jlsteenwyk/orthosnap" alt="Coverage">
+          <img src="https://codecov.io/gh/jlsteenwyk/orthosnap/branch/master/graph/badge.svg?token=0J49I6441V">
+        </a>
+        <a href="https://github.com/jlsteenwyk/orthosnap/graphs/contributors" alt="Contributors">
+            <img src="https://img.shields.io/github/contributors/jlsteenwyk/orthosnap">
+        </a>
+        <a href="https://twitter.com/intent/follow?screen_name=jlsteenwyk" alt="Author Twitter">
+            <img src="https://img.shields.io/twitter/follow/jlsteenwyk?style=social&logo=twitter"
+                alt="follow on Twitter">
+        </a>
+    </p>
+</p>
+
+orthosnap ONE SENTENCE DESCRIPTION.<br /><br />
+If you found orthosnap useful, please cite *orthosnap: PAPER TITLE*. Steenwyk et al. 2021, JOURNAL NAME. doi: [10.1371/journal.pbio.3001007](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001007).
+<br /><br />
+
+---
+
+<br />
+
+This documentation covers downloading and installing orthosnap. Details about orthosnap usage including a tutorial are available on our [online documentation](https://jlsteenwyk.com/orthosnap/).
+
+<br />
+
+**Installation**
+
+**If you are having trouble installing orthosnap, please contact the lead developer, Jacob L. Steenwyk, via [email](https://jlsteenwyk.com/contact.html) or [twitter](https://twitter.com/jlsteenwyk) to get help.**
+
+To install using *pip*, we strongly recommend building a virtual environment to avoid software dependency issues. To do so, execute the following commands:
+```shell
+# create virtual environment
+python -m venv .venv
+# activate virtual environment
+source .venv/bin/activate
+# install orthosnap
+pip install orthosnap
+```
+**Note, the virtual environment must be activated to use *orthosnap*.**
+
+After using orthosnap, you may wish to deactivate your virtual environment and can do so using the following command:
+```shell
+# deactivate virtual environment
+deactivate
+```
+
+<br />
+
+Similarly, to install from source, we strongly recommend using a virtual environment. To do so, use the following commands:
+```shell
+# download
+git clone https://github.com/JLSteenwyk/orthosnap.git
+cd PhyKIT/
+# create virtual environment
+python -m venv .venv
+# activate virtual environment
+source .venv/bin/activate
+# install
+make install
+```
+To deactivate your virtual environment, use the following command:
+```shell
+# deactivate virtual environment
+deactivate
+```
+**Note, the virtual environment must be activated to use *orthosnap*.**
+
+<br />
+
+To install via anaconda, execute the follwoing command:
+
+``` shell
+conda install -c jlsteenwyk orthosnap
+```
+Visit here for more information: https://anaconda.org/jlsteenwyk/orthosnap
