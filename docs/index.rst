@@ -1,18 +1,10 @@
-.. image:: ../_static/img/mipypro_logo_no_text.jpg
+.. image:: ../_static/img/logo_no_subtext.jpg
    :width: 55%
    :align: center
-   :target: https://jlsteenwyk.com/mipypro
+   :target: https://jlsteenwyk.com/orthosnap
 
 ^^^^^
 
-Recent analyses indicate that ~28% of available computational tools fail to install due to
-implementation errors |Mangul|_. To address this issue, **Mi**\nimum **Py**\thon **P**\roject
-(MiPyP, pronounced 'my pipe') provides a scaffold for researchers to build long-lasting bioinformatic
-tools using a python code base. 
-
-Specifically, MiPyP comes complete with the foundation to build command line tools for the UNIX shell
-environment by providing a 'hello world' example, construct Sphinx-based documentation that can be linked
-to a researcher's GitHub page, and comes with instructions to upload the project to PyPi. 
 
 
 If you found MiPyPro useful, please cite *MiPyPro*. bioRxiv. doi: |doiLink|_.
