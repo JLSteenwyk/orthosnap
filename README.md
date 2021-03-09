@@ -33,7 +33,7 @@
 </p>
 
 orthosnap ONE SENTENCE DESCRIPTION.<br /><br />
-If you found orthosnap useful, please cite *orthosnap: PAPER TITLE*. Steenwyk et al. 2021, JOURNAL NAME. doi: [10.1371/journal.pbio.3001007](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001007).
+If you found orthosnap useful, please cite *orthosnap: PAPER TITLE*. Steenwyk et al. 2021, JOURNAL NAME. doi: [TEXT](LINK).
 <br /><br />
 
 ---
@@ -71,7 +71,7 @@ Similarly, to install from source, we strongly recommend using a virtual environ
 ```shell
 # download
 git clone https://github.com/JLSteenwyk/orthosnap.git
-cd PhyKIT/
+cd orthosnap/
 # create virtual environment
 python -m venv .venv
 # activate virtual environment
