@@ -23,7 +23,7 @@ sys.path.append(os.path.abspath("./_ext"))
 # -- Project information -----------------------------------------------------
 
 project = "orthosnap"
-copyright = "2020 Jacob L. Steenwyk"
+copyright = "2021 Jacob L. Steenwyk"
 author = "Jacob L. Steenwyk <jlsteenwyk@gmail.com>"
 
 # The short X.Y version
@@ -118,7 +118,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "mipyprodoc"
+htmlhelp_basename = "orthosnapdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -167,10 +167,10 @@ man_pages = [(master_doc, "phykit", "phykit Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "phykit",
-        "phykit Documentation",
+        "orthosnap",
+        "orthosnap Documentation",
         author,
-        "phykit",
+        "orthosnap",
         "A data transformation engine.",
         "Miscellaneous",
     ),

@@ -1,4 +1,4 @@
-.. image:: ../_static/img/logo_no_subtext.jpg
+.. image:: ../_static/img/logo_no_subtext.png
    :width: 55%
    :align: center
    :target: https://jlsteenwyk.com/orthosnap
