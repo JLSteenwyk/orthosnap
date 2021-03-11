@@ -33,7 +33,7 @@ def write_output_stats(fasta, subgroup_counter, start_time):
             ---------------------
             | Output Statistics |
             ---------------------
-            Single-copy orthologous genes identified: {subgroup_counter}
+            Subgroups of single-copy orthologous genes identified: {subgroup_counter}
             Output files:"""
             )
         )

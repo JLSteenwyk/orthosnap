@@ -7,7 +7,7 @@
 
 
 
-If you found MiPyPro useful, please cite *MiPyPro*. bioRxiv. doi: |doiLink|_.
+If you found orthosnap useful, please cite *orthosnap: blah blah blah*. bioRxiv. doi: |doiLink|_.
 
 .. _Mangul: https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3000333
 .. |Mangul| replace:: (Mangul *et al.*, 2019) 
@@ -43,7 +43,11 @@ To deactivate your virtual environment, use the following command:
 	:maxdepth: 4
 
 	about/index
+	usage/index
 	tutorial/index
+	change_log/index
+	other_software/index
+	faq/index
 
 ^^^^
 

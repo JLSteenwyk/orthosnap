@@ -1,18 +1,17 @@
-.. image:: ../_static/img/mipypro_logo_no_text.jpg
-   :width: 55%
-   :align: center
-   :target: https://jlsteenwyk.com/mipypro
-
-
 About
 =====
 
 ^^^^^
 
-**Minimum Python Project (**MiPyPro**) was developed as part of `Jacob L. Steenwyk
-<https://jlsteenwyk.github.io/>`_'s graduate thesis work. 
+**ORTHO**\ logous group of genes **S**\ plitti\ **N**\ g **A**\ nd **P**\ runing
+(**orthosnap**) was developed as part of `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_'s
+graduate thesis work. 
 
-ABOUT  
+Increasing the number of genes used during phylogenomic analysis is a promising 
+startegy to resolve contentious branches. To facilitate creating larger phylogenomic
+data matrices, we developed orthosnap, an algorithm that identifies subgroups of
+single-copy orthologous genes.
+
 
 |
 
@@ -21,11 +20,12 @@ The Developers
 
 ^^^^^
 
-MyPyPro is developed and maintained by `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_.
+orthosnap is developed and maintained by `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_.
 
 |
 
 |JLSteenwyk|
+
 |GoogleScholarSteenwyk| |GitHubSteenwyk| |TwitterSteenwyk| 
 
 `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_ is a Howard Hughes Medical Institute
