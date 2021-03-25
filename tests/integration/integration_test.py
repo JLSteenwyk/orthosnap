@@ -16,7 +16,7 @@ class TestIntegration(object):
             tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
             fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
             support=80,
-            occupancy=1,
+            occupancy=5,
         )
         execute(**kwargs)
 
@@ -246,7 +246,7 @@ class TestIntegration(object):
             tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
             fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
             support=60,
-            occupancy=1,
+            occupancy=5,
         )
         execute(**kwargs)
 
