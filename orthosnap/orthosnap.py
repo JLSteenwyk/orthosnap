@@ -56,7 +56,7 @@ def execute(tree: str, fasta: str, support: float, occupancy: float):
         newtree = copy.deepcopy(tree)
 
         # if a sufficient number of taxa are represented, examine the subtree
-        if len(counts_of_taxa_from_terms) >= (len(taxa) * occupancy):
+        if len(counts_of_taxa_from_terms) >= occupancy:
             # if each taxon is represented by one sequence and
             # the tips have not been assigned to a suborthogroup
             # prune tips not part of the subtree of interest
