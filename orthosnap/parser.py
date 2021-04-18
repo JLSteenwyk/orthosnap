@@ -44,9 +44,11 @@ def create_parser():
         "required arguments",
         description=textwrap.dedent(
             """\
-        <tree>                                      asdf
+        -t, --tree <newick tree file>
+            input tree file in newick format
 
-        <fasta>                                     asdf                 
+        -f, --fasta <fasta file>
+            input sequence file in fasta format                 
         """
         ),
     )
@@ -74,14 +76,48 @@ def create_parser():
         "optional arguments",
         description=textwrap.dedent(
             """\
-        -s, --support                                  support
-        <support>
+        -s, --support  <support>
+            support threshold for bipartition collapsing
+            default: 80
+
+        -o, --occupancy  <occupancy>
+            occupancy threshold for minimum number of tips in orthologous subgroup
+            default: 50 percent of total number of taxa  
+       
         
         -------------------------------------
         | Detailed explanation of arguments | 
         -------------------------------------
-        -s, --support <support>
-            support to collapse tree at
+        -t, --tree <newick tree file>
+            - input tree file in newick format
+            - taxa name and gene name should be separate by a "|" symbol
+              For example, "gene_a" from "species_a" should appear in the
+              tree as "species_a|gene_a", and "gene_b" from "species_a"
+              should appear in the tree as "species_a|gene_b", and so 
+              on and so forth.
+
+        -f, --fasta <fasta file>
+            - input sequence file in fasta format 
+            - taxa name and gene name should be formatted the same as in
+              the tree file. Thus, "gene_a" from "species_a" should appear
+              in the tree as "species_a|gene_a" and so on and so forth.
+        
+        -s, --support  <support>
+            - support threshold for bipartition collapsing
+            - all bipartitions will values less than the specified value 
+              will be collapsed. For example, if the support threshold
+              value is 80, all bipartitions with 79 or less support
+              will be collapsed.
+            - default value is 80 and is set for ultrafast bootstrap
+              approximations. If bipartitions support was evaluated 
+              using standard bootstrap, a common threshold to use is 70.
+
+        -o, --occupancy  <occupancy>
+            - occupancy threshold for minimum number of tips in orthologous
+              subgroup. 
+            - default value is 50 percent of the total number of taxa
+            - values are rounded to the nearest integer. For example,
+              if there are 15 taxa, the occupancy threshold will be 8.
         """
         ),
     )
@@ -115,7 +151,7 @@ def create_parser():
         "-v",
         "--version",
         action="version",
-        version=f"clipkit {__version__}",
+        version=f"orthosnap {__version__}",
         help=SUPPRESS,
     )
 
