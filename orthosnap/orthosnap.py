@@ -44,7 +44,6 @@ def execute(tree: str, fasta: str, support: float, occupancy: float):
     assigned_tips = []
     subgroup_counter = 0
     for inter in tqdm(tree.get_nonterminals()[1:]):
-
         (
             taxa_from_terms,
             terms,
