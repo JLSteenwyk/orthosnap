@@ -1,7 +1,11 @@
 import pytest
 from argparse import Namespace
 
-from orthosnap.args_processing import process_args
+from orthosnap.args_processing import (
+    determine_occupancy_threshold,
+    process_args,
+    proper_round,
+)
 
 
 @pytest.fixture
@@ -26,11 +30,6 @@ class TestArgsProcessing(object):
         with pytest.raises(SystemExit):
             process_args(args)
 
-    # def test_process_args_occupancy_above_range(self, args):
-    #     args.occupancy = 1.1
-    #     with pytest.raises(SystemExit):
-    #         process_args(args)
-
     def test_process_args_occupancy_below_range(self, args):
         args.occupancy = -0.1
         with pytest.raises(SystemExit):
@@ -45,3 +44,11 @@ class TestArgsProcessing(object):
         args.support = -0.1
         with pytest.raises(SystemExit):
             process_args(args)
+
+    def test_process_args_determine_occupancy_threshold(self, args):
+        res = determine_occupancy_threshold(args.fasta)
+        assert res == 3
+
+    def test_process_args_determine_occupancy_threshold(self, args):
+        res = proper_round(2.5)
+        assert res == 3.0
