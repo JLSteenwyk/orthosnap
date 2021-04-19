@@ -45,10 +45,10 @@ class TestArgsProcessing(object):
         with pytest.raises(SystemExit):
             process_args(args)
 
-    def test_process_args_determine_occupancy_threshold(self, args):
+    def test_determine_occupancy_threshold(self, args):
         res = determine_occupancy_threshold(args.fasta)
         assert res == 3
 
-    def test_process_args_determine_occupancy_threshold(self, args):
+    def test_proper_round(self, args):
         res = proper_round(2.5)
         assert res == 3.0
