@@ -49,6 +49,10 @@ class TestArgsProcessing(object):
         res = determine_occupancy_threshold(args.fasta)
         assert res == 3
 
-    def test_proper_round(self, args):
+    def test_proper_round0(self, args):
         res = proper_round(2.5)
         assert res == 3.0
+
+    def test_proper_round1(self, args):
+        res = proper_round(2.2)
+        assert res == 2.0
