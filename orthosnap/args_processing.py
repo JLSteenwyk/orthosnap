@@ -1,4 +1,5 @@
 import logging
+import math
 import os.path
 import sys
 
@@ -57,8 +58,8 @@ def determine_occupancy_threshold(fasta: str) -> int:
     return occupancy_threshold
 
 
-def proper_round(num, dec=0):
-    num = str(num)[: str(num).index(".") + dec + 2]
-    if num[-1] >= "5":
-        return float(num[: -2 - (not dec)] + str(int(num[-2 - (not dec)]) + 1))
-    return float(num[:-1])
+def proper_round(num):
+    if num - math.floor(num) < 0.5:
+        return(math.floor(num))
+    else:
+        return(math.ceil(num))

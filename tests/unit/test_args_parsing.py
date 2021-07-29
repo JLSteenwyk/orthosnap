@@ -1,4 +1,6 @@
+import math
 import pytest
+
 from argparse import Namespace
 
 from orthosnap.args_processing import (
