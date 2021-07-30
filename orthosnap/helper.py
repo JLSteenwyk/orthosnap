@@ -46,8 +46,10 @@ def get_all_tips_and_taxa_names(tree):
 
     # loop through the tree and collect terminal names
     for term in tree.get_terminals():
-        if term.name.split("|", 1)[0] not in taxa:
-            taxa.append(term.name.split("|", 1)[0])
+        term_name = term.name
+        taxa_name = term_name[:term_name.index("|")]
+        if taxa_name not in taxa:
+            taxa.append(taxa_name)
         all_tips.append(term.name)
 
     return taxa, all_tips
