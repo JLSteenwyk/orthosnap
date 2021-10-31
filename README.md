@@ -19,8 +19,8 @@
         <a href="https://github.com/JLSteenwyk/orthosnap/actions" alt="Build">
             <img src="https://img.shields.io/github/workflow/status/jlsteenwyk/orthosnap/CI/master">
         </a>
-        <a href="https://codecov.io/gh/jlsteenwyk/orthosnap" alt="Coverage">
-          <img src="https://codecov.io/gh/jlsteenwyk/orthosnap/branch/master/graph/badge.svg?token=0J49I6441V">
+        <a href="https://codecov.io/gh/JLSteenwyk/orthosnap">
+          <img src="https://codecov.io/gh/JLSteenwyk/orthosnap/branch/master/graph/badge.svg?token=FX66FUET0L"/>
         </a>
         <a href="https://github.com/jlsteenwyk/orthosnap/graphs/contributors" alt="Contributors">
             <img src="https://img.shields.io/github/contributors/jlsteenwyk/orthosnap">
@@ -33,7 +33,7 @@
 </p>
 
 orthosnap ONE SENTENCE DESCRIPTION.<br /><br />
-If you found orthosnap useful, please cite *orthosnap: PAPER TITLE*. Steenwyk et al. 2021, JOURNAL NAME. doi: [TEXT](LINK).
+If you found orthosnap useful, please cite *orthosnap: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees*. Steenwyk et al. 2021, bioRxiv [doi and link coming soon!](LINK).
 <br /><br />
 
 ---
