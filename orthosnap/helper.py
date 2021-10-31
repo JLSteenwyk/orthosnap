@@ -1,7 +1,6 @@
 from collections import Counter
 import copy
 import re
-import sys
 
 from Bio import Phylo
 from Bio import SeqIO

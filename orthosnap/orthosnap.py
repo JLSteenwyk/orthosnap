@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import copy
-import itertools
 import sys
 import time
 
@@ -32,11 +31,11 @@ def execute(tree: str, fasta: str, support: float, occupancy: float):
     # create start time logger
     start_time = time.time()
 
-    # read input files and midpoint root ree
+    # read input files and midpoint root tree
     tree, fasta_dict = read_input_files(tree, fasta)
 
     # get list of all tip names and taxa names
-    taxa, all_tips = get_all_tips_and_taxa_names(tree)
+    _, all_tips = get_all_tips_and_taxa_names(tree)
 
     # loop through tree, but skip the root (hence [1:])
     # keep tabs of terms that have already been assigned
@@ -45,7 +44,7 @@ def execute(tree: str, fasta: str, support: float, occupancy: float):
     subgroup_counter = 0
     for inter in tqdm(tree.get_nonterminals()[1:]):
         (
-            taxa_from_terms,
+            _,
             terms,
             counts_of_taxa_from_terms,
             counts,
