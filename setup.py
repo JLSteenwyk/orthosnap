@@ -12,9 +12,9 @@ CLASSIFIERS = [
     "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Topic :: Scientific/Engineering",
 ]
 
@@ -35,3 +35,8 @@ setup(
     include_package_data=True,
     install_requires=REQUIRES,
 )
+
+## push new version to pypi
+# rm -rf dist
+# python3 setup.py sdist bdist_wheel --universal
+# twine upload dist/* -r pypi
