@@ -1,4 +1,4 @@
-.. image:: ../_static/img/logo_no_subtext.png
+.. image:: _static/img/logo_no_subtext.png
    :width: 55%
    :align: center
    :target: https://jlsteenwyk.com/orthosnap
@@ -13,6 +13,7 @@ If you found orthoSNAP useful, please cite *orthoSNAP: a tree splitting and prun
 for retrieving single-copy orthologs from gene family trees*. bioRxiv. doi: |doiLink|_.
 
 .. _doiLink: https://www.biorxiv.org/content/10.1101/2021.10.30.466607v1
+.. |doiLink| replace:: 10.1101/2021.10.30.466607
 
 |
 
