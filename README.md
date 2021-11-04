@@ -94,3 +94,5 @@ To install via anaconda, execute the follwoing command:
 conda install -c jlsteenwyk orthosnap
 ```
 Visit here for more information: https://anaconda.org/jlsteenwyk/orthosnap
+
+
