@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorial &mdash; orthosnap  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Change log" href="../change_log/index.html" />
+    <link rel="prev" title="Usage" href="../usage/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo_no_subtext.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#download-the-test-data">1) Download the test data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-orthosnap">2) Run orthosnap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inspect-output">3) Inspect output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other_software/index.html">Other software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">orthosnap</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p><strong>orthosnap</strong> enables researchers to obtain single-copy subgroups of
+orthologous genes. Single-copy subgroups of orthologous genes are
+phylogenetically-informative and can be used for molecular evolution
+analyses. This tutorial covers the easy-to-implement workflow needed
+for using orthofisher.</p>
+<p>Note, this tutorial assumes orthosnap has already been installed. For
+installation instructions, please see the home page.</p>
+<hr class="docutils" />
+<div class="section" id="download-the-test-data">
+<h2>1) Download the test data<a class="headerlink" href="#download-the-test-data" title="Permalink to this headline">¶</a></h2>
+<p>For ease of use, this tutorial will rely on a small dataset, which can be
+downloaded using the following link:</p>
+<p class="centered">
+<strong>Download test data:
+<a class="reference download internal" download="" href="../_downloads/fef75cd0c5c7e0001986340a4ec0c416/dataset.tar.gz"><code class="xref download docutils literal notranslate"><span class="pre">tutorial</span> <span class="pre">dataset</span></code></a></strong></p><p>Next, unzip the downloaded directory and change directory to the newly downloaded directory.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ tar -zxvf dataset.tar.gz
+$ <span class="nb">cd</span> path_to_unzipped_directory/dataset
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="run-orthosnap">
+<h2>2) Run orthosnap<a class="headerlink" href="#run-orthosnap" title="Permalink to this headline">¶</a></h2>
+<p>Running orthosnap requires two arguments: -f/--fasta, which specifies the unaligned orthologous
+group of sequences, and -t/--tree, which species the phylogeny inferred from the orthologous
+group of sequences. Thus, orthosnap would be run using the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orthosnap -f fake_orthologous_group_of_genes.faa -t fake_orthologous_group_of_genes_tree.tre
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="inspect-output">
+<h2>3) Inspect output<a class="headerlink" href="#inspect-output" title="Permalink to this headline">¶</a></h2>
+<p>Toward the end of what is printed to the stdout, you will see the following text:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Subgroups of single-copy orthologous genes identified: <span class="m">5</span>
+Output files:
+   fake_orthologous_group_of_genes.faa.orthosnap.0.fa
+   fake_orthologous_group_of_genes.faa.orthosnap.1.fa
+   fake_orthologous_group_of_genes.faa.orthosnap.2.fa
+   fake_orthologous_group_of_genes.faa.orthosnap.3.fa
+   fake_orthologous_group_of_genes.faa.orthosnap.4.fa
+</pre></div>
+</div>
+<p>This means that five single-copy orthologous subgroups of genes were identified. Each
+subgroup was written to a different file titled fake_orthologous_group_of_genes.faa.orthosnap.<em>N</em>.fa.
+Each subgroup can be used for various molecular evolution analyses (e.g., phylogenetics, dN/dS, etc.)</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>To provide a little more detail about what orthosnap did, the following figure visualizes each subgroup
+in the original inputted phylogeny.</p>
+<a class="reference external image-reference" href="https://jlsteenwyk.com/orthosnap"><img alt="../_images/dataset_orthosnap.png" class="align-center" src="../_images/dataset_orthosnap.png" style="width: 100%;" /></a>
+<p>In <em>orthosnap.0</em>, species 2 and species 4 have duplicate copies of gene 2. After automated detection of
+duplicate sister sequences (or sequences that belong to the same polytomy), orthosnap will keep the longer
+of the two sequences following PhyloTreePruner. This follows the standard for transcriptomic data wherein
+the longest isoform is often kept. Reevaluation of the pruned subtree results in the inference of a
+single-copy subgroup of orthologous genes.</p>
+<p>Although the species names and gene names have been replaced, the underlying data stems from real
+sequences of protein transporters in five <em>Aspergillus</em> species. Similar to the species tree,
+<em>species4</em> and <em>species2</em> are sister to one another; <em>species4</em> and <em>species2</em> are sister to
+<em>species1</em>; and <em>species4</em>, <em>species2</em> and <em>species2</em> are sister to <em>species3</em> and <em>species0</em>. This
+follows our observation described in the original manuscript wherein subgroups of single-copy
+orthologous genes are often as accurate and robust inferred as ‘traditional’ single-copy orthologous genes.</p>
+<p>Thank you for checking out orthosnap!</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../change_log/index.html" class="btn btn-neutral float-right" title="Change log" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../usage/index.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021 Jacob L. Steenwyk
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-104875636-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>
