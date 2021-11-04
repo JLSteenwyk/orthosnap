@@ -33,7 +33,7 @@
 </p>
 
 orthoSNAP: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees.<br /><br />
-If you found orthosnap useful, please cite *orthosnap: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees*. Steenwyk et al. 2021, bioRxiv [doi and link coming soon!](LINK).
+If you found orthosnap useful, please cite *orthosnap: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees*. Steenwyk et al. 2021, bioRxiv. doi: [10.1101/2021.10.30.466607](https://www.biorxiv.org/content/10.1101/2021.10.30.466607v1).
 <br /><br />
 
 ---
