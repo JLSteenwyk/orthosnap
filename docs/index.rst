@@ -9,7 +9,8 @@ orthosnap is a command-line tool for increasing the size of molecular evolution 
 can then be used for diverse studies including phylogenomics and genome-wide surveys of positive
 selection.
 
-If you found orthoSNAP useful, please cite *orthoSNAP: blah blah blah*. bioRxiv. doi: |doiLink|_.
+If you found orthoSNAP useful, please cite *orthoSNAP: a tree splitting and pruning algorithm
+for retrieving single-copy orthologs from gene family trees*. bioRxiv. doi: |doiLink|_.
 
 .. _doiLink: https://www.biorxiv.org/content/10.1101/2021.10.30.466607v1
 
