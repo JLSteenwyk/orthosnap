@@ -10,12 +10,6 @@
     <a href="https://github.com/jlsteenwyk/orthosnap/issues">Request Feature</a>
   </p>
     <p align="center">
-        <a href="https://lbesson.mit-license.org/" alt="License">
-            <img src="https://img.shields.io/badge/License-MIT-blue.svg">
-        </a>
-        <a href="https://pypi.org/project/orthosnap/" alt="PyPI - Python Version">
-            <img src="https://img.shields.io/pypi/pyversions/orthosnap">
-        </a>
         <a href="https://github.com/JLSteenwyk/orthosnap/actions" alt="Build">
             <img src="https://img.shields.io/github/workflow/status/jlsteenwyk/orthosnap/CI/master">
         </a>
@@ -25,12 +19,19 @@
         <a href="https://github.com/jlsteenwyk/orthosnap/graphs/contributors" alt="Contributors">
             <img src="https://img.shields.io/github/contributors/jlsteenwyk/orthosnap">
         </a>
-        <a href="https://www.biorxiv.org/content/10.1101/2021.10.30.466607">
-          <img src="https://zenodo.org/badge/DOI/10.1101/2021.10.30.466607.svg">
-        </a>
         <a href="https://twitter.com/intent/follow?screen_name=jlsteenwyk" alt="Author Twitter">
             <img src="https://img.shields.io/twitter/follow/jlsteenwyk?style=social&logo=twitter"
                 alt="follow on Twitter">
+        </a>
+        <br />
+        <a href="https://lbesson.mit-license.org/" alt="License">
+            <img src="https://img.shields.io/badge/License-MIT-blue.svg">
+        </a>
+        <a href="https://pypi.org/project/orthosnap/" alt="PyPI - Python Version">
+            <img src="https://img.shields.io/pypi/pyversions/orthosnap">
+        </a>
+        <a href="https://www.biorxiv.org/content/10.1101/2021.10.30.466607">
+          <img src="https://zenodo.org/badge/DOI/10.1101/2021.10.30.466607.svg">
         </a>
     </p>
 </p>
