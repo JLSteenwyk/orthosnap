@@ -25,6 +25,9 @@
         <a href="https://github.com/jlsteenwyk/orthosnap/graphs/contributors" alt="Contributors">
             <img src="https://img.shields.io/github/contributors/jlsteenwyk/orthosnap">
         </a>
+        <a href="https://www.biorxiv.org/content/10.1101/2021.10.30.466607">
+          <img src="https://zenodo.org/badge/DOI/10.1101/2021.10.30.466607.svg">
+        </a>
         <a href="https://twitter.com/intent/follow?screen_name=jlsteenwyk" alt="Author Twitter">
             <img src="https://img.shields.io/twitter/follow/jlsteenwyk?style=social&logo=twitter"
                 alt="follow on Twitter">
