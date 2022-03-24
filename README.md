@@ -24,15 +24,20 @@
                 alt="follow on Twitter">
         </a>
         <br />
+        <a href="https://pepy.tech/badge/orthosnap">
+          <img src="https://static.pepy.tech/personalized-badge/orthosnap?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyPi%20Downloads">
+        </a>
         <a href="https://lbesson.mit-license.org/" alt="License">
             <img src="https://img.shields.io/badge/License-MIT-blue.svg">
         </a>
         <a href="https://pypi.org/project/orthosnap/" alt="PyPI - Python Version">
             <img src="https://img.shields.io/pypi/pyversions/orthosnap">
         </a>
+        <br />
         <a href="https://www.biorxiv.org/content/10.1101/2021.10.30.466607">
           <img src="https://zenodo.org/badge/DOI/10.1101/2021.10.30.466607.svg">
         </a>
+        <a href="https://patreon.com/jlsteenwyk"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Djlsteenwyk%26type%3Dpatrons&style=flat" alt="Support me on Patreon" /></a>
     </p>
 </p>
 
