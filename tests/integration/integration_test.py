@@ -3,7 +3,9 @@ import sys
 
 from pathlib import Path
 
+from orthosnap.helper import InparalogToKeep
 from orthosnap.orthosnap import execute
+
 
 here = Path(__file__)
 
@@ -17,6 +19,9 @@ class TestIntegration(object):
             fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
             support=80,
             occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
         )
         execute(**kwargs)
 
@@ -97,6 +102,9 @@ class TestIntegration(object):
             fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
             support=80,
             occupancy=0.2,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
         )
         execute(**kwargs)
 
@@ -247,6 +255,9 @@ class TestIntegration(object):
             fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
             support=60,
             occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
         )
         execute(**kwargs)
 

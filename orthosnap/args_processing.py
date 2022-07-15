@@ -5,6 +5,8 @@ import sys
 
 from Bio import SeqIO
 
+from .helper import InparalogToKeep
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +43,23 @@ def process_args(args) -> dict:
         logger.warning("and 70 for classic bootstrap support.")
         sys.exit()
 
-    return dict(tree=tree, fasta=fasta, support=support, occupancy=occupancy)
+    rooted = args.rooted
+    snap_trees = args.snap_trees
+
+    if args.inparalog_to_keep:
+        inparalog_to_keep = InparalogToKeep(args.inparalog_to_keep)
+    else:
+        inparalog_to_keep = InparalogToKeep.longest_seq_len
+
+    return dict(
+        tree=tree,
+        fasta=fasta,
+        support=support,
+        occupancy=occupancy,
+        rooted=rooted,
+        snap_trees=snap_trees,
+        inparalog_to_keep=inparalog_to_keep,
+    )
 
 
 def determine_occupancy_threshold(fasta: str) -> int:
@@ -60,6 +78,6 @@ def determine_occupancy_threshold(fasta: str) -> int:
 
 def proper_round(num):
     if num - math.floor(num) < 0.5:
-        return(math.floor(num))
+        return math.floor(num)
     else:
-        return(math.ceil(num))
+        return math.ceil(num)

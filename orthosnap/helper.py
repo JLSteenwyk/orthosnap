@@ -1,10 +1,20 @@
 from collections import Counter
 import copy
+from enum import Enum
 import re
+import statistics as stat
 
 from Bio import Phylo
 from Bio import SeqIO
+from Bio.Phylo.BaseTree import TreeMixin
 
+class InparalogToKeep(Enum):
+    shortest_seq_len = "shortest_seq_len"
+    median_seq_len = "median_seq_len"
+    longest_seq_len = "longest_seq_len"
+    shortest_branch_len = "shortest_branch_len"
+    median_branch_len = "median_branch_len"
+    longest_branch_len = "longest_branch_len"
 
 def collapse_low_support_bipartitions(newtree, support: float):
     """
@@ -45,12 +55,23 @@ def get_all_tips_and_taxa_names(tree):
 
     # loop through the tree and collect terminal names
     for term in tree.get_terminals():
-        taxa_name = term.name[:term.name.index("|")]
+        taxa_name = term.name[: term.name.index("|")]
         if taxa_name not in taxa:
             taxa.append(taxa_name)
         all_tips.append(term.name)
 
     return taxa, all_tips
+
+def check_if_single_copy(taxa: list, all_tips: list):
+    """
+    check if the input phylogeny is already a single-copy tree
+    """
+
+    if len(taxa) == len(all_tips):
+        print("Input phylogeny is already a single-copy orthogroup\nExiting now...")
+        return True
+    else:
+        return False
 
 
 def get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter):
@@ -93,6 +114,10 @@ def get_subtree_tips(terms: list, name: str, tree):
             temp.append(term.name)
         subtree_tips.append(temp)
 
+    # print(name)
+    # import sys
+    # sys.exit()
+
     return subtree_tips, dups
 
 
@@ -107,6 +132,8 @@ def handle_multi_copy_subtree(
     assigned_tips: list,
     counts_of_taxa_from_terms,
     tree,
+    snap_trees: bool,
+    inparalog_to_keep: InparalogToKeep,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -131,7 +158,7 @@ def handle_multi_copy_subtree(
             # if duplicate sequences are sister, get the longest sequence
             if are_sisters:
                 # trim short sequences and keep long sequences in newtree
-                newtree, terms = keep_long_sequences(newtree, fasta_dict, dups, terms)
+                newtree, terms = inparalog_to_keep_determination(newtree, fasta_dict, dups, terms, inparalog_to_keep)
 
     # if the resulting subtree has only single copy genes
     # create a fasta file with sequences from tip labels
@@ -141,7 +168,13 @@ def handle_multi_copy_subtree(
             subgroup_counter,
             assigned_tips,
         ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
-            fasta, subgroup_counter, terms, fasta_dict, assigned_tips
+            fasta,
+            subgroup_counter,
+            terms,
+            fasta_dict,
+            assigned_tips,
+            snap_trees,
+            newtree,
         )
 
     return subgroup_counter, assigned_tips
@@ -156,6 +189,7 @@ def handle_single_copy_subtree(
     support: float,
     fasta_dict: dict,
     assigned_tips: list,
+    snap_trees: bool,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -172,23 +206,53 @@ def handle_single_copy_subtree(
         subgroup_counter,
         assigned_tips,
     ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
-        fasta, subgroup_counter, terms, fasta_dict, assigned_tips
+        fasta, subgroup_counter, terms, fasta_dict, assigned_tips, snap_trees, newtree
     )
 
     return subgroup_counter, assigned_tips
 
 
-def keep_long_sequences(newtree, fasta_dict: dict, dups: list, terms: list):
+def inparalog_to_keep_determination(
+    newtree,
+    fasta_dict: dict,
+    dups: list,
+    terms: list,
+    inparalog_to_keep: InparalogToKeep,
+):
     """
     remove_short_sequences_among_duplicates_that_are_sister
     """
-    seq_lengths = dict()
-    for dup in dups:
-        seq_lengths[dup] = len(re.sub("-", "", str(fasta_dict[dup].seq)))
-    longest_seq = max(seq_lengths, key=seq_lengths.get)
-    # trim shorter sequences from the tree
-    for seq_name, _ in seq_lengths.items():
-        if seq_name != longest_seq:
+
+    lengths = dict()
+    # keep inparalog based on sequence length
+    if inparalog_to_keep.value in ["shortest_seq_len", "median_seq_len", "longest_seq_len"]:
+        for dup in dups:
+            lengths[dup] = len(re.sub("-", "", str(fasta_dict[dup].seq)))
+        # determine which sequences to keep
+        if inparalog_to_keep.value == "shortest_seq_len":
+            seq_to_keep = min(lengths, key=lengths.get)
+        elif len(lengths) > 2 and inparalog_to_keep.value == "median_seq_len":
+            median_len = stat.median(lengths, key=lengths.get)
+            seq_to_keep = [key for key,value in lengths if value==median_len]
+        elif inparalog_to_keep.value == "longest_seq_len":
+            seq_to_keep = max(lengths, key=lengths.get)
+            
+    # keep inparalog based on tip to root length
+    else:
+        for dup in dups:
+            lengths[dup] = TreeMixin.distance(newtree, dup)
+        if inparalog_to_keep.value == "shortest_branch_len":
+            seq_to_keep = min(lengths, key=lengths.get)
+        elif len(lengths) > 2 and inparalog_to_keep.value == "median_branch_len":
+            median_len = stat.median(lengths, key=lengths.get)
+            seq_to_keep = [key for key,value in lengths if value==median_len]
+        elif inparalog_to_keep.value == "longest_branch_len":
+            seq_to_keep = max(lengths, key=lengths.get)
+
+    # trim unwanted species-specific
+    # paralogous sequences from the tree
+    for seq_name, _ in lengths.items():
+        if seq_name != seq_to_keep:
             newtree.prune(seq_name)
             terms.remove(seq_name)
 
@@ -208,13 +272,15 @@ def prune_subtree(all_tips: list, terms: list, newtree):
     return newtree
 
 
-def read_input_files(tree: str, fasta: str):
+def read_input_files(tree: str, fasta: str, rooted: bool):
     """
     read input files and midpoint root tree
     """
 
     tree = Phylo.read(tree, "newick")
-    tree.root_at_midpoint()
+
+    if not rooted:
+        tree.root_at_midpoint()
 
     fasta = SeqIO.to_dict(SeqIO.parse(fasta, "fasta"))
 
@@ -227,6 +293,8 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     terms: list,
     fasta_dict: dict,
     assigned_tips: list,
+    snap_tree: bool,
+    newtree,
 ):
 
     # write output
@@ -235,6 +303,11 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
         for term in terms:
             SeqIO.write(fasta_dict[term], output_handle, "fasta")
             assigned_tips.append(term)
+
+    if snap_tree:
+        output_file_name = f"{fasta}.orthosnap.{subgroup_counter}.tre"
+        Phylo.write(newtree, output_file_name, "newick")
+
     subgroup_counter += 1
 
     return subgroup_counter, assigned_tips

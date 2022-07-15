@@ -1,7 +1,7 @@
-"""projectt.__main__: executed when project is called as script"""
+"""orthosnap.__main__: executed when orthosnap is called as script"""
 
 import sys
 
-from .project import main
+from .orthosnap import main
 
 main(sys.argv[1:])

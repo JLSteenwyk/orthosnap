@@ -7,6 +7,8 @@ from argparse import (
     RawDescriptionHelpFormatter,
 )
 
+from .helper import InparalogToKeep
+
 from .version import __version__
 
 
@@ -83,6 +85,24 @@ def create_parser():
             occupancy threshold for minimum number of tips in orthologous subgroup
             default: 50 percent of total number of taxa  
        
+        -r, --rooted
+            boolean argument for whether the input phylogeny is already rooted
+            default: false
+
+        -st, --snap_trees
+            boolean argument for whether trees of SNAP-OGs should be outputted
+            default: false
+
+        -ip, --inparalog_to_keep <shortest_seq_len,
+                                  median_seq_len,
+                                  longest_seq_len,
+                                  shortest_branch_len,
+                                  median_branch_len,
+                                  longest_branch_len>
+            determine which sequence to keep in the case of species-specific
+            inparalogs using sequence- or tree-based options
+            default: longest_seq_len
+
         
         -------------------------------------
         | Detailed explanation of arguments | 
@@ -117,6 +137,29 @@ def create_parser():
             - default value is 50 percent of the total number of taxa
             - values are rounded to the nearest integer. For example,
               if there are 15 taxa, the occupancy threshold will be 8.
+
+        -r, --rooted
+            - boolean argument for whether the input phylogeny is already rooted
+            - if used, the input phylogeny is assumed to be rooted; if not,
+              the tree will be midpoint rooted
+
+        -st, --snap_trees
+            - boolean argument for whether newick files of SNAP-OGs should also
+              be outputted
+            - if used, newick files of SNAP-OGs will be outputteds
+
+        -ip, --inparalog_to_keep <shortest_seq_len,
+                                  median_seq_len,
+                                  longest_seq_len,
+                                  shortest_branch_len,
+                                  median_branch_len,
+                                  longest_branch_len>                                
+            - specify how to determine which species-specific inparalog should be kept
+            - the species-specific inparalog can be kept based on sequence length
+              (shortest/median/longest_seq_len) or branch length based on tip-to-root
+              distances (shortest/median/longest_branch_len)
+            - by default, the longest sequence is kept following the standard approach
+              in transcriptomics
         """
         ),
     )
@@ -137,6 +180,32 @@ def create_parser():
         required=False,
         help=SUPPRESS,
         metavar="seed",
+    )
+
+    optional.add_argument(
+        "-r",
+        "--rooted",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "-st",
+        "--snap_trees",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    inparalog_to_keep_choices = [val.value for val in InparalogToKeep]
+    optional.add_argument(
+        "-ip",
+        "--inparalog_to_keep",
+        help=SUPPRESS,
+        required=False,
+        nargs="?",
+        choices=inparalog_to_keep_choices,
     )
 
     optional.add_argument(
