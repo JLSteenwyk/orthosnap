@@ -20,6 +20,7 @@ jobs:
         # install test dependencies
         pip install pytest
         pip install pytest-cov
+        pip install mock
     - name: Run tests
       run: |
         make test.fast
