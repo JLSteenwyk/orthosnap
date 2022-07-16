@@ -752,4 +752,3 @@ class TestIntegration(object):
 
         assert expected_content == output_content
 
-        # TODO: integration tests for short and median seq lengths
