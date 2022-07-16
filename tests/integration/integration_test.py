@@ -1,10 +1,11 @@
 import pytest
 import sys
 
+from mock import patch, call
 from pathlib import Path
 
 from orthosnap.helper import InparalogToKeep
-from orthosnap.orthosnap import execute
+from orthosnap.orthosnap import execute, main
 
 
 here = Path(__file__)
@@ -256,7 +257,7 @@ class TestIntegration(object):
             support=60,
             occupancy=5,
             rooted=False,
-            snap_trees=False,
+            snap_trees=True,
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
         )
         execute(**kwargs)
@@ -330,3 +331,258 @@ class TestIntegration(object):
             output_content = out_file.read()
 
         assert expected_content == output_content
+
+    def test_snap_trees_argument(self):
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=80,
+            occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+        )
+        execute(**kwargs)
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.tre",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.tre",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.tre",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.tre",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.tre",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.tre",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.tre",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.tre",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_snap_trees_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.tre",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.tre",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+    def test_rooted_argument(self):
+        """"""
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=60,
+            occupancy=5,
+            rooted=True,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+        )
+        execute(**kwargs)
+
+        with open(
+            f"{here.parent.parent}/expected/test_rooted_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_rooted_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.1.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_rooted_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.2.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_rooted_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.3.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_rooted_argument/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.4.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+
+    def test_already_single_copy(self):
+        """"""
+        expected_result = "Input phylogeny is already a single-copy orthogroup\nExiting now..."
+        testargs = [
+            "orthosnap",
+            "-t",
+            f"{here.parent.parent}/samples/already_single_copy.tre",
+            "-f",
+            f"{here.parent.parent}/samples/already_single_copy.fa",
+            "-o",
+            "5",
+        ]
+
+        with pytest.raises(SystemExit) as pytest_wrapped_e:
+            main()
+
+        assert pytest_wrapped_e.type == SystemExit
+        assert pytest_wrapped_e.value.code == 2

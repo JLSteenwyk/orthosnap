@@ -29,6 +29,6 @@ coverage.unit:
 	python -m pytest --cov=./ -m "not integration" --cov-report=xml:unit.coverage.xml
 
 coverage.integration:
-	rm -rf output/
-	mkdir output/
+	rm tests/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.*
 	python -m pytest --basetemp=output --cov=./ -m "integration" --cov-report=xml:integration.coverage.xml
+	rm tests/samples/OG0000010.renamed.fa.mafft.clipkit.orthosnap.*
