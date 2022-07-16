@@ -8,6 +8,7 @@ from orthosnap.args_processing import (
     process_args,
     proper_round,
 )
+from orthosnap.helper import InparalogToKeep
 
 
 @pytest.fixture
@@ -17,6 +18,9 @@ def args():
         fasta="tests/samples/OG0000010.renamed.fa.mafft.clipkit",
         support=80,
         occupancy=1,
+        rooted=False,
+        snap_trees=False,
+        inparalog_to_keep=InparalogToKeep.longest_seq_len,
     )
     return Namespace(**kwargs)
 
@@ -58,3 +62,40 @@ class TestArgsProcessing(object):
     def test_proper_round1(self, args):
         res = proper_round(2.2)
         assert res == 2.0
+    
+    def test_rooted_arg(self, args):
+        assert args.rooted == False
+
+    def test_rooted_arg_true(self, args):
+        args.rooted = True
+        assert args.rooted == True
+
+    def test_snap_trees(self, args):
+        assert args.snap_trees == False
+
+    def test_snap_trees_true(self, args):
+        args.snap_trees = True
+        assert args.snap_trees == True
+
+    def test_inparalog_to_keep_default(self, args):
+        assert args.inparalog_to_keep == InparalogToKeep.longest_seq_len
+
+    def test_inparalog_to_keep_median_seq_len(self, args):
+        res = InparalogToKeep.median_seq_len
+        assert res == InparalogToKeep.median_seq_len
+
+    def test_inparalog_to_keep_shortest_seq_len(self, args):
+        res = InparalogToKeep.shortest_seq_len
+        assert res == InparalogToKeep.shortest_seq_len
+
+    def test_inparalog_to_keep_shortest_branch_len(self, args):
+        res = InparalogToKeep.shortest_branch_len
+        assert res == InparalogToKeep.shortest_branch_len
+
+    def test_inparalog_to_keep_median_branch_len(self, args):
+        res = InparalogToKeep.median_branch_len
+        assert res == InparalogToKeep.median_branch_len
+
+    def test_inparalog_to_keep_longest_branch_len(self, args):
+        res = InparalogToKeep.longest_branch_len
+        assert res == InparalogToKeep.longest_branch_len
