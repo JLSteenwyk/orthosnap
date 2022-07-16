@@ -41,6 +41,7 @@ jobs:
         # install test dependencies
         pip install pytest
         pip install pytest-cov
+        pip install mock
     - name: Generate coverage report
       run: |
         make test.coverage
