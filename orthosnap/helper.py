@@ -234,6 +234,8 @@ def inparalog_to_keep_determination(
         elif len(lengths) > 2 and inparalog_to_keep.value == "median_seq_len":
             median_len = stat.median(lengths, key=lengths.get)
             seq_to_keep = [key for key,value in lengths if value==median_len]
+        elif len(lengths) == 2 and inparalog_to_keep.value == "median_seq_len":
+            seq_to_keep = max(lengths, key=lengths.get)
         elif inparalog_to_keep.value == "longest_seq_len":
             seq_to_keep = max(lengths, key=lengths.get)
             
@@ -246,6 +248,8 @@ def inparalog_to_keep_determination(
         elif len(lengths) > 2 and inparalog_to_keep.value == "median_branch_len":
             median_len = stat.median(lengths, key=lengths.get)
             seq_to_keep = [key for key,value in lengths if value==median_len]
+        elif len(lengths) == 2 and inparalog_to_keep.value == "median_branch_len":
+            seq_to_keep = max(lengths, key=lengths.get)
         elif inparalog_to_keep.value == "longest_branch_len":
             seq_to_keep = max(lengths, key=lengths.get)
 

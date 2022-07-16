@@ -1,10 +1,10 @@
->Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA
+>Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate
 M-----------------------------------------------------------
 ------------------------------------------------------------
 ------------------------------------------------------------
--------------------------AVSRD---LEA----------PAVVNDP-------
----TADDAMVEKKEYADGTPANDPFGNEECGEVRYRVMSWWQCGTLMVAENISLGILSLP
-SAV---ATLGIVPAVILLLGLSAISWYTGYIMGQFKLRFPQIHSMGDAGELLMGRFGREL
+------------------------------------------------------------
+------------------------------------------------------------
+------------------------------------------------------------
 FGIGQLLFLIFLMASHILTFTVVFNTITNHGTCTIVFGVVGLVVSFIGALPRTMGKVYWM
 SMASCISIVTATVVTMIAIGVQAPDHVHVDATTEVSFQDAFLAVTNIIFAY---------
 --------IAHVAFFGFISEMHDPRDFPKSLTMLQVVDTSLYIVTAMVIYRYAGPDVASP
@@ -17,7 +17,7 @@ LTIVNFLILAFACALCGMGLYVSGKSIHDSSSKASW------------------------
 ---------------------------TCKNNAT--------------------------
 ------------------------------------------------------------
 ------------------------------------------------------------
-------------------------------------------------------------
+----------------------------------------------------------TT
 >Aspergillus_fumigatus_Af293|EAL85095.2-duplicate
 M---------------------MLWLK---------------------------------
 ------------------------------------------------------------
