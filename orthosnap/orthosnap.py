@@ -37,10 +37,7 @@ def execute(
 
     # write user args to stdout
     write_user_args(
-        tree, fasta,
-        support, occupancy,
-        rooted, snap_trees,
-        inparalog_to_keep
+        tree, fasta, support, occupancy, rooted, snap_trees, inparalog_to_keep
     )
 
     # create start time logger
@@ -62,7 +59,7 @@ def execute(
     # to a subgroup as well as a counter for that subgroup
     assigned_tips = []
     subgroup_counter = 0
-    
+
     for inter in tqdm(tree.get_nonterminals()[1:]):
         (
             _,

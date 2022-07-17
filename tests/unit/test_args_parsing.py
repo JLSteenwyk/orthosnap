@@ -62,7 +62,7 @@ class TestArgsProcessing(object):
     def test_proper_round1(self, args):
         res = proper_round(2.2)
         assert res == 2.0
-    
+
     def test_rooted_arg(self, args):
         res = process_args(args)
         assert res["rooted"] == False

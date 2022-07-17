@@ -567,7 +567,6 @@ class TestIntegration(object):
 
         assert expected_content == output_content
 
-
     def test_already_single_copy(self):
         """"""
         testargs = [
@@ -751,4 +750,3 @@ class TestIntegration(object):
             output_content = out_file.read()
 
         assert expected_content == output_content
-

@@ -8,6 +8,7 @@ from Bio import Phylo
 from Bio import SeqIO
 from Bio.Phylo.BaseTree import TreeMixin
 
+
 class InparalogToKeep(Enum):
     shortest_seq_len = "shortest_seq_len"
     median_seq_len = "median_seq_len"
@@ -15,6 +16,7 @@ class InparalogToKeep(Enum):
     shortest_branch_len = "shortest_branch_len"
     median_branch_len = "median_branch_len"
     longest_branch_len = "longest_branch_len"
+
 
 def collapse_low_support_bipartitions(newtree, support: float):
     """
@@ -61,6 +63,7 @@ def get_all_tips_and_taxa_names(tree):
         all_tips.append(term.name)
 
     return taxa, all_tips
+
 
 def check_if_single_copy(taxa: list, all_tips: list):
     """
@@ -158,7 +161,9 @@ def handle_multi_copy_subtree(
             # if duplicate sequences are sister, get the longest sequence
             if are_sisters:
                 # trim short sequences and keep long sequences in newtree
-                newtree, terms = inparalog_to_keep_determination(newtree, fasta_dict, dups, terms, inparalog_to_keep)
+                newtree, terms = inparalog_to_keep_determination(
+                    newtree, fasta_dict, dups, terms, inparalog_to_keep
+                )
 
     # if the resulting subtree has only single copy genes
     # create a fasta file with sequences from tip labels
@@ -225,7 +230,11 @@ def inparalog_to_keep_determination(
 
     lengths = dict()
     # keep inparalog based on sequence length
-    if inparalog_to_keep.value in ["shortest_seq_len", "median_seq_len", "longest_seq_len"]:
+    if inparalog_to_keep.value in [
+        "shortest_seq_len",
+        "median_seq_len",
+        "longest_seq_len",
+    ]:
         for dup in dups:
             lengths[dup] = len(re.sub("-", "", str(fasta_dict[dup].seq)))
         # determine which sequences to keep
@@ -233,12 +242,12 @@ def inparalog_to_keep_determination(
             seq_to_keep = min(lengths, key=lengths.get)
         elif len(lengths) > 2 and inparalog_to_keep.value == "median_seq_len":
             median_len = stat.median(lengths, key=lengths.get)
-            seq_to_keep = [key for key,value in lengths if value==median_len]
+            seq_to_keep = [key for key, value in lengths if value == median_len]
         elif len(lengths) == 2 and inparalog_to_keep.value == "median_seq_len":
             seq_to_keep = max(lengths, key=lengths.get)
         elif inparalog_to_keep.value == "longest_seq_len":
             seq_to_keep = max(lengths, key=lengths.get)
-            
+
     # keep inparalog based on tip to root length
     else:
         for dup in dups:
@@ -247,7 +256,7 @@ def inparalog_to_keep_determination(
             seq_to_keep = min(lengths, key=lengths.get)
         elif len(lengths) > 2 and inparalog_to_keep.value == "median_branch_len":
             median_len = stat.median(lengths, key=lengths.get)
-            seq_to_keep = [key for key,value in lengths if value==median_len]
+            seq_to_keep = [key for key, value in lengths if value == median_len]
         elif len(lengths) == 2 and inparalog_to_keep.value == "median_branch_len":
             seq_to_keep = max(lengths, key=lengths.get)
         elif inparalog_to_keep.value == "longest_branch_len":
