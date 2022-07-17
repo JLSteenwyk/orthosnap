@@ -64,11 +64,13 @@ class TestArgsProcessing(object):
         assert res == 2.0
     
     def test_rooted_arg(self, args):
-        assert args.rooted == False
+        res = process_args(args)
+        assert res["rooted"] == False
 
     def test_rooted_arg_true(self, args):
         args.rooted = True
-        assert args.rooted == True
+        res = process_args(args)
+        assert res["rooted"] == True
 
     def test_snap_trees(self, args):
         assert args.snap_trees == False
