@@ -82,6 +82,11 @@ class TestArgsProcessing(object):
     def test_inparalog_to_keep_default(self, args):
         assert args.inparalog_to_keep == InparalogToKeep.longest_seq_len
 
+    def test_inparalog_to_keep_none(self, args):
+        args.inparalog_to_keep = None
+        res = process_args(args)
+        assert res["inparalog_to_keep"] == InparalogToKeep.longest_seq_len
+
     def test_inparalog_to_keep_median_seq_len(self, args):
         res = InparalogToKeep.median_seq_len
         assert res == InparalogToKeep.median_seq_len
