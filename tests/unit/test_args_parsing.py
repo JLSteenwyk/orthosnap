@@ -123,3 +123,9 @@ class TestArgsProcessing(object):
         args.output_path = "./tests/samples"
         res = process_args(args)
         assert res["output_path"] == "./tests/samples/"
+
+    def test_output_path_none(self, args):
+        args.fasta = "requirements.txt" # fake stand in file
+        args.output_path = None
+        res = process_args(args)
+        assert res["output_path"] == "./"
