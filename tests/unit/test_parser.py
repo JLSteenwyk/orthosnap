@@ -39,3 +39,7 @@ class TestParser(object):
         assert parsed.fasta == fasta
         assert parsed.tree == tree
         assert parsed.support == float(support)
+
+    def test_parser_when_no_args(self, parser):
+        with pytest.raises(SystemExit):
+            parser.parse_args([])
