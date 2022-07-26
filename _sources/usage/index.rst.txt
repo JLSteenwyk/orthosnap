@@ -103,5 +103,7 @@ All options
 +-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
 | -ip/\-\-inparalog_to_keep   | determine which sequence to keep in the case of species-specific inparalogs using sequence- or tree-based options (default: longest_seq_len) |
 +-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -op/\-\-output_path         | pathway for output files to be written (default: same as -f input)                                                                           |
++-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
 *For genome-scale analyses, we recommend changing the -o/\-\-occupancy parameter to be the same for all large gene families so that the minimum SNAP-OG occupancy is the same
 for all SNAP-OGs.
