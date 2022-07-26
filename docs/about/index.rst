@@ -5,13 +5,13 @@ About
 
 ^^^^^
 
-**orthoSNAP** (*ortho*\ logous group of genes *s*\ plitti\ *n*\ g *a*\ nd *p*\ runing)
+**OrthoSNAP** (*ortho*\ logous group of genes *s*\ plitti\ *n*\ g *a*\ nd *p*\ runing)
 was developed as part of `Jacob L. Steenwyk <https://jlsteenwyk.com/>`_'s
 graduate thesis work. 
 
 Increasing the number of genes used during phylogenomic analysis is a promising 
 startegy to resolve contentious branches. To facilitate creating larger phylogenomic
-data matrices, we developed orthoSNAP, an algorithm that identifies subgroups of
+data matrices, we developed OrthoSNAP, an algorithm that identifies subgroups of
 single-copy orthologous genes that are nested within larger gene families.
 
 |
@@ -21,7 +21,7 @@ The Developers
 
 ^^^^^
 
-orthoSNAP is developed and maintained by `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_
+OrthoSNAP is developed and maintained by `Jacob L. Steenwyk <https://jlsteenwyk.github.io/>`_
 and `Thomas J. Buida III <https://tjbiii.com/>`_.
 
 |

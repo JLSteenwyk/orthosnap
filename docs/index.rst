@@ -33,9 +33,9 @@ software dependency issues. To do so, execute the following commands:
 	# install orthosnap
 	pip install orthosnap
 
-**Note, the virtual environment must be activated to use orthosnap.**
+**Note, the virtual environment must be activated to use OrthoSNAP.**
 
-After using orthosnap, you may wish to deactivate your virtual environment and can do so using the following command:
+After using OrthoSNAP, you may wish to deactivate your virtual environment and can do so using the following command:
 
 .. code-block:: shell
 

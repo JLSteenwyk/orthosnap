@@ -4,15 +4,15 @@
 FAQ
 ===
 
-**Is there a website application of orthosnap?**
+**Is there a website application of OrthoSNAP?**
 
-Currently, orthosnap is only a command line tool.
+Currently, OrthoSNAP is only a command line tool.
 
 |
 
-**I am having trouble install orthosnap, what should I do?**
+**I am having trouble install OrthoSNAP, what should I do?**
 
-Please install orthosnap using a virtual environment as directed
+Please install OrthoSNAP using a virtual environment as directed
 in the installation instructions. If you are still running into
 issues after installing in a virtual environment, please contact the
 main software developer via email_ or twitter_.

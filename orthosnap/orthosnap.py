@@ -28,6 +28,7 @@ def execute(
     rooted: bool,
     snap_trees: bool,
     inparalog_to_keep: InparalogToKeep,
+    output_path: str,
 ):
     """
     Master execute Function
@@ -37,7 +38,7 @@ def execute(
 
     # write user args to stdout
     write_user_args(
-        tree, fasta, support, occupancy, rooted, snap_trees, inparalog_to_keep
+        tree, fasta, support, occupancy, rooted, snap_trees, inparalog_to_keep, output_path
     )
 
     # create start time logger
@@ -90,6 +91,7 @@ def execute(
                     fasta_dict,
                     assigned_tips,
                     snap_trees,
+                    output_path,
                 )
 
             # if any taxon is represented by more than one sequence and
@@ -109,9 +111,10 @@ def execute(
                     tree,
                     snap_trees,
                     inparalog_to_keep,
+                    output_path,
                 )
 
-    write_output_stats(fasta, subgroup_counter, start_time, snap_trees)
+    write_output_stats(fasta, subgroup_counter, start_time, snap_trees, output_path)
 
 
 def main(argv=None):

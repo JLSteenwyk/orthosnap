@@ -1,6 +1,7 @@
 import logging
 import math
 import os.path
+import re
 import sys
 
 from Bio import SeqIO
@@ -46,6 +47,16 @@ def process_args(args) -> dict:
     rooted = args.rooted
     snap_trees = args.snap_trees
 
+    if args.output_path:
+        output_path = args.output_path
+    else:
+        output_path = re.sub("/[^/]+$", '', fasta)
+        if not output_path:
+            output_path = "."
+        elif not output_path.endswith("/"):
+            output_path = output_path + "/"
+
+
     if args.inparalog_to_keep:
         inparalog_to_keep = InparalogToKeep(args.inparalog_to_keep)
     else:
@@ -59,6 +70,7 @@ def process_args(args) -> dict:
         rooted=rooted,
         snap_trees=snap_trees,
         inparalog_to_keep=inparalog_to_keep,
+        output_path=output_path,
     )
 
 

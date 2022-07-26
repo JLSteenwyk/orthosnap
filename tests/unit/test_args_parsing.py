@@ -21,6 +21,7 @@ def args():
         rooted=False,
         snap_trees=False,
         inparalog_to_keep=InparalogToKeep.longest_seq_len,
+        output_path="./tests/samples/",
     )
     return Namespace(**kwargs)
 

@@ -103,6 +103,9 @@ def create_parser():
             inparalogs using sequence- or tree-based options
             default: longest_seq_len
 
+        -op, --output_path
+            specify directory for writing output files to
+
         
         -------------------------------------
         | Detailed explanation of arguments | 
@@ -160,6 +163,9 @@ def create_parser():
               distances (shortest/median/longest_branch_len)
             - by default, the longest sequence is kept following the standard approach
               in transcriptomics
+
+        -op, --output_path <str>
+            - path to output directory that files will be written to
         """
         ),
     )
@@ -206,6 +212,13 @@ def create_parser():
         required=False,
         nargs="?",
         choices=inparalog_to_keep_choices,
+    )
+
+    optional.add_argument(
+        "-op",
+        "--output_path",
+        help=SUPPRESS,
+        required=False,
     )
 
     optional.add_argument(

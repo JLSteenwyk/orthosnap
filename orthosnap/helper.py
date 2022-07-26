@@ -137,6 +137,7 @@ def handle_multi_copy_subtree(
     tree,
     snap_trees: bool,
     inparalog_to_keep: InparalogToKeep,
+    output_path: str,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -180,6 +181,7 @@ def handle_multi_copy_subtree(
             assigned_tips,
             snap_trees,
             newtree,
+            output_path,
         )
 
     return subgroup_counter, assigned_tips
@@ -195,6 +197,7 @@ def handle_single_copy_subtree(
     fasta_dict: dict,
     assigned_tips: list,
     snap_trees: bool,
+    output_path: str,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -211,7 +214,7 @@ def handle_single_copy_subtree(
         subgroup_counter,
         assigned_tips,
     ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
-        fasta, subgroup_counter, terms, fasta_dict, assigned_tips, snap_trees, newtree
+        fasta, subgroup_counter, terms, fasta_dict, assigned_tips, snap_trees, newtree, output_path
     )
 
     return subgroup_counter, assigned_tips
@@ -308,17 +311,19 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     assigned_tips: list,
     snap_tree: bool,
     newtree,
+    output_path: str,
 ):
 
     # write output
-    output_file_name = f"{fasta}.orthosnap.{subgroup_counter}.fa"
+    fasta_path_stripped = re.sub("^.*/", '', fasta)
+    output_file_name = f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
     with open(output_file_name, "w") as output_handle:
         for term in terms:
             SeqIO.write(fasta_dict[term], output_handle, "fasta")
             assigned_tips.append(term)
 
     if snap_tree:
-        output_file_name = f"{fasta}.orthosnap.{subgroup_counter}.tre"
+        output_file_name = f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.tre"
         Phylo.write(newtree, output_file_name, "newick")
 
     subgroup_counter += 1

@@ -937,7 +937,8 @@ class TestWriteOutputFastaAndAccountForAssignedTipsSingleCopyCase(object):
             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
             "Aspergillus_awamori_IFM_58123|GCB19008.1",
         ]
-        output_file_name = f"{fasta}.orthosnap.{subgroup_counter}.fa"
+
+        output_path = f"{here.parent.parent}/samples/"
         expected_subgroup_counter = 5
 
         place_holder = ""
@@ -954,6 +955,7 @@ class TestWriteOutputFastaAndAccountForAssignedTipsSingleCopyCase(object):
             assigned_tips,
             place_holder,
             place_holder,
+            output_path,
         )
 
         ## check results
