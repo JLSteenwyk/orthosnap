@@ -49,10 +49,12 @@ def process_args(args) -> dict:
 
     if args.output_path:
         output_path = args.output_path
+        if not output_path.endswith("/"):
+            output_path = output_path + "/"
     else:
         output_path = re.sub("/[^/]+$", '', fasta)
         if not output_path:
-            output_path = "."
+            output_path = "./"
         elif not output_path.endswith("/"):
             output_path = output_path + "/"
 

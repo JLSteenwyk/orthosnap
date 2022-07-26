@@ -107,3 +107,19 @@ class TestArgsProcessing(object):
     def test_inparalog_to_keep_longest_branch_len(self, args):
         res = InparalogToKeep.longest_branch_len
         assert res == InparalogToKeep.longest_branch_len
+
+    def test_output_path(self, args):
+        args.output_path="./tests/samples/"
+        res = process_args(args)
+        assert res["output_path"] == "./tests/samples/"
+
+    def test_output_path_none(self, args):
+        args.output_path = None
+        args.fasta = "tests/expected/test_support_value_60_OG0000010/OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa"
+        res = process_args(args)
+        assert res["output_path"] == "tests/expected/test_support_value_60_OG0000010/"
+    
+    def test_output_path_no_slash(self, args):
+        args.output_path = "./tests/samples"
+        res = process_args(args)
+        assert res["output_path"] == "./tests/samples/"
