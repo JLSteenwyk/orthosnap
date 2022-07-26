@@ -1,7 +1,4 @@
 import pytest
-import sys
-
-from mock import patch, call
 from pathlib import Path
 
 from orthosnap.helper import InparalogToKeep
