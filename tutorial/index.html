@@ -91,7 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#download-the-test-data">1) Download the test data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-orthosnap">2) Run orthosnap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-orthosnap">2) Run OrthoSNAP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#inspect-output">3) Inspect output</a></li>
 </ul>
 </li>
@@ -163,12 +163,12 @@
             
   <div class="section" id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p><strong>orthosnap</strong> enables researchers to obtain single-copy subgroups of
+<p><strong>OrthoSNAP</strong> enables researchers to obtain single-copy subgroups of
 orthologous genes. Single-copy subgroups of orthologous genes are
 phylogenetically-informative and can be used for molecular evolution
 analyses. This tutorial covers the easy-to-implement workflow needed
 for using orthofisher.</p>
-<p>Note, this tutorial assumes orthosnap has already been installed. For
+<p>Note, this tutorial assumes OrthoSNAP has already been installed. For
 installation instructions, please see the home page.</p>
 <hr class="docutils" />
 <div class="section" id="download-the-test-data">
@@ -187,8 +187,8 @@ $ <span class="nb">cd</span> path_to_unzipped_directory/dataset
 </div>
 </div>
 <div class="section" id="run-orthosnap">
-<h2>2) Run orthosnap<a class="headerlink" href="#run-orthosnap" title="Permalink to this headline">¶</a></h2>
-<p>Running orthosnap requires two arguments: -f/--fasta, which specifies the unaligned orthologous
+<h2>2) Run OrthoSNAP<a class="headerlink" href="#run-orthosnap" title="Permalink to this headline">¶</a></h2>
+<p>Running OrthoSNAP requires two arguments: -f/--fasta, which specifies the unaligned orthologous
 group of sequences, and -t/--tree, which species the phylogeny inferred from the orthologous
 group of sequences. Thus, orthosnap would be run using the following command:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orthosnap -f fake_orthologous_group_of_genes.faa -t fake_orthologous_group_of_genes_tree.tre
@@ -216,11 +216,11 @@ Each subgroup can be used for various molecular evolution analyses (e.g., phylog
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>To provide a little more detail about what orthosnap did, the following figure visualizes each subgroup
+<p>To provide a little more detail about what OrthoSNAP did, the following figure visualizes each subgroup
 in the original inputted phylogeny.</p>
 <a class="reference external image-reference" href="https://jlsteenwyk.com/orthosnap"><img alt="../_images/dataset_orthosnap.png" class="align-center" src="../_images/dataset_orthosnap.png" style="width: 100%;" /></a>
 <p>In <em>orthosnap.0</em>, species 2 and species 4 have duplicate copies of gene 2. After automated detection of
-duplicate sister sequences (or sequences that belong to the same polytomy), orthosnap will keep the longer
+duplicate sister sequences (or sequences that belong to the same polytomy), OrthoSNAP will keep the longer
 of the two sequences following PhyloTreePruner. This follows the standard for transcriptomic data wherein
 the longest isoform is often kept. Reevaluation of the pruned subtree results in the inference of a
 single-copy subgroup of orthologous genes.</p>
@@ -230,7 +230,7 @@ sequences of protein transporters in five <em>Aspergillus</em> species. Similar 
 <em>species1</em>; and <em>species4</em>, <em>species2</em> and <em>species2</em> are sister to <em>species3</em> and <em>species0</em>. This
 follows our observation described in the original manuscript wherein subgroups of single-copy
 orthologous genes are often as accurate and robust inferred as ‘traditional’ single-copy orthologous genes.</p>
-<p>Thank you for checking out orthosnap!</p>
+<p>Thank you for checking out OrthoSNAP!</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
