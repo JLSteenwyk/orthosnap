@@ -116,10 +116,11 @@ tree of life, and the evolution of human pregnancy. Find out more information at
 
 |DCGoltz|
 
-Dayna is a Vanderbilt University graduate and studied Health Policy. Her interests and
-studies span fields related to medicine, global health, health disparities, and programming.
-She is currently planning to attend medical school beginning in 2022 and hopes to help
-shape the field of medicine and reduce health disparities using an interdisciplinary approach. 
+Dayna is a medical student at University of South Florida Morsani College of Medicine. She is
+also a Vanderbilt University graduate, where she studied Health Policy. Here interests and studies
+span fields related to medicine, global health, health disparities, programming, and the
+intersection of technology and medicine. She hopes to shape the field of medicine and reduce
+health disparities using an interdisciplinary approach.
 
 .. |DCGoltz| image:: ../_static/img/DCGoltz.jpg
    :width: 35%
