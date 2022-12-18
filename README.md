@@ -34,15 +34,15 @@
             <img src="https://img.shields.io/pypi/pyversions/orthosnap">
         </a>
         <br />
-        <a href="https://www.biorxiv.org/content/10.1101/2021.10.30.466607">
-          <img src="https://zenodo.org/badge/DOI/10.1101/2021.10.30.466607.svg">
+        <a href="https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf">
+          <img src="https://zenodo.org/badge/DOI/10.1371/journal.pbio.3001827.svg">
         </a>
         <a href="https://patreon.com/jlsteenwyk"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Djlsteenwyk%26type%3Dpatrons&style=flat" alt="Support me on Patreon" /></a>
     </p>
 </p>
 
 orthoSNAP: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees.<br /><br />
-If you found orthosnap useful, please cite *orthosnap: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees*. Steenwyk et al. 2021, bioRxiv. doi: [10.1101/2021.10.30.466607](https://www.biorxiv.org/content/10.1101/2021.10.30.466607v1).
+If you found orthosnap useful, please cite *orthosnap: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees*. Steenwyk et al. 2022, PLOS Biology. doi: [10.1371/journal.pbio.3001827](https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf).
 <br /><br />
 
 ---
