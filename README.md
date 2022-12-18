@@ -11,7 +11,7 @@
   </p>
     <p align="center">
         <a href="https://github.com/JLSteenwyk/orthosnap/actions" alt="Build">
-            <img src="https://img.shields.io/github/workflow/status/jlsteenwyk/orthosnap/CI/master">
+            <img src="https://img.shields.io/github/actions/workflow/status/JLSteenwyk/orthosnap/ci.yml?branch=master">
         </a>
         <a href="https://codecov.io/gh/JLSteenwyk/orthosnap">
           <img src="https://codecov.io/gh/JLSteenwyk/orthosnap/branch/master/graph/badge.svg?token=FX66FUET0L"/>
