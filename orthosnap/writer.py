@@ -35,13 +35,16 @@ def write_user_args(
         )
     )
 
+
 def write_output_stats(fasta, subgroup_counter, start_time, snap_trees, output_path):
     """
     Function to print out output statistics
     """
 
-    fasta_path_stripped = re.sub("^.*/", '', fasta)
-    output_file_name = f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
+    fasta_path_stripped = re.sub("^.*/", "", fasta)
+    output_file_name = (
+        f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
+    )
 
     if subgroup_counter > 0:
         print(

@@ -28,20 +28,29 @@ def collapse_low_support_bipartitions(newtree, support: float):
     return newtree
 
 
-def determine_if_dups_are_sister(subtree_tips: list):
+def determine_if_dups_are_sister(subtree_tips: list, newtree):
     """
     determine if dups are sister to one another
     """
     # get first set of subtree tips
-    first_set_of_subtree_tips = subtree_tips[0]
+    # first_set_of_subtree_tips = subtree_tips[0]
+    # first_set_of_subtree_tips = subtree_tips
     # set if duplicate sequences are sister as True
     are_sisters = True
-    # check if duplicate sequences are sister
-    for set_of_subtree_tips in subtree_tips[1:]:
-        if first_set_of_subtree_tips != set_of_subtree_tips:
-            are_sisters = False
-        if not are_sisters:
-            break
+    # create a copy of the tree
+    dup_tree = copy.deepcopy(newtree)
+
+    dup_tree = dup_tree.common_ancestor(subtree_tips)
+    _, all_tips = get_all_tips_and_taxa_names(dup_tree)
+    if set(all_tips) != set(subtree_tips):
+        are_sisters = False
+
+    # # check if duplicate sequences are sister
+    # for set_of_subtree_tips in subtree_tips[1:]:
+    #     if first_set_of_subtree_tips != set_of_subtree_tips:
+    #         are_sisters = False
+    #     if not are_sisters:
+    #         break
 
     return are_sisters
 
@@ -154,10 +163,11 @@ def handle_multi_copy_subtree(
         # if the taxon is represented by more than one sequence
         if counts_of_taxa_from_terms[name] > 1:
             # get subtree tips
-            subtree_tips, dups = get_subtree_tips(terms, name, tree)
+            _, dups = get_subtree_tips(terms, name, tree)
 
             # check if subtrees are sister to one another
-            are_sisters = determine_if_dups_are_sister(subtree_tips)
+            # are_sisters = determine_if_dups_are_sister(subtree_tips)
+            are_sisters = determine_if_dups_are_sister(dups, newtree)
 
             # if duplicate sequences are sister, get the longest sequence
             if are_sisters:
@@ -214,7 +224,14 @@ def handle_single_copy_subtree(
         subgroup_counter,
         assigned_tips,
     ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
-        fasta, subgroup_counter, terms, fasta_dict, assigned_tips, snap_trees, newtree, output_path
+        fasta,
+        subgroup_counter,
+        terms,
+        fasta_dict,
+        assigned_tips,
+        snap_trees,
+        newtree,
+        output_path,
     )
 
     return subgroup_counter, assigned_tips
@@ -230,7 +247,6 @@ def inparalog_to_keep_determination(
     """
     remove_short_sequences_among_duplicates_that_are_sister
     """
-
     lengths = dict()
     # keep inparalog based on sequence length
     if inparalog_to_keep.value in [
@@ -313,17 +329,20 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     newtree,
     output_path: str,
 ):
-
     # write output
-    fasta_path_stripped = re.sub("^.*/", '', fasta)
-    output_file_name = f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
+    fasta_path_stripped = re.sub("^.*/", "", fasta)
+    output_file_name = (
+        f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
+    )
     with open(output_file_name, "w") as output_handle:
         for term in terms:
             SeqIO.write(fasta_dict[term], output_handle, "fasta")
             assigned_tips.append(term)
 
     if snap_tree:
-        output_file_name = f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.tre"
+        output_file_name = (
+            f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.tre"
+        )
         Phylo.write(newtree, output_file_name, "newick")
 
     subgroup_counter += 1

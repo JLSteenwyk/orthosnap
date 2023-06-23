@@ -38,7 +38,14 @@ def execute(
 
     # write user args to stdout
     write_user_args(
-        tree, fasta, support, occupancy, rooted, snap_trees, inparalog_to_keep, output_path
+        tree,
+        fasta,
+        support,
+        occupancy,
+        rooted,
+        snap_trees,
+        inparalog_to_keep,
+        output_path,
     )
 
     # create start time logger

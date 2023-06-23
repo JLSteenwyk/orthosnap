@@ -52,12 +52,11 @@ def process_args(args) -> dict:
         if not output_path.endswith("/"):
             output_path = output_path + "/"
     else:
-        output_path = re.sub("/[^/]+$", '', fasta)
+        output_path = re.sub("/[^/]+$", "", fasta)
         if output_path == fasta:
             output_path = "./"
         elif not output_path.endswith("/"):
             output_path = output_path + "/"
-
 
     if args.inparalog_to_keep:
         inparalog_to_keep = InparalogToKeep(args.inparalog_to_keep)
