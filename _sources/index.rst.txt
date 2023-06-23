@@ -10,10 +10,10 @@ can then be used for diverse studies including phylogenomics and genome-wide sur
 selection.
 
 If you found OrthoSNAP useful, please cite *OrthoSNAP: a tree splitting and pruning algorithm
-for retrieving single-copy orthologs from gene family trees*. bioRxiv. doi: |doiLink|_.
+for retrieving single-copy orthologs from gene family trees*. PLOS Biology. doi: |doiLink|_.
 
-.. _doiLink: https://www.biorxiv.org/content/10.1101/2021.10.30.466607v1
-.. |doiLink| replace:: 10.1101/2021.10.30.466607
+.. _doiLink: https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf
+.. |doiLink| replace:: 10.1371/journal.pbio.3001827
 
 |
 
