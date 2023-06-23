@@ -33,11 +33,8 @@
         <a href="https://pypi.org/project/orthosnap/" alt="PyPI - Python Version">
             <img src="https://img.shields.io/pypi/pyversions/orthosnap">
         </a>
-        <br />
         <a href="https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf">
           <img src="https://zenodo.org/badge/DOI/10.1371/journal.pbio.3001827.svg">
-        </a>
-        <a href="https://patreon.com/jlsteenwyk"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Djlsteenwyk%26type%3Dpatrons&style=flat" alt="Support me on Patreon" /></a>
     </p>
 </p>
 
