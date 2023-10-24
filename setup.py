@@ -17,7 +17,7 @@ CLASSIFIERS = [
     "Topic :: Scientific/Engineering",
 ]
 
-REQUIRES = ["biopython==1.78", "numpy==1.20.1", "tqdm==4.58.0"]
+REQUIRES = ["biopython>=1.81", "numpy>=1.24.0", "tqdm>=4.66.1"]
 
 setup(
     name="orthosnap",
