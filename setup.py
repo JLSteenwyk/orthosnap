@@ -12,13 +12,12 @@ CLASSIFIERS = [
     "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering",
 ]
 
-REQUIRES = ["biopython==1.78", "numpy==1.20.1", "tqdm==4.58.0"]
+REQUIRES = ["biopython>=1.81", "numpy>=1.24.0", "tqdm>=4.66.1"]
 
 setup(
     name="orthosnap",
@@ -36,7 +35,7 @@ setup(
     install_requires=REQUIRES,
 )
 
-## push new version to pypi
+# push new version to pypi
 # rm -rf dist
 # python3 setup.py sdist bdist_wheel --universal
 # twine upload dist/* -r pypi
