@@ -46,6 +46,7 @@ def process_args(args) -> dict:
 
     rooted = args.rooted
     snap_trees = args.snap_trees
+    report_inparalog_handling = args.report_inparalog_handling
 
     if args.output_path:
         output_path = args.output_path
@@ -71,6 +72,7 @@ def process_args(args) -> dict:
         rooted=rooted,
         snap_trees=snap_trees,
         inparalog_to_keep=inparalog_to_keep,
+        report_inparalog_handling=report_inparalog_handling,
         output_path=output_path,
     )
 

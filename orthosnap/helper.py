@@ -126,10 +126,6 @@ def get_subtree_tips(terms: list, name: str, tree):
             temp.append(term.name)
         subtree_tips.append(temp)
 
-    # print(name)
-    # import sys
-    # sys.exit()
-
     return subtree_tips, dups
 
 
@@ -147,6 +143,8 @@ def handle_multi_copy_subtree(
     snap_trees: bool,
     inparalog_to_keep: InparalogToKeep,
     output_path: str,
+    inparalog_handling: dict,
+    inparalog_handling_summary: dict,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -172,17 +170,22 @@ def handle_multi_copy_subtree(
             # if duplicate sequences are sister, get the longest sequence
             if are_sisters:
                 # trim short sequences and keep long sequences in newtree
-                newtree, terms = inparalog_to_keep_determination(
-                    newtree, fasta_dict, dups, terms, inparalog_to_keep
-                )
+                newtree, terms, inparalog_handling = \
+                    inparalog_to_keep_determination(
+                        newtree, fasta_dict, dups, terms,
+                        inparalog_to_keep, inparalog_handling
+                    )
 
     # if the resulting subtree has only single copy genes
     # create a fasta file with sequences from tip labels
-    _, _, _, counts = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(newtree)
+    _, _, _, counts = \
+        get_tips_and_taxa_names_and_taxa_counts_from_subtrees(newtree)
+
     if set(counts) == set([1]):
         (
             subgroup_counter,
             assigned_tips,
+            inparalog_handling_summary
         ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
             fasta,
             subgroup_counter,
@@ -192,9 +195,13 @@ def handle_multi_copy_subtree(
             snap_trees,
             newtree,
             output_path,
+            inparalog_handling,
+            inparalog_handling_summary,
         )
 
-    return subgroup_counter, assigned_tips
+    return \
+        subgroup_counter, assigned_tips, \
+        inparalog_handling, inparalog_handling_summary
 
 
 def handle_single_copy_subtree(
@@ -208,6 +215,8 @@ def handle_single_copy_subtree(
     assigned_tips: list,
     snap_trees: bool,
     output_path: str,
+    inparalog_handling: dict,
+    inparalog_handling_summary: dict,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -223,6 +232,7 @@ def handle_single_copy_subtree(
     (
         subgroup_counter,
         assigned_tips,
+        inparalog_handling_summary
     ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
         fasta,
         subgroup_counter,
@@ -232,9 +242,13 @@ def handle_single_copy_subtree(
         snap_trees,
         newtree,
         output_path,
+        inparalog_handling,
+        inparalog_handling_summary,
     )
 
-    return subgroup_counter, assigned_tips
+    return \
+        subgroup_counter, assigned_tips, \
+        inparalog_handling, inparalog_handling_summary
 
 
 def inparalog_to_keep_determination(
@@ -243,6 +257,7 @@ def inparalog_to_keep_determination(
     dups: list,
     terms: list,
     inparalog_to_keep: InparalogToKeep,
+    inparalog_handling: dict,
 ):
     """
     remove_short_sequences_among_duplicates_that_are_sister
@@ -261,22 +276,27 @@ def inparalog_to_keep_determination(
             seq_to_keep = min(lengths, key=lengths.get)
         elif len(lengths) > 2 and inparalog_to_keep.value == "median_seq_len":
             median_len = stat.median(lengths, key=lengths.get)
-            seq_to_keep = [key for key, value in lengths if value == median_len]
+            seq_to_keep = [
+                key for key, value in lengths if value == median_len
+            ]
         elif len(lengths) == 2 and inparalog_to_keep.value == "median_seq_len":
             seq_to_keep = max(lengths, key=lengths.get)
         elif inparalog_to_keep.value == "longest_seq_len":
             seq_to_keep = max(lengths, key=lengths.get)
-
     # keep inparalog based on tip to root length
     else:
         for dup in dups:
             lengths[dup] = TreeMixin.distance(newtree, dup)
         if inparalog_to_keep.value == "shortest_branch_len":
             seq_to_keep = min(lengths, key=lengths.get)
-        elif len(lengths) > 2 and inparalog_to_keep.value == "median_branch_len":
+        elif len(lengths) > 2 and \
+                inparalog_to_keep.value == "median_branch_len":
             median_len = stat.median(lengths, key=lengths.get)
-            seq_to_keep = [key for key, value in lengths if value == median_len]
-        elif len(lengths) == 2 and inparalog_to_keep.value == "median_branch_len":
+            seq_to_keep = [
+                key for key, value in lengths if value == median_len
+            ]
+        elif len(lengths) == 2 and \
+                inparalog_to_keep.value == "median_branch_len":
             seq_to_keep = max(lengths, key=lengths.get)
         elif inparalog_to_keep.value == "longest_branch_len":
             seq_to_keep = max(lengths, key=lengths.get)
@@ -288,7 +308,10 @@ def inparalog_to_keep_determination(
             newtree.prune(seq_name)
             terms.remove(seq_name)
 
-    return newtree, terms
+    dups.remove(seq_to_keep)
+    inparalog_handling[seq_to_keep] = dups
+
+    return newtree, terms, inparalog_handling
 
 
 def prune_subtree(all_tips: list, terms: list, newtree):
@@ -296,7 +319,9 @@ def prune_subtree(all_tips: list, terms: list, newtree):
     prune tips not of interest for subtree
     """
 
-    tips_to_prune = [i for i in all_tips + terms if i not in all_tips or i not in terms]
+    tips_to_prune = [
+        i for i in all_tips + terms if i not in all_tips or i not in terms
+    ]
 
     for tip in tips_to_prune:
         newtree.prune(tip)
@@ -328,6 +353,8 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     snap_tree: bool,
     newtree,
     output_path: str,
+    inparalog_handling: dict,
+    inparalog_handling_summary: dict
 ):
     # write output
     fasta_path_stripped = re.sub("^.*/", "", fasta)
@@ -345,6 +372,44 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
         )
         Phylo.write(newtree, output_file_name, "newick")
 
+    write_summary_file_with_inparalog_handling(
+        inparalog_handling, fasta,
+        output_path, subgroup_counter,
+        assigned_tips
+    )
     subgroup_counter += 1
 
-    return subgroup_counter, assigned_tips
+    return subgroup_counter, assigned_tips, inparalog_handling_summary
+
+
+def write_summary_file_with_inparalog_handling(
+        inparalog_handling: dict,
+        fasta: str,
+        output_path: str,
+        subgroup_count: int,
+        assigned_tips: list
+):
+    res_arr = []
+
+    in_file_handle = re.sub("^.*/", "", fasta)
+
+    for k, v in inparalog_handling.items():
+        temp = []
+        temp.append(in_file_handle+".orthosnap."+str(subgroup_count))
+        temp.append(k)
+        temp.append(';'.join(v))
+        res_arr.append(temp)
+    inparalog_report_output_name = in_file_handle + ".inparalog_report.txt"
+
+    fasta_path_stripped = re.sub("^.*/", "", fasta)
+    output_fasta_file_name = (
+        f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_count}.fa"
+    )
+
+    if res_arr:
+        try:
+            if res_arr[0][1] in open(output_fasta_file_name).read():
+                with open(f"{output_path}{inparalog_report_output_name}", "a") as file:
+                    file.writelines('\t'.join(i) + '\n' for i in res_arr)
+        except FileNotFoundError:
+            1

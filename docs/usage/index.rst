@@ -81,29 +81,47 @@ or the inparalog with the median sequence length can be kept using the following
 Again, following transcriptomics, the default is to keep the longest sequence because (at least in theory)
 it is the most complete gene annotation.
 
+Report inparalog handling
+-------------------------
+To report inparalogs and specify which was kept per SNAP-OG, use the -rih, \-\-report_inparalog_handling
+argument. The resulting file, which will have the suffix ".inparalog_report.txt," will have three columns: |br|
+- col 1 is the orthogroup file |br|
+- col 2 is the inparalog that was kept |br|
+- col 3 is/are the inparalog/s that were trimmed separated by a semi-colon ";" |br|
+
+To generate this file, use the following command:
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre -rih
+
+|
+
 All options
 -----------
 
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| Option                      | Usage and meaning                                                                                                                            |
-+=============================+==============================================================================================================================================+
-| -h/\-\-help                 | Print help message                                                                                                                           |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -v/\-\-version              | Print software version                                                                                                                       |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -t/\-\-tree                 | Input tree file (format: newick)                                                                                                             |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -s/\-\-support              | Bipartition support threshold for collapsing uncertain branches (default: 80)                                                                |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -o/\-\-occupancy            | Occupancy threshold for identifying a subgroup of interest (default: 50%)                                                                    |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -r/\-\-roooted              | boolean argument for whether the input phylogeny is already rooted (default: false)                                                          |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -st/\-\-snap_trees          | boolean argument for whether trees of SNAP-OGs should be outputted (default: false)                                                          |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -ip/\-\-inparalog_to_keep   | determine which sequence to keep in the case of species-specific inparalogs using sequence- or tree-based options (default: longest_seq_len) |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
-| -op/\-\-output_path         | pathway for output files to be written (default: same as -f input)                                                                           |
-+-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| Option                              | Usage and meaning                                                                                                                            |
++=====================================+==============================================================================================================================================+
+| -h/\-\-help                         | Print help message                                                                                                                           |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -v/\-\-version                      | Print software version                                                                                                                       |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -t/\-\-tree                         | Input tree file (format: newick)                                                                                                             |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -s/\-\-support                      | Bipartition support threshold for collapsing uncertain branches (default: 80)                                                                |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -o/\-\-occupancy                    | Occupancy threshold for identifying a subgroup of interest (default: 50%)                                                                    |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -r/\-\-roooted                      | boolean argument for whether the input phylogeny is already rooted (default: false)                                                          |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -st/\-\-snap_trees                  | boolean argument for whether trees of SNAP-OGs should be outputted (default: false)                                                          |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -ip/\-\-inparalog_to_keep           | determine which sequence to keep in the case of species-specific inparalogs using sequence- or tree-based options (default: longest_seq_len) |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -op/\-\-output_path                 | pathway for output files to be written (default: same as -f input)                                                                           |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -rih, \-\-report_inparalog_handling | create a summary file of which inparalogs where kept compared to trimmed                                                                     |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
 *For genome-scale analyses, we recommend changing the -o/\-\-occupancy parameter to be the same for all large gene families so that the minimum SNAP-OG occupancy is the same
 for all SNAP-OGs.

@@ -13,6 +13,7 @@ def write_user_args(
     rooted: bool,
     snap_trees: bool,
     inparalog_to_keep: InparalogToKeep,
+    report_inparalog_handling: bool,
     output_path: str,
 ):
     """
@@ -27,6 +28,7 @@ def write_user_args(
     Input phylogeny: {tree} (rooted, {rooted})
     Input fasta: {fasta}
     Inparalog to keep: {inparalog_to_keep.value}
+    Report inparalog handling: {report_inparalog_handling}
     Support threshold: {support}
     Taxon occupancy threshold: {occupancy}
     Output newick of SNAP-OGs: {snap_trees}
@@ -36,7 +38,9 @@ def write_user_args(
     )
 
 
-def write_output_stats(fasta, subgroup_counter, start_time, snap_trees, output_path):
+def write_output_stats(
+    fasta, subgroup_counter, start_time, snap_trees, output_path
+):
     """
     Function to print out output statistics
     """
@@ -60,11 +64,11 @@ def write_output_stats(fasta, subgroup_counter, start_time, snap_trees, output_p
         )
         if snap_trees:
             for i in range(subgroup_counter):
-                output_file_name = f"{output_path}/{fasta_path_stripped}.orthosnap.{i}"
+                output_file_name = f"{output_path}{fasta_path_stripped}.orthosnap.{i}"
                 print(f"\t{output_file_name}.fa\n\t{output_file_name}.tre")
         else:
             for i in range(subgroup_counter):
-                output_file_name = f"{output_path}/{fasta_path_stripped}.orthosnap.{i}"
+                output_file_name = f"{output_path}{fasta_path_stripped}.orthosnap.{i}"
                 print(f"\t{output_file_name}.fa")
             print(
                 textwrap.dedent(
