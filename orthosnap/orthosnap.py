@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import copy
+import os
+import re
 import sys
 import time
 
@@ -14,6 +16,7 @@ from .helper import (
     handle_single_copy_subtree,
     handle_multi_copy_subtree,
     read_input_files,
+    write_summary_file_with_inparalog_handling
 )
 from .helper import InparalogToKeep
 from .parser import create_parser
@@ -28,6 +31,7 @@ def execute(
     rooted: bool,
     snap_trees: bool,
     inparalog_to_keep: InparalogToKeep,
+    report_inparalog_handling: bool,
     output_path: str,
 ):
     """
@@ -35,6 +39,13 @@ def execute(
     -----------------------
     This function executes the main functions and calls other subfunctions
     """
+
+    # clean
+    if report_inparalog_handling:
+        in_file_handle = re.sub("^.*/", "", fasta)
+        inparalog_report_output_name = in_file_handle + ".inparalog_report.txt"
+        if os.path.isfile(f"{output_path}{inparalog_report_output_name}"):
+            os.remove(f"{output_path}{inparalog_report_output_name}")
 
     # write user args to stdout
     write_user_args(
@@ -45,6 +56,7 @@ def execute(
         rooted,
         snap_trees,
         inparalog_to_keep,
+        report_inparalog_handling,
         output_path,
     )
 
@@ -68,6 +80,9 @@ def execute(
     assigned_tips = []
     subgroup_counter = 0
 
+    inparalog_handling = dict()
+    inparalog_handling_summary = dict()
+
     for inter in tqdm(tree.get_nonterminals()[1:]):
         (
             _,
@@ -88,40 +103,59 @@ def execute(
                 set([1]) == set(counts)
                 and len(list(set(terms) & set(assigned_tips))) == 0
             ):
-                subgroup_counter, assigned_tips = handle_single_copy_subtree(
-                    all_tips,
-                    terms,
-                    newtree,
-                    subgroup_counter,
-                    fasta,
-                    support,
-                    fasta_dict,
-                    assigned_tips,
-                    snap_trees,
-                    output_path,
-                )
+                subgroup_counter, assigned_tips, \
+                    inparalog_handling, inparalog_handling_summary = \
+                    handle_single_copy_subtree(
+                        all_tips,
+                        terms,
+                        newtree,
+                        subgroup_counter,
+                        fasta,
+                        support,
+                        fasta_dict,
+                        assigned_tips,
+                        snap_trees,
+                        output_path,
+                        inparalog_handling,
+                        inparalog_handling_summary
+                    )
 
             # if any taxon is represented by more than one sequence and
             # the tips have not been assigned to a suborthogroup
             # prune tips not part of the subtree of interest
             elif len(list(set(terms) & set(assigned_tips))) == 0:
-                subgroup_counter, assigned_tips = handle_multi_copy_subtree(
-                    all_tips,
-                    terms,
-                    newtree,
-                    subgroup_counter,
-                    fasta,
-                    support,
-                    fasta_dict,
-                    assigned_tips,
-                    counts_of_taxa_from_terms,
-                    tree,
-                    snap_trees,
-                    inparalog_to_keep,
-                    output_path,
-                )
+                subgroup_counter, assigned_tips, \
+                    inparalog_handling, inparalog_handling_summary = \
+                    handle_multi_copy_subtree(
+                        all_tips,
+                        terms,
+                        newtree,
+                        subgroup_counter,
+                        fasta,
+                        support,
+                        fasta_dict,
+                        assigned_tips,
+                        counts_of_taxa_from_terms,
+                        tree,
+                        snap_trees,
+                        inparalog_to_keep,
+                        output_path,
+                        inparalog_handling,
+                        inparalog_handling_summary,
+                    )
 
-    write_output_stats(fasta, subgroup_counter, start_time, snap_trees, output_path)
+    if report_inparalog_handling:
+        write_summary_file_with_inparalog_handling(
+            inparalog_handling,
+            fasta,
+            output_path,
+            subgroup_counter,
+            assigned_tips,
+        )
+
+    write_output_stats(
+        fasta, subgroup_counter, start_time, snap_trees, output_path
+    )
 
 
 def main(argv=None):

@@ -103,6 +103,9 @@ def create_parser():
             inparalogs using sequence- or tree-based options
             default: longest_seq_len
 
+        -rih, --report_inparalog_handling
+            create a summary file of which inparalogs where kept compared to trimmed
+
         -op, --output_path
             specify directory for writing output files to
 
@@ -164,6 +167,12 @@ def create_parser():
             - by default, the longest sequence is kept following the standard approach
               in transcriptomics
 
+        -rih, --report_inparalog_handling
+            - create a summary file of which inparalogs where kept compared to trimmed
+            - col 1 is the orthogroup file
+            - col 2 is the inparalog that was kept
+            - col 3 is/are the inparalog/s that were trimmed separated by a semi-colon ";"
+
         -op, --output_path <str>
             - path to output directory that files will be written to
         """
@@ -212,6 +221,14 @@ def create_parser():
         required=False,
         nargs="?",
         choices=inparalog_to_keep_choices,
+    )
+
+    optional.add_argument(
+        "-rih",
+        "--report_inparalog_handling",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
     )
 
     optional.add_argument(

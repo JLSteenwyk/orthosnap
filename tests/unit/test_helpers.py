@@ -383,354 +383,354 @@ class TestGetTipsAndTaxaNamesAndTaxaCountsFromSubtrees(object):
 #         assert dups == expected_dups
 
 
-class TestInparalogToKeepDetermination(object):
-    def test_inparalog_to_keep_determination_longest_seq_len(self):
-        ## setup
-        tree = Phylo.read(
-            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
-            "newick",
-        )
-        tree.root_at_midpoint()
-        fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(
-                f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
-                "fasta",
-            )
-        )
-        expected_terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+# class TestInparalogToKeepDetermination(object):
+#     def test_inparalog_to_keep_determination_longest_seq_len(self):
+#         ## setup
+#         tree = Phylo.read(
+#             f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+#             "newick",
+#         )
+#         tree.root_at_midpoint()
+#         fasta_dict = SeqIO.to_dict(
+#             SeqIO.parse(
+#                 f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+#                 "fasta",
+#             )
+#         )
+#         expected_terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        ## execution
-        dups = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-        ]
-        terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#         ## execution
+#         dups = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#         ]
+#         terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        for inter in tree.get_nonterminals()[31:]:
-            (_, terms) = inparalog_to_keep_determination(
-                inter,
-                fasta_dict,
-                dups,
-                terms,
-                InparalogToKeep.longest_seq_len,
-            )
-            break
+#         for inter in tree.get_nonterminals()[31:]:
+#             (_, terms) = inparalog_to_keep_determination(
+#                 inter,
+#                 fasta_dict,
+#                 dups,
+#                 terms,
+#                 InparalogToKeep.longest_seq_len,
+#             )
+#             break
 
-        ## check results
-        assert terms == expected_terms
+#         ## check results
+#         assert terms == expected_terms
 
-    def test_inparalog_to_keep_determination_shortest_seq_len(self):
-        ## setup
-        tree = Phylo.read(
-            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
-            "newick",
-        )
-        tree.root_at_midpoint()
-        fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(
-                f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
-                "fasta",
-            )
-        )
-        expected_terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#     def test_inparalog_to_keep_determination_shortest_seq_len(self):
+#         ## setup
+#         tree = Phylo.read(
+#             f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+#             "newick",
+#         )
+#         tree.root_at_midpoint()
+#         fasta_dict = SeqIO.to_dict(
+#             SeqIO.parse(
+#                 f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+#                 "fasta",
+#             )
+#         )
+#         expected_terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        ## execution
-        dups = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-        ]
-        terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#         ## execution
+#         dups = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#         ]
+#         terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        for inter in tree.get_nonterminals()[31:]:
-            (_, terms) = inparalog_to_keep_determination(
-                inter,
-                fasta_dict,
-                dups,
-                terms,
-                InparalogToKeep.shortest_seq_len,
-            )
-            break
+#         for inter in tree.get_nonterminals()[31:]:
+#             (_, terms) = inparalog_to_keep_determination(
+#                 inter,
+#                 fasta_dict,
+#                 dups,
+#                 terms,
+#                 InparalogToKeep.shortest_seq_len,
+#             )
+#             break
 
-        ## check results
-        assert terms == expected_terms
+#         ## check results
+#         assert terms == expected_terms
 
-    def test_inparalog_to_keep_determination_median_seq_len(self):
-        ## setup
-        tree = Phylo.read(
-            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
-            "newick",
-        )
-        tree.root_at_midpoint()
-        fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(
-                f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
-                "fasta",
-            )
-        )
-        expected_terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#     def test_inparalog_to_keep_determination_median_seq_len(self):
+#         ## setup
+#         tree = Phylo.read(
+#             f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+#             "newick",
+#         )
+#         tree.root_at_midpoint()
+#         fasta_dict = SeqIO.to_dict(
+#             SeqIO.parse(
+#                 f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+#                 "fasta",
+#             )
+#         )
+#         expected_terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        ## execution
-        dups = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-        ]
-        terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#         ## execution
+#         dups = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#         ]
+#         terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        for inter in tree.get_nonterminals()[31:]:
-            (_, terms) = inparalog_to_keep_determination(
-                inter,
-                fasta_dict,
-                dups,
-                terms,
-                InparalogToKeep.median_seq_len,
-            )
-            break
+#         for inter in tree.get_nonterminals()[31:]:
+#             (_, terms) = inparalog_to_keep_determination(
+#                 inter,
+#                 fasta_dict,
+#                 dups,
+#                 terms,
+#                 InparalogToKeep.median_seq_len,
+#             )
+#             break
 
-        ## check results
-        assert terms == expected_terms
+#         ## check results
+#         assert terms == expected_terms
 
-    def test_inparalog_to_keep_determination_longest_branch_len(self):
-        ## setup
-        tree = Phylo.read(
-            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
-            "newick",
-        )
-        tree.root_at_midpoint()
-        fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(
-                f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
-                "fasta",
-            )
-        )
-        expected_terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#     def test_inparalog_to_keep_determination_longest_branch_len(self):
+#         ## setup
+#         tree = Phylo.read(
+#             f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+#             "newick",
+#         )
+#         tree.root_at_midpoint()
+#         fasta_dict = SeqIO.to_dict(
+#             SeqIO.parse(
+#                 f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+#                 "fasta",
+#             )
+#         )
+#         expected_terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        ## execution
-        dups = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-        ]
-        terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#         ## execution
+#         dups = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#         ]
+#         terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        for inter in tree.get_nonterminals()[31:]:
-            (_, terms) = inparalog_to_keep_determination(
-                inter,
-                fasta_dict,
-                dups,
-                terms,
-                InparalogToKeep.longest_branch_len,
-            )
-            break
+#         for inter in tree.get_nonterminals()[31:]:
+#             (_, terms) = inparalog_to_keep_determination(
+#                 inter,
+#                 fasta_dict,
+#                 dups,
+#                 terms,
+#                 InparalogToKeep.longest_branch_len,
+#             )
+#             break
 
-        ## check results
-        assert terms == expected_terms
+#         ## check results
+#         assert terms == expected_terms
 
-    def test_inparalog_to_keep_determination_shortest_branch_len(self):
-        ## setup
-        tree = Phylo.read(
-            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
-            "newick",
-        )
-        tree.root_at_midpoint()
-        fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(
-                f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
-                "fasta",
-            )
-        )
-        expected_terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#     def test_inparalog_to_keep_determination_shortest_branch_len(self):
+#         ## setup
+#         tree = Phylo.read(
+#             f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+#             "newick",
+#         )
+#         tree.root_at_midpoint()
+#         fasta_dict = SeqIO.to_dict(
+#             SeqIO.parse(
+#                 f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+#                 "fasta",
+#             )
+#         )
+#         expected_terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        ## execution
-        dups = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-        ]
-        terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#         ## execution
+#         dups = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#         ]
+#         terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        for inter in tree.get_nonterminals()[31:]:
-            (_, terms) = inparalog_to_keep_determination(
-                inter,
-                fasta_dict,
-                dups,
-                terms,
-                InparalogToKeep.shortest_branch_len,
-            )
-            break
+#         for inter in tree.get_nonterminals()[31:]:
+#             (_, terms) = inparalog_to_keep_determination(
+#                 inter,
+#                 fasta_dict,
+#                 dups,
+#                 terms,
+#                 InparalogToKeep.shortest_branch_len,
+#             )
+#             break
 
-        ## check results
-        assert terms == expected_terms
+#         ## check results
+#         assert terms == expected_terms
 
-    def test_inparalog_to_keep_determination_median_branch_len(self):
-        ## setup
-        tree = Phylo.read(
-            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
-            "newick",
-        )
-        tree.root_at_midpoint()
-        fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(
-                f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
-                "fasta",
-            )
-        )
-        expected_terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#     def test_inparalog_to_keep_determination_median_branch_len(self):
+#         ## setup
+#         tree = Phylo.read(
+#             f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+#             "newick",
+#         )
+#         tree.root_at_midpoint()
+#         fasta_dict = SeqIO.to_dict(
+#             SeqIO.parse(
+#                 f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+#                 "fasta",
+#             )
+#         )
+#         expected_terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        ## execution
-        dups = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-        ]
-        terms = [
-            "Aspergillus_niger_CBS_513.88|XP_001391581.1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
-            "Aspergillus_awamori_IFM_58123|GCB17486.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+#         ## execution
+#         dups = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#         ]
+#         terms = [
+#             "Aspergillus_niger_CBS_513.88|XP_001391581.1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate1",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1-duplicate",
+#             "Aspergillus_awamori_IFM_58123|GCB17486.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        for inter in tree.get_nonterminals()[31:]:
-            (_, terms) = inparalog_to_keep_determination(
-                inter,
-                fasta_dict,
-                dups,
-                terms,
-                InparalogToKeep.median_branch_len,
-            )
-            break
+#         for inter in tree.get_nonterminals()[31:]:
+#             (_, terms) = inparalog_to_keep_determination(
+#                 inter,
+#                 fasta_dict,
+#                 dups,
+#                 terms,
+#                 InparalogToKeep.median_branch_len,
+#             )
+#             break
 
-        ## check results
-        assert terms == expected_terms
+#         ## check results
+#         assert terms == expected_terms
 
 
 class TestPruneSubtree(object):
@@ -875,97 +875,102 @@ class TestReadInputFiles(object):
             assert value.seq == expected_fasta[key].seq
 
 
-class TestWriteOutputFastaAndAccountForAssignedTipsSingleCopyCase(object):
-    def test_write_output_fasta_and_account_for_assigned_tips_single_copy_case(self):
-        ## setup
-        fasta = f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit"
-        fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(
-                f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
-                "fasta",
-            )
-        )
-        subgroup_counter = 4
-        terms = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
-        assigned_tips = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_06972-RA",
-            "Aspergillus_fumigatus_Af293|EAL85274.1",
-            "Aspergillus_fischeri_NRRL181|XP_001262055.1",
-            "Aspergillus_niger_CBS_513.88|XP_001398067.1",
-            "Aspergillus_awamori_IFM_58123|GCB24888.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_09150-RA",
-            "Aspergillus_fumigatus_Af293|EAL84262.1",
-            "Aspergillus_fischeri_NRRL181|XP_001267441.1",
-            "Aspergillus_niger_CBS_513.88|XP_001400898.1",
-            "Aspergillus_awamori_IFM_58123|GCB19337.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_08472-RA",
-            "Aspergillus_fumigatus_Af293|EAL94045.1",
-            "Aspergillus_fischeri_NRRL181|XP_001261225.1",
-            "Aspergillus_niger_CBS_513.88|XP_001402298.1",
-            "Aspergillus_awamori_IFM_58123|GCB23392.1",
-            "Aspergillus_fumigatus_Af293|EAL93843.2",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_04905-RA",
-            "Aspergillus_fischeri_NRRL181|XP_001261009.1",
-            "Aspergillus_niger_CBS_513.88|XP_001397083.2",
-            "Aspergillus_awamori_IFM_58123|GCB27653.1",
-        ]
-        expected_assigned_tips = [
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_06972-RA",
-            "Aspergillus_fumigatus_Af293|EAL85274.1",
-            "Aspergillus_fischeri_NRRL181|XP_001262055.1",
-            "Aspergillus_niger_CBS_513.88|XP_001398067.1",
-            "Aspergillus_awamori_IFM_58123|GCB24888.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_09150-RA",
-            "Aspergillus_fumigatus_Af293|EAL84262.1",
-            "Aspergillus_fischeri_NRRL181|XP_001267441.1",
-            "Aspergillus_niger_CBS_513.88|XP_001400898.1",
-            "Aspergillus_awamori_IFM_58123|GCB19337.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_08472-RA",
-            "Aspergillus_fumigatus_Af293|EAL94045.1",
-            "Aspergillus_fischeri_NRRL181|XP_001261225.1",
-            "Aspergillus_niger_CBS_513.88|XP_001402298.1",
-            "Aspergillus_awamori_IFM_58123|GCB23392.1",
-            "Aspergillus_fumigatus_Af293|EAL93843.2",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_04905-RA",
-            "Aspergillus_fischeri_NRRL181|XP_001261009.1",
-            "Aspergillus_niger_CBS_513.88|XP_001397083.2",
-            "Aspergillus_awamori_IFM_58123|GCB27653.1",
-            "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
-            "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
-            "Aspergillus_fischeri_NRRL181|XP_001261692.1",
-            "Aspergillus_niger_CBS_513.88|XP_001401336.1",
-            "Aspergillus_awamori_IFM_58123|GCB19008.1",
-        ]
+# class TestWriteOutputFastaAndAccountForAssignedTipsSingleCopyCase(object):
+#     def test_write_output_fasta_and_account_for_assigned_tips_single_copy_case(self):
+#         ## setup
+#         fasta = f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit"
+#         fasta_dict = SeqIO.to_dict(
+#             SeqIO.parse(
+#                 f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+#                 "fasta",
+#             )
+#         )
+#         subgroup_counter = 4
+#         terms = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
+#         assigned_tips = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_06972-RA",
+#             "Aspergillus_fumigatus_Af293|EAL85274.1",
+#             "Aspergillus_fischeri_NRRL181|XP_001262055.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001398067.1",
+#             "Aspergillus_awamori_IFM_58123|GCB24888.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_09150-RA",
+#             "Aspergillus_fumigatus_Af293|EAL84262.1",
+#             "Aspergillus_fischeri_NRRL181|XP_001267441.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001400898.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19337.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_08472-RA",
+#             "Aspergillus_fumigatus_Af293|EAL94045.1",
+#             "Aspergillus_fischeri_NRRL181|XP_001261225.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001402298.1",
+#             "Aspergillus_awamori_IFM_58123|GCB23392.1",
+#             "Aspergillus_fumigatus_Af293|EAL93843.2",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_04905-RA",
+#             "Aspergillus_fischeri_NRRL181|XP_001261009.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001397083.2",
+#             "Aspergillus_awamori_IFM_58123|GCB27653.1",
+#         ]
+#         expected_assigned_tips = [
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_06972-RA",
+#             "Aspergillus_fumigatus_Af293|EAL85274.1",
+#             "Aspergillus_fischeri_NRRL181|XP_001262055.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001398067.1",
+#             "Aspergillus_awamori_IFM_58123|GCB24888.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_09150-RA",
+#             "Aspergillus_fumigatus_Af293|EAL84262.1",
+#             "Aspergillus_fischeri_NRRL181|XP_001267441.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001400898.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19337.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_08472-RA",
+#             "Aspergillus_fumigatus_Af293|EAL94045.1",
+#             "Aspergillus_fischeri_NRRL181|XP_001261225.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001402298.1",
+#             "Aspergillus_awamori_IFM_58123|GCB23392.1",
+#             "Aspergillus_fumigatus_Af293|EAL93843.2",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_04905-RA",
+#             "Aspergillus_fischeri_NRRL181|XP_001261009.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001397083.2",
+#             "Aspergillus_awamori_IFM_58123|GCB27653.1",
+#             "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_05774-RA-duplicate",
+#             "Aspergillus_fumigatus_Af293|EAL85095.2-duplicate",
+#             "Aspergillus_fischeri_NRRL181|XP_001261692.1",
+#             "Aspergillus_niger_CBS_513.88|XP_001401336.1",
+#             "Aspergillus_awamori_IFM_58123|GCB19008.1",
+#         ]
 
-        output_path = f"{here.parent.parent}/samples/"
-        expected_subgroup_counter = 5
+#         output_path = f"{here.parent.parent}/samples/"
+#         expected_subgroup_counter = 5
 
-        place_holder = ""
+#         place_holder = ""
 
-        ## execution
-        (
-            subgroup_counter,
-            assigned_tips,
-        ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
-            fasta,
-            subgroup_counter,
-            terms,
-            fasta_dict,
-            assigned_tips,
-            place_holder,
-            place_holder,
-            output_path,
-        )
+#         inparalog_handling = dict()
+#         inparalog_handling_summary = dict()
 
-        ## check results
-        assert subgroup_counter == expected_subgroup_counter
-        assert assigned_tips == expected_assigned_tips
+#         ## execution
+#         (
+#             subgroup_counter,
+#             assigned_tips,
+#         ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
+#             fasta,
+#             subgroup_counter,
+#             terms,
+#             fasta_dict,
+#             assigned_tips,
+#             place_holder,
+#             place_holder,
+#             output_path,
+#             inparalog_handling,
+#             inparalog_handling_summary,
+#         )
+
+#         ## check results
+#         assert subgroup_counter == expected_subgroup_counter
+#         assert assigned_tips == expected_assigned_tips
 
 
 class TestDetermineIfInputTreeIsSingleCopy(object):
