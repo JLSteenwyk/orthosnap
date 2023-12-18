@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#accounting-for-tree-uncertainty">Accounting for tree uncertainty</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#specifying-which-inparalog-to-keep">Specifying which inparalog to keep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#report-inparalog-handling">Report inparalog handling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#all-options">All options</a></li>
 </ul>
 </li>
@@ -234,12 +235,27 @@ median branch length (median_branch_len) in the case of three or more inparalogs
 <p>Again, following transcriptomics, the default is to keep the longest sequence because (at least in theory)
 it is the most complete gene annotation.</p>
 </div>
+<div class="section" id="report-inparalog-handling">
+<h2>Report inparalog handling<a class="headerlink" href="#report-inparalog-handling" title="Permalink to this headline">¶</a></h2>
+<p>To report inparalogs and specify which was kept per SNAP-OG, use the -rih, --report_inparalog_handling
+argument. The resulting file, which will have the suffix “.inparalog_report.txt,” will have three columns: <a href="#id3"><span class="problematic" id="id4">|br|</span></a>
+- col 1 is the orthogroup file <a href="#id5"><span class="problematic" id="id6">|br|</span></a>
+- col 2 is the inparalog that was kept <a href="#id7"><span class="problematic" id="id8">|br|</span></a>
+- col 3 is/are the inparalog/s that were trimmed separated by a semi-colon “;” <a href="#id9"><span class="problematic" id="id10">|br|</span></a></p>
+<p>To generate this file, use the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre -rih
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
 <div class="section" id="all-options">
 <h2>All options<a class="headerlink" href="#all-options" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 17%" />
-<col style="width: 83%" />
+<col style="width: 21%" />
+<col style="width: 79%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Option</p></th>
@@ -273,6 +289,9 @@ it is the most complete gene annotation.</p>
 </tr>
 <tr class="row-even"><td><p>-op/--output_path</p></td>
 <td><p>pathway for output files to be written (default: same as -f input)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-rih, --report_inparalog_handling</p></td>
+<td><p>create a summary file of which inparalogs where kept compared to trimmed</p></td>
 </tr>
 </tbody>
 </table>
