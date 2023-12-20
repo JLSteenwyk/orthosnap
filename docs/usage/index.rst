@@ -87,7 +87,7 @@ To report inparalogs and specify which was kept per SNAP-OG, use the -rih, \-\-r
 argument. The resulting file, which will have the suffix ".inparalog_report.txt," will have three columns: |br|
 - col 1 is the orthogroup file |br|
 - col 2 is the inparalog that was kept |br|
-- col 3 is/are the inparalog/s that were trimmed separated by a semi-colon ";" |br|
+- col 3 is/are the inparalog/s that were trimmed separated by a semi-colon ";"
 
 To generate this file, use the following command:
 
@@ -125,3 +125,8 @@ All options
 +-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
 *For genome-scale analyses, we recommend changing the -o/\-\-occupancy parameter to be the same for all large gene families so that the minimum SNAP-OG occupancy is the same
 for all SNAP-OGs.
+
+
+.. |br| raw:: html
+
+  <br/>

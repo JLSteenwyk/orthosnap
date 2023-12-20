@@ -961,3 +961,88 @@ class TestIntegration(object):
             output_content = out_file.read()
 
         assert expected_content == output_content
+
+    def test_default_param_fake_ogs_inparalog_report_occupancy_1(self):
+        """"""
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes_tree.tre",
+            fasta=f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes.faa",
+            support=80,
+            occupancy=1.0,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{here.parent.parent}/samples/dataset/",
+            report_inparalog_handling=False,
+        )
+        execute(**kwargs)
+
+        with open(
+            f"{here.parent.parent}/expected/fake_ogs/fake_orthologous_group_of_genes.faa.orthosnap.0.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes.faa.orthosnap.0.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/fake_ogs/fake_orthologous_group_of_genes.faa.orthosnap.1.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes.faa.orthosnap.1.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/fake_ogs/fake_orthologous_group_of_genes.faa.orthosnap.2.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes.faa.orthosnap.2.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/fake_ogs/fake_orthologous_group_of_genes.faa.orthosnap.3.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes.faa.orthosnap.3.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/fake_ogs/fake_orthologous_group_of_genes.faa.orthosnap.4.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes.faa.orthosnap.4.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content

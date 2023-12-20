@@ -375,7 +375,6 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     write_summary_file_with_inparalog_handling(
         inparalog_handling, fasta,
         output_path, subgroup_counter,
-        assigned_tips
     )
     subgroup_counter += 1
 
@@ -387,7 +386,6 @@ def write_summary_file_with_inparalog_handling(
         fasta: str,
         output_path: str,
         subgroup_count: int,
-        assigned_tips: list
 ):
     res_arr = []
 
@@ -406,10 +404,19 @@ def write_summary_file_with_inparalog_handling(
         f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_count}.fa"
     )
 
-    if res_arr:
+    for i in res_arr:
         try:
-            if res_arr[0][1] in open(output_fasta_file_name).read():
+            if string_exact_match(f">{i[1]}", output_fasta_file_name):
                 with open(f"{output_path}{inparalog_report_output_name}", "a") as file:
-                    file.writelines('\t'.join(i) + '\n' for i in res_arr)
+                    file.writelines('\t'.join(i) + '\n')
         except FileNotFoundError:
             1
+
+
+def string_exact_match(string, filename):
+    with open(filename, 'r') as f:
+        for line in f:
+            line = line.rstrip()
+            if re.search(r'\b{}\b'.format(string), line):
+                return True
+    return False
