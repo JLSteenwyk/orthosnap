@@ -150,7 +150,6 @@ def execute(
             fasta,
             output_path,
             subgroup_counter,
-            assigned_tips,
         )
 
     write_output_stats(
