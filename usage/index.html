@@ -53,6 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#accounting-for-tree-uncertainty">Accounting for tree uncertainty</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#specifying-which-inparalog-to-keep">Specifying which inparalog to keep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#report-inparalog-handling">Report inparalog handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#specifying-the-delimiter">Specifying the delimiter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#all-options">All options</a></li>
 </ul>
 </li>
@@ -172,6 +173,20 @@ argument. The resulting file, which will have the suffix “.inparalog_report.tx
 <div class="line"><br /></div>
 </div>
 </section>
+<section id="specifying-the-delimiter">
+<h2>Specifying the delimiter<a class="headerlink" href="#specifying-the-delimiter" title="Link to this heading"></a></h2>
+<p>As of version 1.3.2, OrthoSNAP supports an argument for user-defined delimiters between
+the taxon name and gene name.</p>
+<p>By default, the delimiter is a pipe character (or “|”), but can be changed by setting the
+-d/--delimiter argument. For example, if “-” is the current delimiter between taxon and
+gene names, use the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orthosnap<span class="w"> </span>-f<span class="w"> </span>orthogroup_of_genes.faa<span class="w"> </span>-t<span class="w"> </span>phylogeny_of_orthogroup_of_genes.tre<span class="w"> </span>-d<span class="w"> </span>-
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
 <section id="all-options">
 <h2>All options<a class="headerlink" href="#all-options" title="Link to this heading"></a></h2>
 <table class="docutils align-default">
@@ -199,16 +214,19 @@ argument. The resulting file, which will have the suffix “.inparalog_report.tx
 <tr class="row-odd"><td><p>-r/--roooted</p></td>
 <td><p>boolean argument for whether the input phylogeny is already rooted (default: false)</p></td>
 </tr>
-<tr class="row-even"><td><p>-st/--snap_trees</p></td>
+<tr class="row-even"><td><p>-d/--delimiter</p></td>
+<td><p>specify the delimiter found between taxon names and gene names (default: “|”)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-st/--snap_trees</p></td>
 <td><p>boolean argument for whether trees of SNAP-OGs should be outputted (default: false)</p></td>
 </tr>
-<tr class="row-odd"><td><p>-ip/--inparalog_to_keep</p></td>
+<tr class="row-even"><td><p>-ip/--inparalog_to_keep</p></td>
 <td><p>determine which sequence to keep in the case of species-specific inparalogs using sequence- or tree-based options (default: longest_seq_len)</p></td>
 </tr>
-<tr class="row-even"><td><p>-op/--output_path</p></td>
+<tr class="row-odd"><td><p>-op/--output_path</p></td>
 <td><p>pathway for output files to be written (default: same as -f input)</p></td>
 </tr>
-<tr class="row-odd"><td><p>-rih, --report_inparalog_handling</p></td>
+<tr class="row-even"><td><p>-rih, --report_inparalog_handling</p></td>
 <td><p>create a summary file of which inparalogs where kept compared to trimmed</p></td>
 </tr>
 </tbody>
