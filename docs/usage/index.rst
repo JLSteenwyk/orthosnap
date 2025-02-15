@@ -97,6 +97,22 @@ To generate this file, use the following command:
 
 |
 
+Specifying the delimiter
+------------------------
+
+As of version 1.3.2, OrthoSNAP supports an argument for user-defined delimiters between
+the taxon name and gene name.
+
+By default, the delimiter is a pipe character (or "|"), but can be changed by setting the
+-d/\-\-delimiter argument. For example, if "-" is the current delimiter between taxon and
+gene names, use the following command:
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre -d -
+
+|
+
 All options
 -----------
 
@@ -114,6 +130,8 @@ All options
 | -o/\-\-occupancy                    | Occupancy threshold for identifying a subgroup of interest (default: 50%)                                                                    |
 +-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
 | -r/\-\-roooted                      | boolean argument for whether the input phylogeny is already rooted (default: false)                                                          |
++-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| -d/\-\-delimiter                    | specify the delimiter found between taxon names and gene names (default: "|")                                                                |
 +-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+
 | -st/\-\-snap_trees                  | boolean argument for whether trees of SNAP-OGs should be outputted (default: false)                                                          |
 +-------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------+

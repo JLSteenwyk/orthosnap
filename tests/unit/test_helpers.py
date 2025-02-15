@@ -153,7 +153,7 @@ class TestGetAllTipsAndTaxaNames(object):
         ]
 
         ## execution
-        taxa, all_tips = get_all_tips_and_taxa_names(tree)
+        taxa, all_tips = get_all_tips_and_taxa_names(tree, "|")
 
         ## check results
         assert set(taxa) == set(expected_taxa)
@@ -262,7 +262,7 @@ class TestGetTipsAndTaxaNamesAndTaxaCountsFromSubtrees(object):
                 terms,
                 counts_of_taxa_from_terms,
                 counts,
-            ) = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter)
+            ) = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter, "|")
             break
 
         ## check results

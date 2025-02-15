@@ -15,6 +15,7 @@ def write_user_args(
     inparalog_to_keep: InparalogToKeep,
     report_inparalog_handling: bool,
     output_path: str,
+    delimiter: str,
 ):
     """
     Function to print user arguments to stdout
@@ -31,6 +32,7 @@ def write_user_args(
     Report inparalog handling: {report_inparalog_handling}
     Support threshold: {support}
     Taxon occupancy threshold: {occupancy}
+    Delimiter: {delimiter}
     Output newick of SNAP-OGs: {snap_trees}
     Output directory: {output_path}
     """
