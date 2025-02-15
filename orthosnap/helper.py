@@ -3,6 +3,7 @@ import copy
 from enum import Enum
 import re
 import statistics as stat
+import sys
 
 from Bio import Phylo
 from Bio import SeqIO
@@ -28,7 +29,11 @@ def collapse_low_support_bipartitions(newtree, support: float):
     return newtree
 
 
-def determine_if_dups_are_sister(subtree_tips: list, newtree):
+def determine_if_dups_are_sister(
+    subtree_tips: list,
+    newtree,
+    delimiter: str,
+):
     """
     determine if dups are sister to one another
     """
@@ -41,7 +46,7 @@ def determine_if_dups_are_sister(subtree_tips: list, newtree):
     dup_tree = copy.deepcopy(newtree)
 
     dup_tree = dup_tree.common_ancestor(subtree_tips)
-    _, all_tips = get_all_tips_and_taxa_names(dup_tree)
+    _, all_tips = get_all_tips_and_taxa_names(dup_tree, delimiter)
     if set(all_tips) != set(subtree_tips):
         are_sisters = False
 
@@ -55,7 +60,7 @@ def determine_if_dups_are_sister(subtree_tips: list, newtree):
     return are_sisters
 
 
-def get_all_tips_and_taxa_names(tree):
+def get_all_tips_and_taxa_names(tree, delimiter: str):
     """
     get all taxa and tip names in a phylogeny
 
@@ -66,7 +71,11 @@ def get_all_tips_and_taxa_names(tree):
 
     # loop through the tree and collect terminal names
     for term in tree.get_terminals():
-        taxa_name = term.name[: term.name.index("|")]
+        try:
+            taxa_name = term.name[: term.name.index(delimiter)]
+        except ValueError:
+            print("\nERROR: Delimiter does not exist in FASTA headers.\nSpecify the delimiter using the -d argument.")
+            sys.exit()
         if taxa_name not in taxa:
             taxa.append(taxa_name)
         all_tips.append(term.name)
@@ -86,7 +95,7 @@ def check_if_single_copy(taxa: list, all_tips: list):
         return False
 
 
-def get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter):
+def get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter, delimiter: str):
     """
     get taxa, counts of each taxa, and all terminal names
     """
@@ -94,7 +103,7 @@ def get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter):
     terms = []
     # get taxa and terminal names from subtree
     for term in inter.get_terminals():
-        taxa_from_terms.append(term.name.split("|", 1)[0])
+        taxa_from_terms.append(term.name.split(delimiter, 1)[0])
         terms.append(term.name)
     # count number of taxa in subtree
     counts_of_taxa_from_terms = Counter(taxa_from_terms)
@@ -145,6 +154,7 @@ def handle_multi_copy_subtree(
     output_path: str,
     inparalog_handling: dict,
     inparalog_handling_summary: dict,
+    delimiter: str,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -165,7 +175,9 @@ def handle_multi_copy_subtree(
 
             # check if subtrees are sister to one another
             # are_sisters = determine_if_dups_are_sister(subtree_tips)
-            are_sisters = determine_if_dups_are_sister(dups, newtree)
+            are_sisters = determine_if_dups_are_sister(
+                dups, newtree, delimiter
+            )
 
             # if duplicate sequences are sister, get the longest sequence
             if are_sisters:
@@ -179,7 +191,7 @@ def handle_multi_copy_subtree(
     # if the resulting subtree has only single copy genes
     # create a fasta file with sequences from tip labels
     _, _, _, counts = \
-        get_tips_and_taxa_names_and_taxa_counts_from_subtrees(newtree)
+        get_tips_and_taxa_names_and_taxa_counts_from_subtrees(newtree, delimiter)
 
     if set(counts) == set([1]):
         (

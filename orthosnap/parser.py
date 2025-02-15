@@ -19,18 +19,19 @@ def create_parser():
         usage=SUPPRESS,
         description=textwrap.dedent(
             f"""\
-                   _   _                                 
-                  | | | |                                
-         ___  _ __| |_| |__   ___  ___ _ __   __ _ _ __  
-        / _ \| '__| __| '_ \ / _ \/ __| '_ \ / _` | '_ \ 
-       | (_) | |  | |_| | | | (_) \__ \ | | | (_| | |_) |
-        \___/|_|   \__|_| |_|\___/|___/_| |_|\__,_| .__/ 
-                                                  | |    
-                                                  |_|     
+         ____       _   _           _____ _   _          _____  
+        / __ \     | | | |         / ____| \ | |   /\   |  __ \ 
+       | |  | |_ __| |_| |__   ___| (___ |  \| |  /  \  | |__) |
+       | |  | | '__| __| '_ \ / _ \\___ \| . ` | / /\ \ |  ___/ 
+       | |__| | |  | |_| | | | (_) |___) | |\  |/ ____ \| |     
+        \____/|_|   \__|_| |_|\___/_____/|_| \_/_/    \_\_|                                                        
+                                                            
 
         Version: {__version__}
-        Citation: Steenwyk et al.
-        Usage: orthosnap <input> [optional arguments]
+        Citation: Steenwyk et al. (2022), PLOS Biology. DOI: 10.1371/journal.pbio.3001827.
+        https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001827
+        
+        Usage: orthosnap -f <fasta_file> -t <newick_tree_file> [optional arguments]
         """
         ),
     )
@@ -88,6 +89,10 @@ def create_parser():
         -r, --rooted
             boolean argument for whether the input phylogeny is already rooted
             default: false
+
+        -d, --delimiter
+            string for delimited between species and sequence name
+            default: "|"
 
         -st, --snap_trees
             boolean argument for whether trees of SNAP-OGs should be outputted
@@ -149,6 +154,13 @@ def create_parser():
             - if used, the input phylogeny is assumed to be rooted; if not,
               the tree will be midpoint rooted
 
+        -d, --delimiter
+            - separator between taxon name and gene sequence
+            - the default is a pipe character (or "|")
+                - for example, a FASTA header may be as follows:
+                >species_A|gene0 to specify species_A and
+                gene identifier gene_0
+
         -st, --snap_trees
             - boolean argument for whether newick files of SNAP-OGs should also
               be outputted
@@ -201,6 +213,14 @@ def create_parser():
         "-r",
         "--rooted",
         action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "-d",
+        "--delimiter",
+        type=str,
         required=False,
         help=SUPPRESS,
     )

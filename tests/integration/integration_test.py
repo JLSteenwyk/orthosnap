@@ -22,6 +22,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -107,6 +108,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -262,6 +264,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -346,6 +349,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -501,6 +505,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -604,6 +609,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.shortest_branch_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -689,6 +695,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.shortest_branch_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -774,6 +781,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/specified_dir/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -859,6 +867,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/specified_dir",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -944,6 +953,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=True,
+            delimiter="|",
         )
 
         execute(**kwargs)
@@ -974,6 +984,7 @@ class TestIntegration(object):
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/dataset/",
             report_inparalog_handling=False,
+            delimiter="|",
         )
         execute(**kwargs)
 
@@ -1041,6 +1052,50 @@ class TestIntegration(object):
 
         with open(
             f"{here.parent.parent}/samples/dataset/fake_orthologous_group_of_genes.faa.orthosnap.4.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+    def test_alt_delimiter_OG0000005(self):
+        """"""
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000005.ampersand_delimiter.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000005.ampersand_delimiter.fa",
+            support=80,
+            occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{here.parent.parent}/samples/",
+            report_inparalog_handling=False,
+            delimiter="&",
+        )
+        execute(**kwargs)
+
+        with open(
+            f"{here.parent.parent}/expected/test_alt_delimiter_OG0000005/OG0000005.ampersand_delimiter.fa.orthosnap.0.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000005.ampersand_delimiter.fa.orthosnap.0.fa",
+            "r",
+        ) as out_file:
+            output_content = out_file.read()
+
+        assert expected_content == output_content
+
+        with open(
+            f"{here.parent.parent}/expected/test_alt_delimiter_OG0000005/OG0000005.ampersand_delimiter.fa.orthosnap.1.fa",
+            "r",
+        ) as expected:
+            expected_content = expected.read()
+
+        with open(
+            f"{here.parent.parent}/samples/OG0000005.ampersand_delimiter.fa.orthosnap.1.fa",
             "r",
         ) as out_file:
             output_content = out_file.read()

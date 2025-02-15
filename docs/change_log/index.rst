@@ -8,6 +8,9 @@ Change log
 
 Major changes to OrthoSNAP are summarized here.
 
+**1.3.2**
+Added argument for user-defined delimiter (-d, \-\-delimiter)
+
 **1.2.0**
 Added the -rih (\-\-report_inparalog_handling) function, which creates
 a summary file of which inparalogs where kept compared to trimmed

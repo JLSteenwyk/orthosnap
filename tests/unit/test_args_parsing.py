@@ -23,6 +23,7 @@ def args():
         inparalog_to_keep=InparalogToKeep.longest_seq_len,
         output_path="./tests/samples/",
         report_inparalog_handling=False,
+        delimiter="|",
     )
     return Namespace(**kwargs)
 
@@ -54,7 +55,7 @@ class TestArgsProcessing(object):
             process_args(args)
 
     def test_determine_occupancy_threshold(self, args):
-        res = determine_occupancy_threshold(args.fasta)
+        res = determine_occupancy_threshold(args.fasta, args.delimiter)
         assert res == 3
 
     def test_proper_round0(self, args):
@@ -130,3 +131,12 @@ class TestArgsProcessing(object):
         args.output_path = None
         res = process_args(args)
         assert res["output_path"] == "./"
+
+    def test_delimiter_default(self, args):
+        res = process_args(args)
+        assert res["delimiter"] == "|"
+
+    def test_delimiter_custom(self, args):
+        args.delimiter = "&"
+        res = process_args(args)
+        assert res["delimiter"] == "&"

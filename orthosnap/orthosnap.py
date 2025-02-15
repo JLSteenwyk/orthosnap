@@ -33,6 +33,7 @@ def execute(
     inparalog_to_keep: InparalogToKeep,
     report_inparalog_handling: bool,
     output_path: str,
+    delimiter: str,
 ):
     """
     Master execute Function
@@ -58,6 +59,7 @@ def execute(
         inparalog_to_keep,
         report_inparalog_handling,
         output_path,
+        delimiter,
     )
 
     # create start time logger
@@ -67,7 +69,7 @@ def execute(
     tree, fasta_dict = read_input_files(tree, fasta, rooted)
 
     # get list of all tip names and taxa names
-    taxa, all_tips = get_all_tips_and_taxa_names(tree)
+    taxa, all_tips = get_all_tips_and_taxa_names(tree, delimiter)
 
     # check if the inputted phylogeny is already a single-copy tree.
     # if it is, exit
@@ -89,7 +91,9 @@ def execute(
             terms,
             counts_of_taxa_from_terms,
             counts,
-        ) = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter)
+        ) = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(
+            inter, delimiter
+        )
 
         # create a copy of the input tree
         newtree = copy.deepcopy(tree)
@@ -142,6 +146,7 @@ def execute(
                         output_path,
                         inparalog_handling,
                         inparalog_handling_summary,
+                        delimiter,
                     )
 
     if report_inparalog_handling:

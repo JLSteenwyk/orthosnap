@@ -18,6 +18,8 @@ def process_args(args) -> dict:
     tree = args.tree
     fasta = args.fasta
 
+    delimiter = args.delimiter if args.delimiter is not None else "|"
+
     if not os.path.isfile(tree):
         logger.warning("Input tree does not exist")
         sys.exit()
@@ -30,7 +32,7 @@ def process_args(args) -> dict:
     occupancy = (
         args.occupancy
         if args.occupancy is not None
-        else determine_occupancy_threshold(fasta)
+        else determine_occupancy_threshold(fasta, delimiter)
     )
 
     if occupancy <= 0:
@@ -74,15 +76,16 @@ def process_args(args) -> dict:
         inparalog_to_keep=inparalog_to_keep,
         report_inparalog_handling=report_inparalog_handling,
         output_path=output_path,
+        delimiter=delimiter,
     )
 
 
-def determine_occupancy_threshold(fasta: str) -> int:
+def determine_occupancy_threshold(fasta: str, delimiter: str) -> int:
     fasta = SeqIO.parse(fasta, "fasta")
     unique_names = []
 
     for i in fasta:
-        i = i.id.split("|", 1)[0]
+        i = i.id.split(delimiter, 1)[0]
         if i not in unique_names:
             unique_names.append(i)
 
