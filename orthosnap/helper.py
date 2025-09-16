@@ -7,7 +7,7 @@ import sys
 
 from Bio import Phylo
 from Bio import SeqIO
-from Bio.Phylo.BaseTree import TreeMixin
+from Bio.Phylo.BaseTree import TreeMixin, Tree
 
 
 class InparalogToKeep(Enum):
@@ -40,24 +40,10 @@ def determine_if_dups_are_sister(
     # get first set of subtree tips
     # first_set_of_subtree_tips = subtree_tips[0]
     # first_set_of_subtree_tips = subtree_tips
-    # set if duplicate sequences are sister as True
-    are_sisters = True
-    # create a copy of the tree
-    dup_tree = copy.deepcopy(newtree)
+    ancestor = newtree.common_ancestor(subtree_tips)
+    ancestor_tips = {term.name for term in ancestor.get_terminals()}
 
-    dup_tree = dup_tree.common_ancestor(subtree_tips)
-    _, all_tips = get_all_tips_and_taxa_names(dup_tree, delimiter)
-    if set(all_tips) != set(subtree_tips):
-        are_sisters = False
-
-    # # check if duplicate sequences are sister
-    # for set_of_subtree_tips in subtree_tips[1:]:
-    #     if first_set_of_subtree_tips != set_of_subtree_tips:
-    #         are_sisters = False
-    #     if not are_sisters:
-    #         break
-
-    return are_sisters
+    return ancestor_tips == set(subtree_tips)
 
 
 def get_all_tips_and_taxa_names(tree, delimiter: str):
@@ -81,6 +67,19 @@ def get_all_tips_and_taxa_names(tree, delimiter: str):
         all_tips.append(term.name)
 
     return taxa, all_tips
+
+
+def build_tip_parent_lookup(tree):
+    """Return a mapping from terminal name to its parent clade."""
+
+    tip_parent = dict()
+
+    for parent in tree.find_clades(order="preorder"):
+        for child in parent.clades:
+            if child.is_terminal() and child.name is not None:
+                tip_parent[child.name] = parent
+
+    return tip_parent
 
 
 def check_if_single_copy(taxa: list, all_tips: list):
@@ -115,7 +114,7 @@ def get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter, delimiter: str)
     return taxa_from_terms, terms, counts_of_taxa_from_terms, counts
 
 
-def get_subtree_tips(terms: list, name: str, tree):
+def get_subtree_tips(terms: list, name: str, tip_parent_lookup: dict):
     """
     get lists of subsubtrees from subtree
     """
@@ -124,43 +123,36 @@ def get_subtree_tips(terms: list, name: str, tree):
     subtree_tips = []
     # for individual sequence among duplicate sequences
     for dup in dups:
-        # create a copy of the tree
-        temptree = copy.deepcopy(tree)
-        # get the node path for the duplicate sequence
-        node_path = temptree.get_path(dup)
-        # for the terminals of the parent of the duplicate sequence
-        # get the terminal names and append them to temp
-        temp = []
-        for term in node_path[-2].get_terminals():
-            temp.append(term.name)
+        parent = tip_parent_lookup.get(dup)
+        if parent is None:
+            continue
+        temp = [term.name for term in parent.get_terminals()]
         subtree_tips.append(temp)
 
     return subtree_tips, dups
 
 
 def handle_multi_copy_subtree(
-    all_tips: list,
+    subtree,
     terms: list,
-    newtree,
     subgroup_counter: int,
     fasta: str,
     support: float,
     fasta_dict: dict,
-    assigned_tips: list,
+    assigned_tips: set,
     counts_of_taxa_from_terms,
-    tree,
     snap_trees: bool,
     inparalog_to_keep: InparalogToKeep,
     output_path: str,
     inparalog_handling: dict,
     inparalog_handling_summary: dict,
     delimiter: str,
+    tip_parent_lookup: dict,
 ):
     """
     handling case where subtree contains all single copy genes
     """
-    # prune subtree to get subtree of interest
-    newtree = prune_subtree(all_tips, terms, newtree)
+    newtree = Tree(root=copy.deepcopy(subtree))
 
     # collapse bipartition with low support
     newtree = collapse_low_support_bipartitions(newtree, support)
@@ -171,7 +163,9 @@ def handle_multi_copy_subtree(
         # if the taxon is represented by more than one sequence
         if counts_of_taxa_from_terms[name] > 1:
             # get subtree tips
-            _, dups = get_subtree_tips(terms, name, tree)
+            _, dups = get_subtree_tips(terms, name, tip_parent_lookup)
+            if not dups:
+                continue
 
             # check if subtrees are sister to one another
             # are_sisters = determine_if_dups_are_sister(subtree_tips)
@@ -217,14 +211,13 @@ def handle_multi_copy_subtree(
 
 
 def handle_single_copy_subtree(
-    all_tips: list,
+    subtree,
     terms: list,
-    newtree,
     subgroup_counter: int,
     fasta: str,
     support: float,
     fasta_dict: dict,
-    assigned_tips: list,
+    assigned_tips: set,
     snap_trees: bool,
     output_path: str,
     inparalog_handling: dict,
@@ -233,8 +226,7 @@ def handle_single_copy_subtree(
     """
     handling case where subtree contains all single copy genes
     """
-    # prune subtree to get subtree of interest
-    newtree = prune_subtree(all_tips, terms, newtree)
+    newtree = Tree(root=copy.deepcopy(subtree))
 
     # collapse bipartition with low support
     newtree = collapse_low_support_bipartitions(newtree, support)
@@ -361,7 +353,7 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     subgroup_counter: int,
     terms: list,
     fasta_dict: dict,
-    assigned_tips: list,
+    assigned_tips: set,
     snap_tree: bool,
     newtree,
     output_path: str,
@@ -376,7 +368,7 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     with open(output_file_name, "w") as output_handle:
         for term in terms:
             SeqIO.write(fasta_dict[term], output_handle, "fasta")
-            assigned_tips.append(term)
+            assigned_tips.add(term)
 
     if snap_tree:
         output_file_name = (
