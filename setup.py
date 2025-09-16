@@ -15,10 +15,12 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
 ]
 
-REQUIRES = ["biopython>=1.82", "numpy>=1.24.0", "tqdm>=4.66.1"]
+REQUIRES = ["biopython>=1.85", "numpy>=2.1", "tqdm>=4.66.1"]
 
 setup(
     name="orthosnap",
@@ -34,6 +36,7 @@ setup(
     version=__version__,
     include_package_data=True,
     install_requires=REQUIRES,
+    python_requires=">=3.9",
 )
 
 # push new version to pypi
