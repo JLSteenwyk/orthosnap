@@ -16,7 +16,7 @@ Pytest drives all suites. Mark unit-only tests with the default markers and inte
 Write concise, present-tense commit messages (e.g., `add delimiter argument`) and group related changes. Reference issues in the body using `Fixes #<id>` when relevant. For pull requests, summarise behaviour changes, call out new dependencies, and attach command outputs or screenshots when UX changes. Confirm CI passes, ensure docs stay accurate (update Sphinx sources when CLI flags change), and request at least one review before merging.
 
 ## Environment & Documentation Tips
-Use `requirements.txt` for runtime deps (supports CPython 3.9 through 3.13) and install doc tooling via `pipenv` inside `docs/` when updating the Sphinx site (`cd docs && pipenv run make html`). Avoid checking in files under `docs/_build/` or temporary trees left by integration tests.
+Use `requirements.txt` for runtime and packaging deps (supports CPython 3.9 through 3.13) and install doc tooling via `pipenv` inside `docs/` when updating the Sphinx site (`cd docs && pipenv run make html`). Avoid checking in files under `docs/_build/` or temporary trees left by integration tests.
 
 ## Performance Improvements In Progress
 - Replace whole-tree `copy.deepcopy` calls in `orthosnap/orthosnap.py` with subtree-level cloning so we only touch the relevant clade per iteration.
