@@ -345,7 +345,7 @@ class TestIntegration(object):
             support=80,
             occupancy=5,
             rooted=False,
-            snap_trees=False,
+            snap_trees=True,
             inparalog_to_keep=InparalogToKeep.longest_seq_len,
             output_path=f"{here.parent.parent}/samples/",
             report_inparalog_handling=False,

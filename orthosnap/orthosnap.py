@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import copy
 import os
 import re
 import sys
@@ -11,6 +10,7 @@ from tqdm import tqdm
 from .args_processing import process_args
 from .helper import (
     check_if_single_copy,
+    build_tip_parent_lookup,
     get_all_tips_and_taxa_names,
     get_tips_and_taxa_names_and_taxa_counts_from_subtrees,
     handle_single_copy_subtree,
@@ -68,6 +68,8 @@ def execute(
     # read input files and midpoint root tree
     tree, fasta_dict = read_input_files(tree, fasta, rooted)
 
+    tip_parent_lookup = build_tip_parent_lookup(tree)
+
     # get list of all tip names and taxa names
     taxa, all_tips = get_all_tips_and_taxa_names(tree, delimiter)
 
@@ -79,7 +81,7 @@ def execute(
     # loop through tree, but skip the root (hence [1:])
     # keep tabs of terms that have already been assigned
     # to a subgroup as well as a counter for that subgroup
-    assigned_tips = []
+    assigned_tips = set()
     subgroup_counter = 0
 
     inparalog_handling = dict()
@@ -95,8 +97,7 @@ def execute(
             inter, delimiter
         )
 
-        # create a copy of the input tree
-        newtree = copy.deepcopy(tree)
+        terms_set = set(terms)
 
         # if a sufficient number of taxa are represented, examine the subtree
         if len(counts_of_taxa_from_terms) >= occupancy:
@@ -105,14 +106,13 @@ def execute(
             # prune tips not part of the subtree of interest
             if (
                 set([1]) == set(counts)
-                and len(list(set(terms) & set(assigned_tips))) == 0
+                and assigned_tips.isdisjoint(terms_set)
             ):
                 subgroup_counter, assigned_tips, \
                     inparalog_handling, inparalog_handling_summary = \
                     handle_single_copy_subtree(
-                        all_tips,
+                        inter,
                         terms,
-                        newtree,
                         subgroup_counter,
                         fasta,
                         support,
@@ -127,26 +127,25 @@ def execute(
             # if any taxon is represented by more than one sequence and
             # the tips have not been assigned to a suborthogroup
             # prune tips not part of the subtree of interest
-            elif len(list(set(terms) & set(assigned_tips))) == 0:
+            elif assigned_tips.isdisjoint(terms_set):
                 subgroup_counter, assigned_tips, \
                     inparalog_handling, inparalog_handling_summary = \
                     handle_multi_copy_subtree(
-                        all_tips,
+                        inter,
                         terms,
-                        newtree,
                         subgroup_counter,
                         fasta,
                         support,
                         fasta_dict,
                         assigned_tips,
                         counts_of_taxa_from_terms,
-                        tree,
                         snap_trees,
                         inparalog_to_keep,
                         output_path,
                         inparalog_handling,
                         inparalog_handling_summary,
                         delimiter,
+                        tip_parent_lookup,
                     )
 
     if report_inparalog_handling:
