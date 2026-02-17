@@ -10,6 +10,7 @@
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=b745eb55" />
 
   
+    <link rel="shortcut icon" href="_static/logo_no_subtext.png"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -78,77 +79,47 @@
            <div itemprop="articleBody">
              
   <a class="reference external image-reference" href="https://jlsteenwyk.com/orthosnap"><img alt="_images/logo_no_subtext.png" class="align-center" src="_images/logo_no_subtext.png" style="width: 55%;" /></a>
-<hr class="docutils" />
-<p>OrthoSNAP is a command-line tool for increasing the size of molecular evolution datasets that
-can then be used for diverse studies including phylogenomics and genome-wide surveys of positive
-selection.</p>
+<p>OrthoSNAP is a command-line tool for retrieving single-copy orthologous subgroups (SNAP-OGs)
+from larger gene families.</p>
 <p>If you found OrthoSNAP useful, please cite <em>OrthoSNAP: a tree splitting and pruning algorithm
 for retrieving single-copy orthologs from gene family trees</em>. PLOS Biology. doi: <a class="reference external" href="https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf">10.1371/journal.pbio.3001827</a>.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <section id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h1>
-<p><strong>1) Installation</strong></p>
-<p>To install using <em>pip</em>, we strongly recommend building a virtual environment to avoid
-software dependency issues. To do so, execute the following commands:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># create virtual environment</span>
-python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
-<span class="c1"># activate virtual environment</span>
+<section id="install-with-pip">
+<h2>1. Install with pip<a class="headerlink" href="#install-with-pip" title="Link to this heading"></a></h2>
+<p>We recommend using a virtual environment.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-<span class="c1"># install orthosnap</span>
 pip<span class="w"> </span>install<span class="w"> </span>orthosnap
 </pre></div>
 </div>
-<p><strong>Note, the virtual environment must be activated to use OrthoSNAP.</strong></p>
-<p>After using OrthoSNAP, you may wish to deactivate your virtual environment and can do so using the following command:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># deactivate virtual environment</span>
-deactivate
+<p>Deactivate when finished:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>deactivate
 </pre></div>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>To install via anaconda, execute the following command:</p>
+</section>
+<section id="install-with-conda">
+<h2>2. Install with conda<a class="headerlink" href="#install-with-conda" title="Link to this heading"></a></h2>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>jlsteenwyk<span class="w"> </span>orthosnap
 </pre></div>
 </div>
-<p>Visit here for more information:
-<a class="reference external" href="https://anaconda.org/JLSteenwyk/orthosnap">https://anaconda.org/JLSteenwyk/orthosnap</a></p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>Similarly, to install from source, we strongly recommend using a virtual environment. To do so, use the
-following commands:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># download</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/JLSteenwyk/orthosnap.git
-<span class="nb">cd</span><span class="w"> </span>orthosnap/
-<span class="c1"># create virtual environment</span>
+<p>More details: <a class="reference external" href="https://anaconda.org/JLSteenwyk/orthosnap">https://anaconda.org/JLSteenwyk/orthosnap</a></p>
+</section>
+<section id="install-from-source">
+<h2>3. Install from source<a class="headerlink" href="#install-from-source" title="Link to this heading"></a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/JLSteenwyk/orthosnap.git
+<span class="nb">cd</span><span class="w"> </span>orthosnap
 python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
-<span class="c1"># activate virtual environment</span>
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-<span class="c1"># install</span>
 make<span class="w"> </span>install
 </pre></div>
 </div>
-<p>To deactivate your virtual environment, use the following command:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># deactivate virtual environment</span>
-deactivate
-</pre></div>
-</div>
-<p><strong>Note, the virtual environment must be activated to use orthosnap.</strong></p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><strong>2) Usage</strong></p>
-<p>Get the help message from orthosnap:</p>
+</section>
+<section id="show-cli-help">
+<h2>4. Show CLI help<a class="headerlink" href="#show-cli-help" title="Link to this heading"></a></h2>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>orthosnap<span class="w"> </span>-h
 </pre></div>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<hr class="docutils" />
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="about/index.html">About</a><ul>
@@ -158,17 +129,20 @@ deactivate
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage/index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#input-requirements">Input requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/index.html#accounting-for-tree-uncertainty">Accounting for tree uncertainty</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/index.html#specifying-which-inparalog-to-keep">Specifying which inparalog to keep</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/index.html#report-inparalog-handling">Report inparalog handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#choosing-which-inparalog-to-keep">Choosing which inparalog to keep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#inparalog-handling-report">Inparalog handling report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/index.html#specifying-the-delimiter">Specifying the delimiter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/index.html#plotting-snap-og-assignments">Plotting SNAP-OG assignments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/index.html#all-options">All options</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#download-the-test-data">1) Download the test data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#run-orthosnap">2) Run OrthoSNAP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#inspect-output">3) Inspect output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#download-test-data">1. Download test data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#run-orthosnap">2. Run OrthoSNAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#inspect-output">3. Inspect output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#interpretation">Interpretation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="change_log/index.html">Change log</a></li>
@@ -183,7 +157,7 @@ deactivate
 <li class="toctree-l1"><a class="reference internal" href="faq/index.html">FAQ</a></li>
 </ul>
 </div>
-<hr class="docutils" />
+</section>
 </section>
 
 
@@ -213,18 +187,7 @@ deactivate
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-    <!-- Theme Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-104875636-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-104875636-1', {
-          'anonymize_ip': false,
-      });
-    </script> 
+  </script> 
 
 </body>
 </html>

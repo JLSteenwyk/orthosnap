@@ -3,11 +3,8 @@
    :align: center
    :target: https://jlsteenwyk.com/orthosnap
 
-^^^^^
-
-OrthoSNAP is a command-line tool for increasing the size of molecular evolution datasets that
-can then be used for diverse studies including phylogenomics and genome-wide surveys of positive
-selection.
+OrthoSNAP is a command-line tool for retrieving single-copy orthologous subgroups (SNAP-OGs)
+from larger gene families.
 
 If you found OrthoSNAP useful, please cite *OrthoSNAP: a tree splitting and pruning algorithm
 for retrieving single-copy orthologs from gene family trees*. PLOS Biology. doi: |doiLink|_.
@@ -15,93 +12,59 @@ for retrieving single-copy orthologs from gene family trees*. PLOS Biology. doi:
 .. _doiLink: https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf
 .. |doiLink| replace:: 10.1371/journal.pbio.3001827
 
-|
-
 Quick Start
 -----------
-**1) Installation**
 
-To install using *pip*, we strongly recommend building a virtual environment to avoid 
-software dependency issues. To do so, execute the following commands:
+1. Install with pip
+^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
-
-	# create virtual environment
-	python -m venv .venv
-	# activate virtual environment
-	source .venv/bin/activate
-	# install orthosnap
-	pip install orthosnap
-
-**Note, the virtual environment must be activated to use OrthoSNAP.**
-
-After using OrthoSNAP, you may wish to deactivate your virtual environment and can do so using the following command:
+We recommend using a virtual environment.
 
 .. code-block:: shell
 
-	# deactivate virtual environment
-	deactivate
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install orthosnap
 
-|
-
-To install via anaconda, execute the following command:
-
-.. code-block:: shell
-
-	conda install -c jlsteenwyk orthosnap
-
-Visit here for more information:
-https://anaconda.org/JLSteenwyk/orthosnap
-
-|
-
-Similarly, to install from source, we strongly recommend using a virtual environment. To do so, use the
-following commands:
+Deactivate when finished:
 
 .. code-block:: shell
 
-	# download
-	git clone https://github.com/JLSteenwyk/orthosnap.git
-	cd orthosnap/
-	# create virtual environment
-	python -m venv .venv
-	# activate virtual environment
-	source .venv/bin/activate
-	# install
-	make install
+   deactivate
 
-To deactivate your virtual environment, use the following command:
+2. Install with conda
+^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: shell
 
-	# deactivate virtual environment
-	deactivate
+   conda install -c jlsteenwyk orthosnap
 
-**Note, the virtual environment must be activated to use orthosnap.**
+More details: https://anaconda.org/JLSteenwyk/orthosnap
 
-|
-
-**2) Usage**
-
-Get the help message from orthosnap:
+3. Install from source
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: shell
 
-	orthosnap -h
+   git clone https://github.com/JLSteenwyk/orthosnap.git
+   cd orthosnap
+   python -m venv .venv
+   source .venv/bin/activate
+   make install
 
-|
+4. Show CLI help
+^^^^^^^^^^^^^^^^
 
-^^^^
+.. code-block:: shell
+
+   orthosnap -h
 
 .. toctree::
-	:maxdepth: 4
+   :maxdepth: 4
 
-	about/index
-	usage/index
-	tutorial/index
-	change_log/index
-	other_software/index
-	faq/index
-
-^^^^
-
+   about/index
+   usage/index
+   tutorial/index
+   change_log/index
+   other_software/index
+   faq/index

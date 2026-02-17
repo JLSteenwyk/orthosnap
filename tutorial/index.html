@@ -10,6 +10,7 @@
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=b745eb55" />
 
   
+    <link rel="shortcut icon" href="../_static/logo_no_subtext.png"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -50,9 +51,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#download-the-test-data">1) Download the test data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-orthosnap">2) Run OrthoSNAP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#inspect-output">3) Inspect output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download-test-data">1. Download test data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-orthosnap">2. Run OrthoSNAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inspect-output">3. Inspect output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpretation">Interpretation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../change_log/index.html">Change log</a></li>
@@ -85,44 +87,31 @@
              
   <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
-<p><strong>OrthoSNAP</strong> enables researchers to obtain single-copy subgroups of
-orthologous genes. Single-copy subgroups of orthologous genes are
-phylogenetically-informative and can be used for molecular evolution
-analyses. This tutorial covers the easy-to-implement workflow needed
-for using orthofisher.</p>
-<p>Note, this tutorial assumes OrthoSNAP has already been installed. For
-installation instructions, please see the home page.</p>
-<hr class="docutils" />
-<section id="download-the-test-data">
-<h2>1) Download the test data<a class="headerlink" href="#download-the-test-data" title="Link to this heading"></a></h2>
-<p>For ease of use, this tutorial will rely on a small dataset, which can be
-downloaded using the following link:</p>
+<p>This tutorial walks through a minimal end-to-end OrthoSNAP run using the bundled example dataset.</p>
+<section id="download-test-data">
+<h2>1. Download test data<a class="headerlink" href="#download-test-data" title="Link to this heading"></a></h2>
+<p>Download the tutorial dataset:</p>
 <p class="centered">
-<strong>Download test data:
-<a class="reference download internal" download="" href="../_downloads/fef75cd0c5c7e0001986340a4ec0c416/dataset.tar.gz"><code class="xref download docutils literal notranslate"><span class="pre">tutorial</span> <span class="pre">dataset</span></code></a></strong></p><p>Next, unzip the downloaded directory and change directory to the newly downloaded directory.</p>
+<strong><a class="reference download internal" download="" href="../_downloads/fef75cd0c5c7e0001986340a4ec0c416/dataset.tar.gz"><code class="xref download docutils literal notranslate"><span class="pre">tutorial</span> <span class="pre">dataset</span></code></a></strong></p><p>Unpack and move into the dataset directory:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tar<span class="w"> </span>-zxvf<span class="w"> </span>dataset.tar.gz
 $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>path_to_unzipped_directory/dataset
 </pre></div>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 </section>
 <section id="run-orthosnap">
-<h2>2) Run OrthoSNAP<a class="headerlink" href="#run-orthosnap" title="Link to this heading"></a></h2>
-<p>Running OrthoSNAP requires two arguments: -f/--fasta, which specifies the unaligned orthologous
-group of sequences, and -t/--tree, which species the phylogeny inferred from the orthologous
-group of sequences. Thus, orthosnap would be run using the following command:</p>
+<h2>2. Run OrthoSNAP<a class="headerlink" href="#run-orthosnap" title="Link to this heading"></a></h2>
+<p>Run OrthoSNAP with required arguments:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orthosnap<span class="w"> </span>-f<span class="w"> </span>fake_orthologous_group_of_genes.faa<span class="w"> </span>-t<span class="w"> </span>fake_orthologous_group_of_genes_tree.tre
 </pre></div>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
+<p>To also generate a full-tree subgroup visualization:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orthosnap<span class="w"> </span>-f<span class="w"> </span>fake_orthologous_group_of_genes.faa<span class="w"> </span>-t<span class="w"> </span>fake_orthologous_group_of_genes_tree.tre<span class="w"> </span>-ps
+</pre></div>
 </div>
 </section>
 <section id="inspect-output">
-<h2>3) Inspect output<a class="headerlink" href="#inspect-output" title="Link to this heading"></a></h2>
-<p>Toward the end of what is printed to the stdout, you will see the following text:</p>
+<h2>3. Inspect output<a class="headerlink" href="#inspect-output" title="Link to this heading"></a></h2>
+<p>Near the end of stdout, you should see output similar to:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Subgroups<span class="w"> </span>of<span class="w"> </span>single-copy<span class="w"> </span>orthologous<span class="w"> </span>genes<span class="w"> </span>identified:<span class="w"> </span><span class="m">5</span>
 Output<span class="w"> </span>files:
 <span class="w">   </span>fake_orthologous_group_of_genes.faa.orthosnap.0.fa
@@ -132,30 +121,21 @@ Output<span class="w"> </span>files:
 <span class="w">   </span>fake_orthologous_group_of_genes.faa.orthosnap.4.fa
 </pre></div>
 </div>
-<p>This means that five single-copy orthologous subgroups of genes were identified. Each
-subgroup was written to a different file titled fake_orthologous_group_of_genes.faa.orthosnap.<em>N</em>.fa.
-Each subgroup can be used for various molecular evolution analyses (e.g., phylogenetics, dN/dS, etc.)</p>
-<div class="line-block">
-<div class="line"><br /></div>
+<p>This indicates five SNAP-OG FASTA files were produced.</p>
+<p>If <cite>-ps</cite> is used, an additional plot file is produced:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>fake_orthologous_group_of_genes.faa.orthosnap.subgroups.png
+</pre></div>
 </div>
-<p>To provide a little more detail about what OrthoSNAP did, the following figure visualizes each subgroup
-in the original inputted phylogeny.</p>
 <a class="reference external image-reference" href="https://jlsteenwyk.com/orthosnap"><img alt="../_images/dataset_orthosnap.png" class="align-center" src="../_images/dataset_orthosnap.png" style="width: 100%;" /></a>
-<p>In <em>orthosnap.0</em>, species 2 and species 4 have duplicate copies of gene 2. After automated detection of
-duplicate sister sequences (or sequences that belong to the same polytomy), OrthoSNAP will keep the longer
-of the two sequences following PhyloTreePruner. This follows the standard for transcriptomic data wherein
-the longest isoform is often kept. Reevaluation of the pruned subtree results in the inference of a
-single-copy subgroup of orthologous genes.</p>
-<p>Although the species names and gene names have been replaced, the underlying data stems from real
-sequences of protein transporters in five <em>Aspergillus</em> species. Similar to the species tree,
-<em>species4</em> and <em>species2</em> are sister to one another; <em>species4</em> and <em>species2</em> are sister to
-<em>species1</em>; and <em>species4</em>, <em>species2</em> and <em>species2</em> are sister to <em>species3</em> and <em>species0</em>. This
-follows our observation described in the original manuscript wherein subgroups of single-copy
-orthologous genes are often as accurate and robust inferred as ‘traditional’ single-copy orthologous genes.</p>
-<p>Thank you for checking out OrthoSNAP!</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
+</section>
+<section id="interpretation">
+<h2>Interpretation<a class="headerlink" href="#interpretation" title="Link to this heading"></a></h2>
+<p>In this example, some species have duplicate copies. OrthoSNAP evaluates subtree structure,
+prunes species-specific inparalogs according to the selected <cite>-ip/–inparalog_to_keep</cite> rule,
+and outputs subgroups that satisfy single-copy criteria.</p>
+<p>By default, <cite>longest_seq_len</cite> is used, matching common transcriptomics workflows where the
+longest isoform is often retained.</p>
+<a class="reference internal image-reference" href="../_images/orthosnap_subgroups_example.png"><img alt="Example OrthoSNAP subgroup plot with color-coded SNAP-OG assignments on a phylogeny." class="align-center" src="../_images/orthosnap_subgroups_example.png" style="width: 100%;" /></a>
 </section>
 </section>
 
@@ -187,18 +167,7 @@ orthologous genes are often as accurate and robust inferred as ‘traditional’
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-    <!-- Theme Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-104875636-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-104875636-1', {
-          'anonymize_ip': false,
-      });
-    </script> 
+  </script> 
 
 </body>
 </html>

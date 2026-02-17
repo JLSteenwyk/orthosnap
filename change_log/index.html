@@ -10,6 +10,7 @@
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=b745eb55" />
 
   
+    <link rel="shortcut icon" href="../_static/logo_no_subtext.png"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -80,13 +81,16 @@
              
   <section id="change-log">
 <span id="id1"></span><h1>Change log<a class="headerlink" href="#change-log" title="Link to this heading"></a></h1>
-<hr class="docutils" />
 <p>Major changes to OrthoSNAP are summarized here.</p>
+<p><strong>1.5.0</strong>
+- Added <cite>-ps/–plot_snap_ogs</cite> to generate one color-coded tree figure showing inferred SNAP-OG assignments.
+- Added <cite>-pf/–plot_format</cite> to select <cite>png</cite> (default), <cite>pdf</cite>, or <cite>svg</cite> output for subgroup plots.
+- Improved runtime for duplicate-handling hotspots via faster internal indexing and pruning updates.</p>
 <p><strong>1.3.2</strong>
 Added argument for user-defined delimiter (-d, --delimiter)</p>
 <p><strong>1.2.0</strong>
 Added the -rih (--report_inparalog_handling) function, which creates
-a summary file of which inparalogs where kept compared to trimmed</p>
+a summary file of which inparalogs were kept compared to trimmed</p>
 <p><strong>0.1.0</strong>
 Added -r/--rooted, -st/--snap_trees, and -ip/--inparalog_to_keep functions</p>
 <p><strong>1.0.0</strong>
@@ -121,18 +125,7 @@ Improved species inparalog pruning</p>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-    <!-- Theme Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-104875636-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-104875636-1', {
-          'anonymize_ip': false,
-      });
-    </script> 
+  </script> 
 
 </body>
 </html>
