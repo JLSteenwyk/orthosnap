@@ -108,6 +108,24 @@ Example output (`png`):
    :align: center
    :alt: Example OrthoSNAP subgroup plot with color-coded SNAP-OG assignments on a phylogeny.
 
+Performance Benchmark
+---------------------
+
+The chart below summarizes benchmarked runtime across selected PyPI releases and the current local version.
+Runs used a rooted input tree (`-r`), one warm-up run per version, and three measured runs per version on the same dataset.
+
+Compared versions:
+
+- `1.1.0` (PyPI baseline)
+- `1.2.0` (PyPI)
+- `1.3.2` (PyPI)
+- `1.5.0-current` (local)
+
+.. image:: ../_static/img/orthosnap_speedup_pypi_comparison.png
+   :width: 100%
+   :align: center
+   :alt: Runtime and speedup comparison for OrthoSNAP versions from PyPI baseline to current local version.
+
 All options
 -----------
 
