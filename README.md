@@ -16,8 +16,8 @@
         <a href="https://codecov.io/gh/JLSteenwyk/orthosnap">
           <img src="https://codecov.io/gh/JLSteenwyk/orthosnap/branch/master/graph/badge.svg?token=FX66FUET0L"/>
         </a>
-        <a href="https://github.com/jlsteenwyk/orthosnap/graphs/contributors" alt="Contributors">
-            <img src="https://img.shields.io/github/contributors/jlsteenwyk/orthosnap">
+        <a href="https://github.com/JLSteenwyk/orthosnap/graphs/contributors" alt="Contributors">
+            <img src="https://img.shields.io/github/contributors/JLSteenwyk/orthosnap">
         </a>
         <a href="https://bsky.app/profile/jlsteenwyk.bsky.social" target="_blank" rel="noopener noreferrer">
           <img src="https://img.shields.io/badge/Bluesky-0285FF?logo=bluesky&logoColor=fff">
@@ -34,6 +34,7 @@
         </a>
         <a href="https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf">
           <img src="https://zenodo.org/badge/DOI/10.1371/journal.pbio.3001827.svg">
+        </a>
     </p>
 </p>
 
