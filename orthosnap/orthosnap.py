@@ -9,14 +9,12 @@ from tqdm import tqdm
 
 from .args_processing import process_args
 from .helper import (
+    build_subtree_taxa_cache,
     check_if_single_copy,
-    build_tip_parent_lookup,
     get_all_tips_and_taxa_names,
-    get_tips_and_taxa_names_and_taxa_counts_from_subtrees,
     handle_single_copy_subtree,
     handle_multi_copy_subtree,
     read_input_files,
-    write_summary_file_with_inparalog_handling
 )
 from .helper import InparalogToKeep
 from .parser import create_parser
@@ -68,8 +66,6 @@ def execute(
     # read input files and midpoint root tree
     tree, fasta_dict = read_input_files(tree, fasta, rooted)
 
-    tip_parent_lookup = build_tip_parent_lookup(tree)
-
     # get list of all tip names and taxa names
     taxa, all_tips = get_all_tips_and_taxa_names(tree, delimiter)
 
@@ -86,18 +82,15 @@ def execute(
 
     inparalog_handling = dict()
     inparalog_handling_summary = dict()
+    subtree_cache = build_subtree_taxa_cache(tree, delimiter)
 
     for inter in tqdm(tree.get_nonterminals()[1:]):
         (
-            _,
             terms,
+            terms_set,
             counts_of_taxa_from_terms,
             counts,
-        ) = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(
-            inter, delimiter
-        )
-
-        terms_set = set(terms)
+        ) = subtree_cache[inter]
 
         # if a sufficient number of taxa are represented, examine the subtree
         if len(counts_of_taxa_from_terms) >= occupancy:
@@ -121,7 +114,8 @@ def execute(
                         snap_trees,
                         output_path,
                         inparalog_handling,
-                        inparalog_handling_summary
+                        inparalog_handling_summary,
+                        report_inparalog_handling,
                     )
 
             # if any taxon is represented by more than one sequence and
@@ -144,17 +138,9 @@ def execute(
                         output_path,
                         inparalog_handling,
                         inparalog_handling_summary,
+                        report_inparalog_handling,
                         delimiter,
-                        tip_parent_lookup,
                     )
-
-    if report_inparalog_handling:
-        write_summary_file_with_inparalog_handling(
-            inparalog_handling,
-            fasta,
-            output_path,
-            subgroup_counter,
-        )
 
     write_output_stats(
         fasta, subgroup_counter, start_time, snap_trees, output_path

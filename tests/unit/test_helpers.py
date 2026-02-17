@@ -1,13 +1,19 @@
 from collections import Counter
 import copy
+from io import StringIO
 from pathlib import Path
 import pytest
 
 from Bio import Phylo
 from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 from orthosnap.helper import (
+    build_subtree_taxa_cache,
+    build_clade_terminal_set_index,
     check_if_single_copy,
+    clone_subtree_as_tree,
     collapse_low_support_bipartitions,
     determine_if_dups_are_sister,
     get_all_tips_and_taxa_names,
@@ -16,6 +22,7 @@ from orthosnap.helper import (
     inparalog_to_keep_determination,
     prune_subtree,
     read_input_files,
+    update_clade_terminal_set_index_for_pruned_tips,
     write_output_fasta_and_account_for_assigned_tips_single_copy_case,
 )
 from orthosnap.helper import InparalogToKeep
@@ -41,6 +48,64 @@ class TestCollapseLowSupportBipartitions(object):
         for term0, term1 in zip(tree.get_terminals(), res.get_terminals()):
             assert term0.name == term1.name
             assert term0.branch_length == term1.branch_length
+
+
+class TestCloneSubtreeAsTree(object):
+    def test_clone_subtree_as_tree_independent_copy(self):
+        tree = Phylo.read(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            "newick",
+        )
+        subtree = tree.common_ancestor(
+            [
+                "Aspergillus_fumigatus_Af293|EAL84942.1",
+                "Aspergillus_oerlinghausenensis_CBS139183|A_oerling_CBS139183_06972-RA",
+            ]
+        )
+
+        cloned_tree = clone_subtree_as_tree(subtree)
+        clone_terms = {term.name for term in cloned_tree.get_terminals()}
+        source_terms = {term.name for term in subtree.get_terminals()}
+
+        assert clone_terms == source_terms
+
+        original_children = len(subtree.clades)
+        cloned_tree.root.clades.pop()
+
+        assert len(subtree.clades) == original_children
+        assert len(cloned_tree.root.clades) == original_children - 1
+
+
+class TestDetermineIfDupsAreSister(object):
+    def test_determine_if_dups_are_sister_true(self):
+        tree = Phylo.read(StringIO("((sp|a,sp|b),sp|c);"), "newick")
+        clade_terminal_sets = build_clade_terminal_set_index(tree)
+
+        assert determine_if_dups_are_sister(["sp|a", "sp|b"], clade_terminal_sets)
+
+    def test_determine_if_dups_are_sister_false(self):
+        tree = Phylo.read(StringIO("((sp|a,sp|b),sp|c);"), "newick")
+        clade_terminal_sets = build_clade_terminal_set_index(tree)
+
+        assert not determine_if_dups_are_sister(
+            ["sp|a", "sp|c"], clade_terminal_sets
+        )
+
+
+class TestUpdateCladeTerminalSetIndexForPrunedTips(object):
+    def test_incremental_index_matches_rebuild(self):
+        tree = Phylo.read(StringIO("(((sp|a,sp|b),sp|c),sp|d);"), "newick")
+        before = build_clade_terminal_set_index(tree)
+
+        tree.prune("sp|d")
+        tree.prune("sp|c")
+        rebuilt = build_clade_terminal_set_index(tree)
+
+        updated = update_clade_terminal_set_index_for_pruned_tips(
+            before, ["sp|d", "sp|c"]
+        )
+
+        assert updated == rebuilt
 
 
 # class TestDetermineIfDupsAreSister(object):
@@ -270,6 +335,35 @@ class TestGetTipsAndTaxaNamesAndTaxaCountsFromSubtrees(object):
         assert set(terms) == set(expected_terms)
         assert counts_of_taxa_from_terms == expected_counts_of_taxa_from_terms
         assert counts == expected_counts
+
+
+class TestBuildSubtreeTaxaCache(object):
+    def test_cache_matches_subtree_function(self):
+        tree = Phylo.read(
+            f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            "newick",
+        )
+        tree.root_at_midpoint()
+        cache = build_subtree_taxa_cache(tree, "|")
+
+        for inter in tree.get_nonterminals()[1:]:
+            (
+                _,
+                terms,
+                counts_of_taxa_from_terms,
+                counts,
+            ) = get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter, "|")
+            (
+                cached_terms,
+                cached_terms_set,
+                cached_counts_of_taxa_from_terms,
+                cached_counts,
+            ) = cache[inter]
+
+            assert cached_terms == terms
+            assert cached_terms_set == set(terms)
+            assert cached_counts_of_taxa_from_terms == counts_of_taxa_from_terms
+            assert cached_counts == counts
 
 
 # class TestGetSubtreeTips(object):
@@ -1014,3 +1108,29 @@ class TestDetermineIfInputTreeIsSingleCopy(object):
 
         ## check results
         assert res == expected_res
+
+
+class TestInparalogMedianSelection(object):
+    def test_median_seq_len_more_than_two_duplicates(self):
+        newtree = Phylo.read(StringIO("(sp|g1:0.1,sp|g2:0.2,sp|g3:0.3);"), "newick")
+        dups = ["sp|g1", "sp|g2", "sp|g3"]
+        terms = dups.copy()
+        fasta_dict = {
+            "sp|g1": SeqRecord(Seq("A"), id="sp|g1"),
+            "sp|g2": SeqRecord(Seq("AA"), id="sp|g2"),
+            "sp|g3": SeqRecord(Seq("AAA"), id="sp|g3"),
+        }
+        inparalog_handling = dict()
+
+        _, updated_terms, inparalog_handling, pruned_tips = inparalog_to_keep_determination(
+            newtree,
+            fasta_dict,
+            dups,
+            terms,
+            InparalogToKeep.median_seq_len,
+            inparalog_handling,
+        )
+
+        assert updated_terms == ["sp|g2"]
+        assert inparalog_handling["sp|g2"] == ["sp|g1", "sp|g3"]
+        assert pruned_tips == ["sp|g1", "sp|g3"]
