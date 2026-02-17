@@ -49,6 +49,9 @@ def process_args(args) -> dict:
     rooted = args.rooted
     snap_trees = args.snap_trees
     report_inparalog_handling = args.report_inparalog_handling
+    plot_snap_ogs_output = getattr(args, "plot_snap_ogs", False)
+    raw_plot_format = getattr(args, "plot_format", None)
+    plot_format = raw_plot_format if raw_plot_format is not None else "png"
 
     if args.output_path:
         output_path = args.output_path
@@ -77,6 +80,8 @@ def process_args(args) -> dict:
         report_inparalog_handling=report_inparalog_handling,
         output_path=output_path,
         delimiter=delimiter,
+        plot_snap_ogs_output=plot_snap_ogs_output,
+        plot_format=plot_format,
     )
 
 

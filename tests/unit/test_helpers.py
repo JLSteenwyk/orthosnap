@@ -20,6 +20,8 @@ from orthosnap.helper import (
     get_tips_and_taxa_names_and_taxa_counts_from_subtrees,
     get_subtree_tips,
     inparalog_to_keep_determination,
+    build_terminal_parent_maps,
+    prune_terminal_fast,
     prune_subtree,
     read_input_files,
     update_clade_terminal_set_index_for_pruned_tips,
@@ -28,6 +30,22 @@ from orthosnap.helper import (
 from orthosnap.helper import InparalogToKeep
 
 here = Path(__file__)
+
+
+def _index_to_terminal_sets(index):
+    bit_to_tip = {bit: tip for tip, bit in index["tip_bits"].items()}
+    terminal_sets = set()
+
+    for mask in index["masks"]:
+        members = set()
+        remaining = mask
+        while remaining:
+            lowest_bit = remaining & -remaining
+            members.add(bit_to_tip[lowest_bit])
+            remaining ^= lowest_bit
+        terminal_sets.add(frozenset(members))
+
+    return terminal_sets
 
 
 class TestCollapseLowSupportBipartitions(object):
@@ -105,7 +123,44 @@ class TestUpdateCladeTerminalSetIndexForPrunedTips(object):
             before, ["sp|d", "sp|c"]
         )
 
-        assert updated == rebuilt
+        assert _index_to_terminal_sets(updated) == _index_to_terminal_sets(rebuilt)
+
+    def test_repeated_pruned_tip_is_idempotent(self):
+        tree = Phylo.read(StringIO("(((sp|a,sp|b),sp|c),sp|d);"), "newick")
+        before = build_clade_terminal_set_index(tree)
+
+        once = update_clade_terminal_set_index_for_pruned_tips(
+            copy.deepcopy(before), ["sp|d"]
+        )
+        repeated = update_clade_terminal_set_index_for_pruned_tips(
+            copy.deepcopy(before), ["sp|d", "sp|d"]
+        )
+
+        assert repeated == once
+
+    def test_missing_pruned_tip_does_not_change_index(self):
+        tree = Phylo.read(StringIO("(((sp|a,sp|b),sp|c),sp|d);"), "newick")
+        before = build_clade_terminal_set_index(tree)
+
+        updated = update_clade_terminal_set_index_for_pruned_tips(
+            copy.deepcopy(before), ["sp|not_present"]
+        )
+
+        assert updated == before
+
+    def test_prune_to_singleton_matches_rebuild(self):
+        tree = Phylo.read(StringIO("((sp|a,sp|b),sp|c);"), "newick")
+        before = build_clade_terminal_set_index(tree)
+
+        tree.prune("sp|b")
+        tree.prune("sp|c")
+        rebuilt = build_clade_terminal_set_index(tree)
+
+        updated = update_clade_terminal_set_index_for_pruned_tips(
+            before, ["sp|b", "sp|c"]
+        )
+
+        assert _index_to_terminal_sets(updated) == _index_to_terminal_sets(rebuilt)
 
 
 # class TestDetermineIfDupsAreSister(object):
@@ -364,6 +419,27 @@ class TestBuildSubtreeTaxaCache(object):
             assert cached_terms_set == set(terms)
             assert cached_counts_of_taxa_from_terms == counts_of_taxa_from_terms
             assert cached_counts == counts
+
+
+class TestGetSubtreeTips(object):
+    def test_taxon_prefix_collision_is_not_matched(self):
+        terms = ["sp1|geneA", "sp10|geneB", "sp1|geneC"]
+        _, dups = get_subtree_tips(terms, "sp1", "|")
+        assert dups == ["sp1|geneA", "sp1|geneC"]
+
+
+class TestFastTerminalPrune(object):
+    def test_fast_prune_matches_sequential_prune_for_terminals(self):
+        tree_fast = Phylo.read(StringIO("(((a:1,b:1):1,c:1):1,d:1);"), "newick")
+        tree_seq = Phylo.read(StringIO("(((a:1,b:1):1,c:1):1,d:1);"), "newick")
+
+        terminal_lookup, parent_lookup = build_terminal_parent_maps(tree_fast)
+        prune_terminal_fast(tree_fast, "b", terminal_lookup, parent_lookup)
+        prune_terminal_fast(tree_fast, "d", terminal_lookup, parent_lookup)
+        tree_seq.prune("b")
+        tree_seq.prune("d")
+
+        assert tree_fast.format("newick") == tree_seq.format("newick")
 
 
 # class TestGetSubtreeTips(object):
@@ -1128,6 +1204,30 @@ class TestInparalogMedianSelection(object):
             dups,
             terms,
             InparalogToKeep.median_seq_len,
+            inparalog_handling,
+        )
+
+        assert updated_terms == ["sp|g2"]
+        assert inparalog_handling["sp|g2"] == ["sp|g1", "sp|g3"]
+        assert pruned_tips == ["sp|g1", "sp|g3"]
+
+    def test_median_branch_len_more_than_two_duplicates(self):
+        newtree = Phylo.read(StringIO("(sp|g1:0.1,sp|g2:0.2,sp|g3:0.3);"), "newick")
+        dups = ["sp|g1", "sp|g2", "sp|g3"]
+        terms = dups.copy()
+        fasta_dict = {
+            "sp|g1": SeqRecord(Seq("A"), id="sp|g1"),
+            "sp|g2": SeqRecord(Seq("AA"), id="sp|g2"),
+            "sp|g3": SeqRecord(Seq("AAA"), id="sp|g3"),
+        }
+        inparalog_handling = dict()
+
+        _, updated_terms, inparalog_handling, pruned_tips = inparalog_to_keep_determination(
+            newtree,
+            fasta_dict,
+            dups,
+            terms,
+            InparalogToKeep.median_branch_len,
             inparalog_handling,
         )
 

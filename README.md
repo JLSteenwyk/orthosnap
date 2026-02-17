@@ -37,67 +37,71 @@
     </p>
 </p>
 
-OrthoSNAP: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees.<br /><br />
-If you found orthosnap useful, please cite *OrthoSNAP: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees*. Steenwyk et al. 2022, PLOS Biology. doi: [10.1371/journal.pbio.3001827](https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf).
-<br /><br />
+OrthoSNAP is a tree splitting and pruning tool for retrieving single-copy orthologous subgroups (SNAP-OGs) from larger gene families.
+
+If you found OrthoSNAP useful, please cite:
+*OrthoSNAP: a tree splitting and pruning algorithm for retrieving single-copy orthologs from gene family trees*. Steenwyk et al. 2022, PLOS Biology. DOI: [10.1371/journal.pbio.3001827](https://jlsteenwyk.com/publication_pdfs/2022_Steenwyk_etal_PLoS_Biology.pdf).
 
 ---
 
-<br />
+Full usage documentation and tutorial:
+[https://jlsteenwyk.com/orthosnap/](https://jlsteenwyk.com/orthosnap/)
 
-This documentation covers downloading and installing orthosnap. Details about orthosnap usage including a tutorial are available on our [online documentation](https://jlsteenwyk.com/orthosnap/).
+## Installation
 
-<br />
+### Install with pip (recommended)
 
-**Installation**
-
-**If you are having trouble installing orthosnap, please contact the lead developer, Jacob L. Steenwyk, via [email](https://jlsteenwyk.com/contact.html) or [twitter](https://twitter.com/jlsteenwyk) to get help.**
-
-To install using *pip*, we strongly recommend building a virtual environment to avoid software dependency issues. To do so, execute the following commands:
 ```shell
-# create virtual environment
 python -m venv .venv
-# activate virtual environment
 source .venv/bin/activate
-# install orthosnap
 pip install orthosnap
 ```
-**Note, the virtual environment must be activated to use *orthosnap*.**
 
-After using orthosnap, you may wish to deactivate your virtual environment and can do so using the following command:
+### Install from source
+
 ```shell
-# deactivate virtual environment
-deactivate
-```
-
-<br />
-
-Similarly, to install from source, we strongly recommend using a virtual environment. To do so, use the following commands:
-```shell
-# download
 git clone https://github.com/JLSteenwyk/orthosnap.git
-cd orthosnap/
-# create virtual environment
+cd orthosnap
 python -m venv .venv
-# activate virtual environment
 source .venv/bin/activate
-# install
 make install
 ```
-To deactivate your virtual environment, use the following command:
+
+### Install with conda
+
 ```shell
-# deactivate virtual environment
-deactivate
-```
-**Note, the virtual environment must be activated to use *orthosnap*.**
-
-<br />
-
-To install via anaconda, execute the follwoing command:
-
-``` shell
 conda install -c jlsteenwyk orthosnap
 ```
-Visit here for more information: https://anaconda.org/jlsteenwyk/orthosnap
 
+Conda package details:
+https://anaconda.org/jlsteenwyk/orthosnap
 
+## Quick start
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre
+```
+
+Generate a color-coded SNAP-OG assignment plot for the full tree:
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre -ps
+```
+
+Choose plot format (`png` default, `pdf` or `svg`):
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre -ps -pf svg
+```
+
+Show all CLI options:
+
+```shell
+orthosnap -h
+```
+
+## Support
+
+If installation fails in a clean virtual environment, contact Jacob L. Steenwyk via:
+- Email: https://jlsteenwyk.com/contact.html
+- Twitter/X: https://twitter.com/jlsteenwyk

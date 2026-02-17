@@ -1,53 +1,42 @@
 Tutorial
 ========
 
-**OrthoSNAP** enables researchers to obtain single-copy subgroups of
-orthologous genes. Single-copy subgroups of orthologous genes are
-phylogenetically-informative and can be used for molecular evolution
-analyses. This tutorial covers the easy-to-implement workflow needed
-for using orthofisher.
+This tutorial walks through a minimal end-to-end OrthoSNAP run using the bundled example dataset.
 
-Note, this tutorial assumes OrthoSNAP has already been installed. For
-installation instructions, please see the home page.
+1. Download test data
+#####################
 
-^^^^^
-
-1) Download the test data
-#########################
-
-For ease of use, this tutorial will rely on a small dataset, which can be
-downloaded using the following link:
+Download the tutorial dataset:
 
 .. centered::
-   Download test data:
    :download:`tutorial dataset </data/dataset.tar.gz>`
 
-Next, unzip the downloaded directory and change directory to the newly downloaded directory.
+Unpack and move into the dataset directory:
 
 .. code-block:: shell
 
    $ tar -zxvf dataset.tar.gz
    $ cd path_to_unzipped_directory/dataset
 
-|
-
-2) Run OrthoSNAP
+2. Run OrthoSNAP
 ################
 
-Running OrthoSNAP requires two arguments: -f/\-\-fasta, which specifies the unaligned orthologous
-group of sequences, and -t/\-\-tree, which species the phylogeny inferred from the orthologous
-group of sequences. Thus, orthosnap would be run using the following command:
+Run OrthoSNAP with required arguments:
 
 .. code-block:: shell
 
    $ orthosnap -f fake_orthologous_group_of_genes.faa -t fake_orthologous_group_of_genes_tree.tre
 
-|
+To also generate a full-tree subgroup visualization:
 
-3) Inspect output
+.. code-block:: shell
+
+   $ orthosnap -f fake_orthologous_group_of_genes.faa -t fake_orthologous_group_of_genes_tree.tre -ps
+
+3. Inspect output
 #################
 
-Toward the end of what is printed to the stdout, you will see the following text:
+Near the end of stdout, you should see output similar to:
 
 .. code-block:: shell
 
@@ -59,35 +48,30 @@ Toward the end of what is printed to the stdout, you will see the following text
       fake_orthologous_group_of_genes.faa.orthosnap.3.fa
       fake_orthologous_group_of_genes.faa.orthosnap.4.fa
 
-This means that five single-copy orthologous subgroups of genes were identified. Each
-subgroup was written to a different file titled fake_orthologous_group_of_genes.faa.orthosnap.\ *N*\ .fa.
-Each subgroup can be used for various molecular evolution analyses (e.g., phylogenetics, dN/dS, etc.)
+This indicates five SNAP-OG FASTA files were produced.
 
-|
+If `-ps` is used, an additional plot file is produced:
 
-To provide a little more detail about what OrthoSNAP did, the following figure visualizes each subgroup
-in the original inputted phylogeny.
+.. code-block:: shell
+
+   fake_orthologous_group_of_genes.faa.orthosnap.subgroups.png
 
 .. image:: ../_static/img/dataset_orthosnap.png
    :width: 100%
    :align: center
    :target: https://jlsteenwyk.com/orthosnap
 
+Interpretation
+##############
 
-In *orthosnap.0*, species 2 and species 4 have duplicate copies of gene 2. After automated detection of
-duplicate sister sequences (or sequences that belong to the same polytomy), OrthoSNAP will keep the longer
-of the two sequences following PhyloTreePruner. This follows the standard for transcriptomic data wherein
-the longest isoform is often kept. Reevaluation of the pruned subtree results in the inference of a 
-single-copy subgroup of orthologous genes.
+In this example, some species have duplicate copies. OrthoSNAP evaluates subtree structure,
+prunes species-specific inparalogs according to the selected `-ip/--inparalog_to_keep` rule,
+and outputs subgroups that satisfy single-copy criteria.
 
-Although the species names and gene names have been replaced, the underlying data stems from real 
-sequences of protein transporters in five *Aspergillus* species. Similar to the species tree,
-*species4* and *species2* are sister to one another; *species4* and *species2* are sister to 
-*species1*; and *species4*, *species2* and *species2* are sister to *species3* and *species0*. This
-follows our observation described in the original manuscript wherein subgroups of single-copy
-orthologous genes are often as accurate and robust inferred as 'traditional' single-copy orthologous genes.
+By default, `longest_seq_len` is used, matching common transcriptomics workflows where the
+longest isoform is often retained.
 
-Thank you for checking out OrthoSNAP!
-
-|
-
+.. image:: ../_static/img/orthosnap_subgroups_example.png
+   :width: 100%
+   :align: center
+   :alt: Example OrthoSNAP subgroup plot with color-coded SNAP-OG assignments on a phylogeny.

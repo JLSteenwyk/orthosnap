@@ -18,6 +18,7 @@ from .helper import (
 )
 from .helper import InparalogToKeep
 from .parser import create_parser
+from .plotter import plot_snap_ogs
 from .writer import write_user_args, write_output_stats
 
 
@@ -32,12 +33,16 @@ def execute(
     report_inparalog_handling: bool,
     output_path: str,
     delimiter: str,
+    plot_snap_ogs_output: bool = False,
+    plot_format: str = "png",
 ):
     """
     Master execute Function
     -----------------------
     This function executes the main functions and calls other subfunctions
     """
+    if not output_path.endswith("/"):
+        output_path = output_path + "/"
 
     # clean
     if report_inparalog_handling:
@@ -58,6 +63,8 @@ def execute(
         report_inparalog_handling,
         output_path,
         delimiter,
+        plot_snap_ogs_output,
+        plot_format,
     )
 
     # create start time logger
@@ -82,6 +89,7 @@ def execute(
 
     inparalog_handling = dict()
     inparalog_handling_summary = dict()
+    subgroup_records = []
     subtree_cache = build_subtree_taxa_cache(tree, delimiter)
 
     for inter in tqdm(tree.get_nonterminals()[1:]):
@@ -116,6 +124,7 @@ def execute(
                         inparalog_handling,
                         inparalog_handling_summary,
                         report_inparalog_handling,
+                        subgroup_records,
                     )
 
             # if any taxon is represented by more than one sequence and
@@ -140,10 +149,26 @@ def execute(
                         inparalog_handling_summary,
                         report_inparalog_handling,
                         delimiter,
+                        subgroup_records,
                     )
 
+    plot_file = None
+    if plot_snap_ogs_output and subgroup_counter > 0:
+        plot_file = plot_snap_ogs(
+            tree=tree,
+            subgroup_records=subgroup_records,
+            fasta=fasta,
+            output_path=output_path,
+            plot_format=plot_format,
+        )
+
     write_output_stats(
-        fasta, subgroup_counter, start_time, snap_trees, output_path
+        fasta,
+        subgroup_counter,
+        start_time,
+        snap_trees,
+        output_path,
+        plot_file,
     )
 
 

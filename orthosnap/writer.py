@@ -16,6 +16,8 @@ def write_user_args(
     report_inparalog_handling: bool,
     output_path: str,
     delimiter: str,
+    plot_snap_ogs_output: bool,
+    plot_format: str,
 ):
     """
     Function to print user arguments to stdout
@@ -34,6 +36,8 @@ def write_user_args(
     Taxon occupancy threshold: {occupancy}
     Delimiter: {delimiter}
     Output newick of SNAP-OGs: {snap_trees}
+    Plot SNAP-OG assignments: {plot_snap_ogs_output}
+    Plot format: {plot_format}
     Output directory: {output_path}
     """
         )
@@ -41,7 +45,7 @@ def write_user_args(
 
 
 def write_output_stats(
-    fasta, subgroup_counter, start_time, snap_trees, output_path
+    fasta, subgroup_counter, start_time, snap_trees, output_path, plot_file=None
 ):
     """
     Function to print out output statistics
@@ -68,10 +72,14 @@ def write_output_stats(
             for i in range(subgroup_counter):
                 output_file_name = f"{output_path}{fasta_path_stripped}.orthosnap.{i}"
                 print(f"\t{output_file_name}.fa\n\t{output_file_name}.tre")
+            if plot_file is not None:
+                print(f"\t{plot_file}")
         else:
             for i in range(subgroup_counter):
                 output_file_name = f"{output_path}{fasta_path_stripped}.orthosnap.{i}"
                 print(f"\t{output_file_name}.fa")
+            if plot_file is not None:
+                print(f"\t{plot_file}")
             print(
                 textwrap.dedent(
                     f"""\

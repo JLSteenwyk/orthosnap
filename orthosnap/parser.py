@@ -19,19 +19,17 @@ def create_parser():
         usage=SUPPRESS,
         description=textwrap.dedent(
             f"""\
-         ____       _   _           _____ _   _          _____  
-        / __ \     | | | |         / ____| \ | |   /\   |  __ \ 
-       | |  | |_ __| |_| |__   ___| (___ |  \| |  /  \  | |__) |
-       | |  | | '__| __| '_ \ / _ \\___ \| . ` | / /\ \ |  ___/ 
-       | |__| | |  | |_| | | | (_) |___) | |\  |/ ____ \| |     
-        \____/|_|   \__|_| |_|\___/_____/|_| \_/_/    \_\_|                                                        
-                                                            
+        OrthoSNAP identifies single-copy orthologous subgroups (SNAP-OGs)
+        from larger multi-copy gene families using a gene tree and FASTA file.
 
         Version: {__version__}
-        Citation: Steenwyk et al. (2022), PLOS Biology. DOI: 10.1371/journal.pbio.3001827.
+        Citation: Steenwyk et al. (2022), PLOS Biology.
+        DOI: 10.1371/journal.pbio.3001827
         https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001827
-        
-        Usage: orthosnap -f <fasta_file> -t <newick_tree_file> [optional arguments]
+
+        Usage: orthosnap -f <fasta_file> -t <newick_tree_file> [options]
+        Example:
+          orthosnap -f OG0000010.fa -t OG0000010.treefile -s 80 -o 5
         """
         ),
     )
@@ -47,10 +45,10 @@ def create_parser():
         description=textwrap.dedent(
             """\
         -t, --tree <newick tree file>
-            input tree file in newick format
+            Input phylogeny in Newick format.
 
         -f, --fasta <fasta file>
-            input sequence file in fasta format                 
+            Input sequences in FASTA format.
         """
         ),
     )
@@ -79,24 +77,24 @@ def create_parser():
         description=textwrap.dedent(
             """\
         -s, --support  <support>
-            support threshold for bipartition collapsing
-            default: 80
+            Collapse bipartitions with support values below this threshold.
+            Default: 80
 
         -o, --occupancy  <occupancy>
-            occupancy threshold for minimum number of tips in orthologous subgroup
-            default: 50 percent of total number of taxa  
-       
+            Minimum number of taxa required for a subgroup candidate.
+            Default: rounded half of total taxa in the input FASTA
+
         -r, --rooted
-            boolean argument for whether the input phylogeny is already rooted
-            default: false
+            Treat the input tree as already rooted.
+            Default: false (tree is midpoint-rooted)
 
         -d, --delimiter
-            string for delimited between species and sequence name
-            default: "|"
+            Delimiter between taxon and sequence name in headers.
+            Default: "|"
 
         -st, --snap_trees
-            boolean argument for whether trees of SNAP-OGs should be outputted
-            default: false
+            Also write Newick trees for inferred SNAP-OGs.
+            Default: false
 
         -ip, --inparalog_to_keep <shortest_seq_len,
                                   median_seq_len,
@@ -104,67 +102,50 @@ def create_parser():
                                   shortest_branch_len,
                                   median_branch_len,
                                   longest_branch_len>
-            determine which sequence to keep in the case of species-specific
-            inparalogs using sequence- or tree-based options
-            default: longest_seq_len
+            Rule used to keep one sequence among species-specific inparalogs.
+            Default: longest_seq_len
 
         -rih, --report_inparalog_handling
-            create a summary file of which inparalogs where kept compared to trimmed
+            Write a report of kept vs trimmed inparalogs.
 
         -op, --output_path
-            specify directory for writing output files to
+            Directory for output files.
+            Default: same directory as input FASTA
 
-        
-        -------------------------------------
-        | Detailed explanation of arguments | 
-        -------------------------------------
+        -ps, --plot_snap_ogs
+            Plot full tree with color-coded SNAP-OG assignments.
+            Default: false
+
+        -pf, --plot_format <png|pdf|svg>
+            Output format for SNAP-OG plot.
+            Default: png
+
+        Notes
+        -----
         -t, --tree <newick tree file>
-            - input tree file in newick format
-            - taxa name and gene name should be separate by a "|" symbol
-              For example, "gene_a" from "species_a" should appear in the
-              tree as "species_a|gene_a", and "gene_b" from "species_a"
-              should appear in the tree as "species_a|gene_b", and so 
-              on and so forth.
+            Input tree in Newick format.
 
         -f, --fasta <fasta file>
-            - input sequence file in fasta format 
-            - taxa name and gene name should be formatted the same as in
-              the tree file. Thus, "gene_a" from "species_a" should appear
-              in the tree as "species_a|gene_a" and so on and so forth.
+            Input sequence file in FASTA format. Header naming must match the tree.
+            Example header format: species_A|gene_001
         
         -s, --support  <support>
-            - support threshold for bipartition collapsing
-            - all bipartitions will values less than the specified value 
-              will be collapsed. For example, if the support threshold
-              value is 80, all bipartitions with 79 or less support
-              will be collapsed.
-            - default value is 80 and is set for ultrafast bootstrap
-              approximations. If bipartitions support was evaluated 
-              using standard bootstrap, a common threshold to use is 70.
+            Typical values:
+            80 for ultrafast bootstrap support; 70 for standard bootstrap support.
 
         -o, --occupancy  <occupancy>
-            - occupancy threshold for minimum number of tips in orthologous
-              subgroup. 
-            - default value is 50 percent of the total number of taxa
-            - values are rounded to the nearest integer. For example,
-              if there are 15 taxa, the occupancy threshold will be 8.
+            Occupancy can be any positive float.
+            Subgroups are considered when represented taxa >= occupancy.
 
         -r, --rooted
-            - boolean argument for whether the input phylogeny is already rooted
-            - if used, the input phylogeny is assumed to be rooted; if not,
-              the tree will be midpoint rooted
+            If omitted, OrthoSNAP midpoint-roots the tree.
 
         -d, --delimiter
-            - separator between taxon name and gene sequence
-            - the default is a pipe character (or "|")
-                - for example, a FASTA header may be as follows:
-                >species_A|gene0 to specify species_A and
-                gene identifier gene_0
+            Must appear in all relevant FASTA/tree labels.
+            Example: >species_A|gene0
 
         -st, --snap_trees
-            - boolean argument for whether newick files of SNAP-OGs should also
-              be outputted
-            - if used, newick files of SNAP-OGs will be outputteds
+            Writes additional .tre files for each output SNAP-OG.
 
         -ip, --inparalog_to_keep <shortest_seq_len,
                                   median_seq_len,
@@ -172,21 +153,23 @@ def create_parser():
                                   shortest_branch_len,
                                   median_branch_len,
                                   longest_branch_len>                                
-            - specify how to determine which species-specific inparalog should be kept
-            - the species-specific inparalog can be kept based on sequence length
-              (shortest/median/longest_seq_len) or branch length based on tip-to-root
-              distances (shortest/median/longest_branch_len)
-            - by default, the longest sequence is kept following the standard approach
-              in transcriptomics
+            Sequence-based options use ungapped sequence length.
+            Branch-based options use tip-to-root distance in the current subtree.
 
         -rih, --report_inparalog_handling
-            - create a summary file of which inparalogs where kept compared to trimmed
-            - col 1 is the orthogroup file
-            - col 2 is the inparalog that was kept
-            - col 3 is/are the inparalog/s that were trimmed separated by a semi-colon ";"
+            Report columns:
+            1) SNAP-OG identifier
+            2) kept inparalog
+            3) trimmed inparalog(s), separated by ';'
 
         -op, --output_path <str>
-            - path to output directory that files will be written to
+            Parent directory for output files.
+
+        -ps, --plot_snap_ogs
+            Writes one color-coded tree figure showing inferred SNAP-OGs.
+
+        -pf, --plot_format <png|pdf|svg>
+            File format for the SNAP-OG assignment plot.
         """
         ),
     )
@@ -256,6 +239,23 @@ def create_parser():
         "--output_path",
         help=SUPPRESS,
         required=False,
+    )
+
+    optional.add_argument(
+        "-ps",
+        "--plot_snap_ogs",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "-pf",
+        "--plot_format",
+        type=str,
+        choices=["png", "pdf", "svg"],
+        required=False,
+        help=SUPPRESS,
     )
 
     optional.add_argument(

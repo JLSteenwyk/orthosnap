@@ -53,58 +53,133 @@ def collapse_low_support_bipartitions(newtree, support: float):
 
 def determine_if_dups_are_sister(
     subtree_tips: list,
-    clade_terminal_sets: set,
+    clade_terminal_index: dict,
 ):
     """
     determine if dups are sister to one another
     """
-    return frozenset(subtree_tips) in clade_terminal_sets
+    tip_bits = clade_terminal_index["tip_bits"]
+    duplicate_mask = 0
+    for tip in subtree_tips:
+        bit = tip_bits.get(tip)
+        if bit is None:
+            return False
+        duplicate_mask |= bit
+    return duplicate_mask in clade_terminal_index["masks"]
 
 
 def build_clade_terminal_set_index(tree):
     """
-    Build a set of terminal-name frozensets for every clade in a tree.
+    Build a bitmask index for terminal membership across all clades.
     """
 
-    clade_to_terminals = dict()
-    terminal_sets = set()
+    terminal_names = sorted(
+        term.name for term in tree.get_terminals() if term.name is not None
+    )
+    tip_bits = {name: (1 << idx) for idx, name in enumerate(terminal_names)}
+    clade_to_mask = dict()
+    masks = set()
 
     for clade in tree.find_clades(order="postorder"):
         if clade.is_terminal():
-            names = frozenset([clade.name])
+            mask = tip_bits[clade.name]
         else:
-            merged = set()
+            merged_mask = 0
             for child in clade.clades:
-                merged.update(clade_to_terminals[child])
-            names = frozenset(merged)
+                merged_mask |= clade_to_mask[child]
+            mask = merged_mask
 
-        clade_to_terminals[clade] = names
-        terminal_sets.add(names)
-
-    return terminal_sets
+        clade_to_mask[clade] = mask
+        masks.add(mask)
+    return {"masks": masks, "tip_bits": tip_bits}
 
 
 def update_clade_terminal_set_index_for_pruned_tips(
-    clade_terminal_sets: set,
+    clade_terminal_index: dict,
     pruned_tips: list,
 ):
     """
-    Incrementally update terminal-set index after pruning one or more tips.
+    Incrementally update bitmask index after pruning one or more tips.
     """
 
-    updated_sets = clade_terminal_sets
-    for tip in pruned_tips:
-        next_sets = set()
-        for terms in updated_sets:
-            if tip in terms:
-                trimmed_terms = terms.difference([tip])
-                if trimmed_terms:
-                    next_sets.add(frozenset(trimmed_terms))
-            else:
-                next_sets.add(terms)
-        updated_sets = next_sets
+    if not pruned_tips:
+        return clade_terminal_index
 
-    return updated_sets
+    prune_mask = 0
+    tip_bits = clade_terminal_index["tip_bits"]
+    for tip in pruned_tips:
+        bit = tip_bits.get(tip)
+        if bit is not None:
+            prune_mask |= bit
+
+    if prune_mask == 0:
+        return clade_terminal_index
+
+    updated_masks = set()
+    for mask in clade_terminal_index["masks"]:
+        trimmed_mask = mask & ~prune_mask
+        if trimmed_mask:
+            updated_masks.add(trimmed_mask)
+
+    return {"masks": updated_masks, "tip_bits": tip_bits}
+
+
+def build_terminal_parent_maps(tree):
+    """
+    Build terminal-node and parent lookups for fast terminal pruning.
+    """
+
+    parent_lookup = dict()
+    terminal_lookup = dict()
+
+    stack = [tree.root]
+    while stack:
+        parent = stack.pop()
+        for child in parent.clades:
+            parent_lookup[child] = parent
+            if child.is_terminal() and child.name is not None:
+                terminal_lookup[child.name] = child
+            else:
+                stack.append(child)
+
+    return terminal_lookup, parent_lookup
+
+
+def prune_terminal_fast(tree, terminal_name: str, terminal_lookup: dict, parent_lookup: dict):
+    """
+    Prune one terminal by name using parent links to avoid full-tree traversals.
+    """
+
+    target = terminal_lookup.pop(terminal_name, None)
+    if target is None:
+        raise ValueError("can't find a matching target below this root")
+
+    parent = parent_lookup.get(target)
+    if parent is None:
+        raise ValueError("can't find parent for matching target")
+
+    parent.clades.remove(target)
+    parent_lookup.pop(target, None)
+
+    if len(parent.clades) == 1:
+        child = parent.clades[0]
+        if child.branch_length is not None:
+            child.branch_length += parent.branch_length or 0.0
+
+        grandparent = parent_lookup.get(parent)
+        if grandparent is None:
+            tree.root = child
+            parent_lookup.pop(parent, None)
+            if not child.is_terminal():
+                for grandchild in child.clades:
+                    parent_lookup[grandchild] = child
+        else:
+            idx = grandparent.clades.index(parent)
+            grandparent.clades[idx] = child
+            parent_lookup[child] = grandparent
+            parent_lookup.pop(parent, None)
+
+    return tree
 
 
 def get_all_tips_and_taxa_names(tree, delimiter: str):
@@ -208,12 +283,12 @@ def build_subtree_taxa_cache(tree, delimiter: str):
     return subtree_cache
 
 
-def get_subtree_tips(terms: list, name: str):
+def get_subtree_tips(terms: list, name: str, delimiter: str):
     """
     get lists of subsubtrees from subtree
     """
     # get the duplicate sequences
-    dups = [e for e in terms if e.startswith(name)]
+    dups = [e for e in terms if e.split(delimiter, 1)[0] == name]
     # This helper is only used for duplicate discovery.
     # Keep return shape for compatibility with older callers/tests.
     return [], dups
@@ -235,6 +310,7 @@ def handle_multi_copy_subtree(
     inparalog_handling_summary: dict,
     report_inparalog_handling: bool,
     delimiter: str,
+    subgroup_records: list = None,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -251,7 +327,7 @@ def handle_multi_copy_subtree(
         # if the taxon is represented by more than one sequence
         if counts_of_taxa_from_terms[name] > 1:
             # get subtree tips
-            _, dups = get_subtree_tips(terms, name)
+            _, dups = get_subtree_tips(terms, name, delimiter)
             if not dups:
                 continue
 
@@ -294,6 +370,7 @@ def handle_multi_copy_subtree(
             inparalog_handling,
             inparalog_handling_summary,
             report_inparalog_handling,
+            subgroup_records,
         )
 
     return \
@@ -314,6 +391,7 @@ def handle_single_copy_subtree(
     inparalog_handling: dict,
     inparalog_handling_summary: dict,
     report_inparalog_handling: bool,
+    subgroup_records: list = None,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -341,6 +419,7 @@ def handle_single_copy_subtree(
         inparalog_handling,
         inparalog_handling_summary,
         report_inparalog_handling,
+        subgroup_records,
     )
 
     return \
@@ -400,11 +479,16 @@ def inparalog_to_keep_determination(
 
     # trim unwanted species-specific
     # paralogous sequences from the tree
-    for seq_name, _ in lengths.items():
+    for seq_name in lengths:
         if seq_name != seq_to_keep:
-            newtree.prune(seq_name)
-            terms.remove(seq_name)
             pruned_tips.append(seq_name)
+
+    if pruned_tips:
+        terminal_lookup, parent_lookup = build_terminal_parent_maps(newtree)
+        for tip_name in pruned_tips:
+            prune_terminal_fast(newtree, tip_name, terminal_lookup, parent_lookup)
+        pruned_tip_set = set(pruned_tips)
+        terms = [term for term in terms if term not in pruned_tip_set]
 
     inparalog_handling[seq_to_keep] = [dup for dup in dups if dup != seq_to_keep]
 
@@ -453,6 +537,7 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     inparalog_handling: dict,
     inparalog_handling_summary: dict,
     report_inparalog_handling: bool,
+    subgroup_records: list = None,
 ):
     # write output
     fasta_path_stripped = re.sub("^.*/", "", fasta)
@@ -478,6 +563,12 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
             subgroup_counter,
             terms,
         )
+
+    if subgroup_records is not None:
+        subgroup_records.append(
+            {"subgroup_id": subgroup_counter, "tips": list(terms)}
+        )
+
     subgroup_counter += 1
 
     return subgroup_counter, assigned_tips, inparalog_handling_summary

@@ -43,3 +43,18 @@ class TestParser(object):
     def test_parser_when_no_args(self, parser):
         with pytest.raises(SystemExit):
             parser.parse_args([])
+
+    def test_plot_flags(self, parser):
+        parsed = parser.parse_args(
+            [
+                "-f",
+                "my/input/file.fa",
+                "-t",
+                "my/input/tree.tree",
+                "-ps",
+                "-pf",
+                "pdf",
+            ]
+        )
+        assert parsed.plot_snap_ogs is True
+        assert parsed.plot_format == "pdf"

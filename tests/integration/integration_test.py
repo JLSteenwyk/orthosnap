@@ -1101,3 +1101,128 @@ class TestIntegration(object):
             output_content = out_file.read()
 
         assert expected_content == output_content
+
+    def test_no_inparalog_report_written_when_disabled(self, tmp_path):
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=80,
+            occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{tmp_path}/",
+            report_inparalog_handling=False,
+            delimiter="|",
+        )
+        execute(**kwargs)
+
+        report_file = tmp_path / "OG0000010.renamed.fa.mafft.clipkit.inparalog_report.txt"
+        output_fasta = tmp_path / "OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa"
+
+        assert output_fasta.exists()
+        assert not report_file.exists()
+
+    def test_execute_output_path_without_trailing_slash(self, tmp_path):
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=80,
+            occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{tmp_path}",
+            report_inparalog_handling=True,
+            delimiter="|",
+        )
+        execute(**kwargs)
+
+        report_file = tmp_path / "OG0000010.renamed.fa.mafft.clipkit.inparalog_report.txt"
+        output_fasta = tmp_path / "OG0000010.renamed.fa.mafft.clipkit.orthosnap.0.fa"
+
+        assert output_fasta.exists()
+        assert report_file.exists()
+
+    def test_occupancy_boundary_behavior(self, tmp_path):
+        eq_path = tmp_path / "occ_eq"
+        gt_path = tmp_path / "occ_gt"
+        eq_path.mkdir()
+        gt_path.mkdir()
+
+        eq_kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=80,
+            occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{eq_path}",
+            report_inparalog_handling=False,
+            delimiter="|",
+        )
+        execute(**eq_kwargs)
+        eq_count = len(list(eq_path.glob("*.orthosnap.*.fa")))
+        assert eq_count == 5
+
+        gt_kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=80,
+            occupancy=5.01,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{gt_path}",
+            report_inparalog_handling=False,
+            delimiter="|",
+        )
+        execute(**gt_kwargs)
+        gt_count = len(list(gt_path.glob("*.orthosnap.*.fa")))
+        assert gt_count == 0
+
+    def test_mixed_delimiter_input_raises_clean_error(self, tmp_path, capsys):
+        tree_path = tmp_path / "mixed_delim.tree"
+        fasta_path = tmp_path / "mixed_delim.fa"
+        tree_path.write_text("(sp1|g1:0.1,sp2g2:0.1);\n")
+        fasta_path.write_text(">sp1|g1\nAAAA\n>sp2g2\nAAAA\n")
+
+        kwargs = dict(
+            tree=f"{tree_path}",
+            fasta=f"{fasta_path}",
+            support=80,
+            occupancy=1,
+            rooted=True,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{tmp_path}",
+            report_inparalog_handling=False,
+            delimiter="|",
+        )
+
+        with pytest.raises(SystemExit):
+            execute(**kwargs)
+
+        std_out = capsys.readouterr().out
+        assert "ERROR: Delimiter does not exist in FASTA headers." in std_out
+
+    def test_plot_snap_ogs_output_file_created(self, tmp_path):
+        kwargs = dict(
+            tree=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit.treefile",
+            fasta=f"{here.parent.parent}/samples/OG0000010.renamed.fa.mafft.clipkit",
+            support=80,
+            occupancy=5,
+            rooted=False,
+            snap_trees=False,
+            inparalog_to_keep=InparalogToKeep.longest_seq_len,
+            output_path=f"{tmp_path}",
+            report_inparalog_handling=False,
+            delimiter="|",
+            plot_snap_ogs_output=True,
+            plot_format="png",
+        )
+        execute(**kwargs)
+
+        plot_file = tmp_path / "OG0000010.renamed.fa.mafft.clipkit.orthosnap.subgroups.png"
+        assert plot_file.exists()

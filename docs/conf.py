@@ -60,7 +60,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -73,7 +73,7 @@ pygments_style = None
 
 # -- Options for HTML output -------------------------------------------------
 # Favicon
-html_favicon = "_static/img/flavicon.png"
+html_favicon = "_static/img/logo_no_subtext.png"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -87,7 +87,6 @@ html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "body_max_width": "900px",
     "logo_only": True,
-    "analytics_id": "UA-104875636-1",
 }
 html_logo = "_static/img/logo_no_subtext.png"
 html_show_sourcelink = False

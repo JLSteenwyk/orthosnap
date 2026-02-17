@@ -24,6 +24,8 @@ def args():
         output_path="./tests/samples/",
         report_inparalog_handling=False,
         delimiter="|",
+        plot_snap_ogs=False,
+        plot_format="png",
     )
     return Namespace(**kwargs)
 
@@ -140,3 +142,22 @@ class TestArgsProcessing(object):
         args.delimiter = "&"
         res = process_args(args)
         assert res["delimiter"] == "&"
+
+    def test_plot_snap_ogs_default(self, args):
+        res = process_args(args)
+        assert res["plot_snap_ogs_output"] == False
+
+    def test_plot_snap_ogs_true(self, args):
+        args.plot_snap_ogs = True
+        res = process_args(args)
+        assert res["plot_snap_ogs_output"] == True
+
+    def test_plot_format_default(self, args):
+        args.plot_format = None
+        res = process_args(args)
+        assert res["plot_format"] == "png"
+
+    def test_plot_format_custom(self, args):
+        args.plot_format = "svg"
+        res = process_args(args)
+        assert res["plot_format"] == "svg"
