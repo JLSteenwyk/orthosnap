@@ -80,6 +80,15 @@
   <section id="change-log">
 <span id="id1"></span><h1>Change log<a class="headerlink" href="#change-log" title="Link to this heading"></a></h1>
 <p>Major changes to OrthoSNAP are summarized here.</p>
+<p><strong>1.6.0</strong>
+- Added batch manifest mode (<cite>–manifest</cite>) for running multiple orthogroups from one TSV/CSV.
+- Added input preflight and dry-run validation mode (<cite>–validate-only</cite>).
+- Added structured provenance outputs (<cite>–structured-output</cite>) with JSON and TSV summaries.
+- Added explicit occupancy semantics (<cite>–occupancy-count</cite>, <cite>–occupancy-fraction</cite>).
+- Added resumable execution (<cite>–resume</cite>) to skip already completed runs.
+- Added bootstrap consensus subgrouping (<cite>–bootstrap-trees</cite>, <cite>–consensus-min-frequency</cite>, <cite>–consensus-trees</cite>).
+- Improved CLI invocation handling by honoring <cite>main(argv)</cite> arguments.
+- Relative to 1.5.0, this release emphasizes reproducibility and workflow orchestration rather than visualization.</p>
 <p><strong>1.5.0</strong>
 - Added <cite>-ps/–plot_snap_ogs</cite> to generate one color-coded tree figure showing inferred SNAP-OG assignments.
 - Added <cite>-pf/–plot_format</cite> to select <cite>png</cite> (default), <cite>pdf</cite>, or <cite>svg</cite> output for subgroup plots.
