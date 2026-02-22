@@ -311,6 +311,7 @@ def handle_multi_copy_subtree(
     report_inparalog_handling: bool,
     delimiter: str,
     subgroup_records: list = None,
+    write_outputs: bool = True,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -371,6 +372,7 @@ def handle_multi_copy_subtree(
             inparalog_handling_summary,
             report_inparalog_handling,
             subgroup_records,
+            write_outputs,
         )
 
     return \
@@ -392,6 +394,7 @@ def handle_single_copy_subtree(
     inparalog_handling_summary: dict,
     report_inparalog_handling: bool,
     subgroup_records: list = None,
+    write_outputs: bool = True,
 ):
     """
     handling case where subtree contains all single copy genes
@@ -420,6 +423,7 @@ def handle_single_copy_subtree(
         inparalog_handling_summary,
         report_inparalog_handling,
         subgroup_records,
+        write_outputs,
     )
 
     return \
@@ -538,31 +542,35 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
     inparalog_handling_summary: dict,
     report_inparalog_handling: bool,
     subgroup_records: list = None,
+    write_outputs: bool = True,
 ):
-    # write output
     fasta_path_stripped = re.sub("^.*/", "", fasta)
-    output_file_name = (
-        f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
-    )
-    with open(output_file_name, "w") as output_handle:
-        for term in terms:
-            SeqIO.write(fasta_dict[term], output_handle, "fasta")
-            assigned_tips.add(term)
 
-    if snap_tree:
+    for term in terms:
+        assigned_tips.add(term)
+
+    if write_outputs:
         output_file_name = (
-            f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.tre"
+            f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
         )
-        Phylo.write(newtree, output_file_name, "newick")
+        with open(output_file_name, "w") as output_handle:
+            for term in terms:
+                SeqIO.write(fasta_dict[term], output_handle, "fasta")
 
-    if report_inparalog_handling:
-        write_summary_file_with_inparalog_handling(
-            inparalog_handling,
-            fasta,
-            output_path,
-            subgroup_counter,
-            terms,
-        )
+        if snap_tree:
+            output_file_name = (
+                f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.tre"
+            )
+            Phylo.write(newtree, output_file_name, "newick")
+
+        if report_inparalog_handling:
+            write_summary_file_with_inparalog_handling(
+                inparalog_handling,
+                fasta,
+                output_path,
+                subgroup_counter,
+                terms,
+            )
 
     if subgroup_records is not None:
         subgroup_records.append(

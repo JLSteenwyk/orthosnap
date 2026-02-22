@@ -1,4 +1,3 @@
-import sys
 import textwrap
 
 from argparse import (
@@ -34,11 +33,6 @@ def create_parser():
         ),
     )
 
-    # if no arguments are given, print help and exit
-    if len(sys.argv) == 1:
-        parser.print_help(sys.stderr)
-        sys.exit()
-
     ## required arguments
     required = parser.add_argument_group(
         "required arguments",
@@ -57,7 +51,7 @@ def create_parser():
         "-f",
         "--fasta",
         type=str,
-        required=True,
+        required=False,
         help=SUPPRESS,
         metavar="fasta",
     )
@@ -66,7 +60,7 @@ def create_parser():
         "-t",
         "--tree",
         type=str,
-        required=True,
+        required=False,
         help=SUPPRESS,
         metavar="tree",
     )
@@ -193,6 +187,22 @@ def create_parser():
     )
 
     optional.add_argument(
+        "--occupancy-count",
+        type=int,
+        required=False,
+        help=SUPPRESS,
+        metavar="count",
+    )
+
+    optional.add_argument(
+        "--occupancy-fraction",
+        type=float,
+        required=False,
+        help=SUPPRESS,
+        metavar="fraction",
+    )
+
+    optional.add_argument(
         "-r",
         "--rooted",
         action="store_true",
@@ -239,6 +249,49 @@ def create_parser():
         "--output_path",
         help=SUPPRESS,
         required=False,
+    )
+
+    optional.add_argument(
+        "--manifest",
+        type=str,
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "--validate-only",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "--resume",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "--structured-output",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "--bootstrap-trees",
+        type=str,
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
+        "--consensus-min-frequency",
+        type=float,
+        required=False,
+        help=SUPPRESS,
+        metavar="fraction",
     )
 
     optional.add_argument(

@@ -74,6 +74,13 @@ def write_output_stats(
                 print(f"\t{output_file_name}.fa\n\t{output_file_name}.tre")
             if plot_file is not None:
                 print(f"\t{plot_file}")
+            print(
+                textwrap.dedent(
+                    f"""\
+                Execution time: {round(time.time() - start_time, 3)}s
+        """
+                )
+            )
         else:
             for i in range(subgroup_counter):
                 output_file_name = f"{output_path}{fasta_path_stripped}.orthosnap.{i}"

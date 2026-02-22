@@ -101,6 +101,43 @@ Show all CLI options:
 orthosnap -h
 ```
 
+Run validation checks only (no subgroup extraction):
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --validate-only
+```
+
+Write structured provenance outputs (`.run.json` and `.subgroups.tsv`):
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --structured-output
+```
+
+Resume an interrupted or previously completed run:
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --resume
+```
+
+Use explicit occupancy semantics:
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --occupancy-count 5
+orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --occupancy-fraction 0.5
+```
+
+Run many orthogroups from a manifest (TSV/CSV with `tree` and `fasta` columns):
+
+```shell
+orthosnap --manifest runs.tsv --structured-output -op results/
+```
+
+Run bootstrap consensus mode using a file of tree paths (one per line):
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t reference.treefile --bootstrap-trees bootstrap_paths.txt --consensus-min-frequency 0.5
+```
+
 ## Support
 
 If installation fails in a clean virtual environment, contact Jacob L. Steenwyk via:

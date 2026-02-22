@@ -1,9 +1,9 @@
-import math
 import pytest
 
 from argparse import Namespace
 
 from orthosnap.args_processing import (
+    count_unique_taxa_in_fasta,
     determine_occupancy_threshold,
     process_args,
     proper_round,
@@ -26,6 +26,14 @@ def args():
         delimiter="|",
         plot_snap_ogs=False,
         plot_format="png",
+        manifest=None,
+        validate_only=False,
+        resume=False,
+        structured_output=False,
+        bootstrap_trees=None,
+        consensus_min_frequency=0.5,
+        occupancy_count=None,
+        occupancy_fraction=None,
     )
     return Namespace(**kwargs)
 
@@ -59,6 +67,10 @@ class TestArgsProcessing(object):
     def test_determine_occupancy_threshold(self, args):
         res = determine_occupancy_threshold(args.fasta, args.delimiter)
         assert res == 3
+
+    def test_count_unique_taxa_in_fasta(self, args):
+        res = count_unique_taxa_in_fasta(args.fasta, args.delimiter)
+        assert res == 5
 
     def test_proper_round0(self, args):
         res = proper_round(2.5)
@@ -161,3 +173,32 @@ class TestArgsProcessing(object):
         args.plot_format = "svg"
         res = process_args(args)
         assert res["plot_format"] == "svg"
+
+    def test_occupancy_count_mode(self, args):
+        args.occupancy = None
+        args.occupancy_count = 4
+        res = process_args(args)
+        assert res["occupancy_mode"] == "count"
+        assert res["occupancy"] == 4
+
+    def test_occupancy_fraction_mode(self, args):
+        args.occupancy = None
+        args.occupancy_fraction = 0.5
+        res = process_args(args)
+        assert res["occupancy_mode"] == "fraction"
+        assert res["occupancy"] == 3
+
+    def test_occupancy_modes_conflict(self, args):
+        args.occupancy = 3
+        args.occupancy_count = 4
+        with pytest.raises(SystemExit):
+            process_args(args)
+
+    def test_manifest_mode_without_tree_fasta(self, args, tmp_path):
+        manifest = tmp_path / "manifest.tsv"
+        manifest.write_text("tree\tfasta\nx\ty\n")
+        args.tree = None
+        args.fasta = None
+        args.manifest = str(manifest)
+        res = process_args(args)
+        assert res["manifest"] == str(manifest)

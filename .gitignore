@@ -144,3 +144,7 @@ output/
 # remove directions for how to submit to conda
 submitting_to_conda.txt
 00_test_grp00.sh
+
+# codex audit helper and generated artifacts
+scripts/codex_audit.sh
+audits/

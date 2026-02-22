@@ -19,6 +19,91 @@ For most cases, only `-f/--fasta` and `-t/--tree` are required:
 
    $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre
 
+Validation-only preflight
+-------------------------
+
+Use ``--validate-only`` to check tree/FASTA concordance, delimiter consistency,
+and duplicate labels without performing SNAP-OG extraction.
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --validate-only
+
+Structured provenance outputs
+-----------------------------
+
+Use ``--structured-output`` to emit machine-readable run metadata and subgroup summaries.
+
+Generated files:
+
+- ``<input>.orthosnap.run.json`` (inputs, hashes, arguments, timing, status)
+- ``<input>.orthosnap.subgroups.tsv`` (subgroup-level summary)
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --structured-output
+
+Occupancy modes
+---------------
+
+OrthoSNAP supports three occupancy inputs:
+
+- ``-o/--occupancy`` legacy numeric threshold
+- ``--occupancy-count`` explicit count threshold
+- ``--occupancy-fraction`` fraction in ``(0, 1]`` converted to a count per input FASTA
+
+Use only one occupancy mode at a time.
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --occupancy-count 5
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --occupancy-fraction 0.5
+
+Resume mode
+-----------
+
+Use ``--resume`` to skip rerunning jobs that already have completed outputs in the target directory.
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t phylogeny_of_orthogroup_of_genes.tre --resume
+
+Batch manifest mode
+-------------------
+
+Use ``--manifest`` with a TSV/CSV listing runs. Required columns are:
+
+- ``tree``
+- ``fasta``
+
+Optional per-row columns can override CLI defaults (for example: ``support``, ``occupancy``,
+``occupancy_count``, ``occupancy_fraction``, ``delimiter``, ``rooted``, ``snap_trees``,
+``report_inparalog_handling``, ``inparalog_to_keep``, ``output_path``, ``id``).
+
+.. code-block:: shell
+
+   $ orthosnap --manifest runs.tsv --structured-output -op batch_results/
+
+Manifest mode writes aggregate summaries:
+
+- ``manifest_summary_<timestamp>.tsv``
+- ``manifest_summary_<timestamp>.json``
+
+Bootstrap consensus mode
+------------------------
+
+Use ``--bootstrap-trees`` with a plain-text file containing one tree path per line.
+OrthoSNAP extracts subgroup tip sets from each tree and reports consensus groups.
+
+Use ``--consensus-min-frequency`` to require a minimum support frequency.
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t reference.treefile --bootstrap-trees bootstrap_paths.txt --consensus-min-frequency 0.5
+
 Input requirements
 ------------------
 
@@ -147,6 +232,10 @@ All options
      - Collapse threshold for branch support (default: 80).
    * - ``-o/--occupancy``
      - Minimum represented taxa for subgroup candidates (default: rounded half of taxa in input FASTA).
+   * - ``--occupancy-count``
+     - Explicit minimum represented-taxa count.
+   * - ``--occupancy-fraction``
+     - Minimum represented-taxa fraction in ``(0, 1]``; converted to count for each input FASTA.
    * - ``-r/--rooted``
      - Treat input tree as rooted; otherwise midpoint-root it (default: false).
    * - ``-d/--delimiter``
@@ -159,6 +248,18 @@ All options
      - Write tab-delimited inparalog handling report (default: false).
    * - ``-op/--output_path``
      - Output directory (default: directory containing input FASTA).
+   * - ``--manifest``
+     - Batch mode: run many jobs from a TSV/CSV manifest.
+   * - ``--validate-only``
+     - Validate inputs and exit without running extraction.
+   * - ``--resume``
+     - Skip runs that already have completed outputs.
+   * - ``--structured-output``
+     - Write JSON/TSV provenance and subgroup summaries.
+   * - ``--bootstrap-trees``
+     - File with bootstrap tree paths (one per line) for consensus subgrouping.
+   * - ``--consensus-min-frequency``
+     - Minimum subgroup frequency required to emit a consensus group (default: 0.5).
    * - ``-ps/--plot_snap_ogs``
      - Write one color-coded full-tree plot with subgroup labels (default: false).
    * - ``-pf/--plot_format``

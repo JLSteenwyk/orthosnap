@@ -41,8 +41,9 @@ class TestParser(object):
         assert parsed.support == float(support)
 
     def test_parser_when_no_args(self, parser):
-        with pytest.raises(SystemExit):
-            parser.parse_args([])
+        parsed = parser.parse_args([])
+        assert parsed.tree is None
+        assert parsed.fasta is None
 
     def test_plot_flags(self, parser):
         parsed = parser.parse_args(
@@ -58,3 +59,27 @@ class TestParser(object):
         )
         assert parsed.plot_snap_ogs is True
         assert parsed.plot_format == "pdf"
+
+    def test_new_workflow_flags(self, parser):
+        parsed = parser.parse_args(
+            [
+                "--manifest",
+                "manifest.tsv",
+                "--validate-only",
+                "--resume",
+                "--structured-output",
+                "--bootstrap-trees",
+                "bootstrap_paths.txt",
+                "--consensus-min-frequency",
+                "0.7",
+                "--occupancy-count",
+                "4",
+            ]
+        )
+        assert parsed.manifest == "manifest.tsv"
+        assert parsed.validate_only is True
+        assert parsed.resume is True
+        assert parsed.structured_output is True
+        assert parsed.bootstrap_trees == "bootstrap_paths.txt"
+        assert parsed.consensus_min_frequency == 0.7
+        assert parsed.occupancy_count == 4
