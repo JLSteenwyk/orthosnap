@@ -32,6 +32,7 @@ def args():
         structured_output=False,
         bootstrap_trees=None,
         consensus_min_frequency=0.5,
+        consensus_trees=False,
         occupancy_count=None,
         occupancy_fraction=None,
     )
@@ -202,3 +203,8 @@ class TestArgsProcessing(object):
         args.manifest = str(manifest)
         res = process_args(args)
         assert res["manifest"] == str(manifest)
+
+    def test_consensus_trees_flag(self, args):
+        args.consensus_trees = True
+        res = process_args(args)
+        assert res["consensus_trees"] is True

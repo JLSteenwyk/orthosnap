@@ -72,6 +72,7 @@ class TestParser(object):
                 "bootstrap_paths.txt",
                 "--consensus-min-frequency",
                 "0.7",
+                "--consensus-trees",
                 "--occupancy-count",
                 "4",
             ]
@@ -82,4 +83,5 @@ class TestParser(object):
         assert parsed.structured_output is True
         assert parsed.bootstrap_trees == "bootstrap_paths.txt"
         assert parsed.consensus_min_frequency == 0.7
+        assert parsed.consensus_trees is True
         assert parsed.occupancy_count == 4

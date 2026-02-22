@@ -72,6 +72,7 @@ def process_args(args) -> dict:
     structured_output = getattr(args, "structured_output", False)
     bootstrap_trees = getattr(args, "bootstrap_trees", None)
     consensus_min_frequency = getattr(args, "consensus_min_frequency", None)
+    consensus_trees = getattr(args, "consensus_trees", False)
 
     if consensus_min_frequency is None:
         consensus_min_frequency = 0.5
@@ -152,6 +153,7 @@ def process_args(args) -> dict:
         structured_output=structured_output,
         bootstrap_trees=bootstrap_trees,
         consensus_min_frequency=consensus_min_frequency,
+        consensus_trees=consensus_trees,
         total_taxa=total_taxa,
     )
 

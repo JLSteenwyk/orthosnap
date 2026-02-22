@@ -10,6 +10,25 @@ OrthoSNAP takes:
 
 It outputs one FASTA file per inferred SNAP-OG (single-copy orthologous subgroup). Optionally, it can also write a Newick tree per SNAP-OG, an inparalog handling report, and one color-coded subgroup plot for the full input tree.
 
+Version differences
+-------------------
+
+**v1.6.0** expands OrthoSNAP from single-run CLI usage to pipeline-oriented workflows:
+
+- Batch manifests (``--manifest``)
+- Validation-only preflight checks (``--validate-only``)
+- Structured provenance output (``--structured-output``)
+- Explicit occupancy semantics (``--occupancy-count``, ``--occupancy-fraction``)
+- Resume-aware execution (``--resume``)
+- Bootstrap consensus subgrouping (``--bootstrap-trees``, ``--consensus-min-frequency``, ``--consensus-trees``)
+
+Compared with prior versions:
+
+- **v1.5.0**: plotting outputs and performance improvements.
+- **v1.3.2**: delimiter configurability.
+- **v1.2.0**: inparalog handling report output.
+- **v1.0.0 and earlier**: core subgroup extraction/pruning behavior.
+
 Basic usage
 -----------
 
@@ -99,10 +118,15 @@ Use ``--bootstrap-trees`` with a plain-text file containing one tree path per li
 OrthoSNAP extracts subgroup tip sets from each tree and reports consensus groups.
 
 Use ``--consensus-min-frequency`` to require a minimum support frequency.
+Use ``--consensus-trees`` to additionally write one consensus Newick tree per emitted group.
 
 .. code-block:: shell
 
    $ orthosnap -f orthogroup_of_genes.faa -t reference.treefile --bootstrap-trees bootstrap_paths.txt --consensus-min-frequency 0.5
+
+.. code-block:: shell
+
+   $ orthosnap -f orthogroup_of_genes.faa -t reference.treefile --bootstrap-trees bootstrap_paths.txt --consensus-trees
 
 Input requirements
 ------------------
@@ -204,7 +228,7 @@ Compared versions:
 - `1.1.0` (PyPI baseline)
 - `1.2.0` (PyPI)
 - `1.3.2` (PyPI)
-- `1.5.0-current` (local)
+- `1.6.0-current` (local)
 
 .. image:: ../_static/img/orthosnap_speedup_pypi_comparison.png
    :width: 100%
@@ -260,6 +284,8 @@ All options
      - File with bootstrap tree paths (one per line) for consensus subgrouping.
    * - ``--consensus-min-frequency``
      - Minimum subgroup frequency required to emit a consensus group (default: 0.5).
+   * - ``--consensus-trees``
+     - In consensus mode, also write one Newick tree per emitted consensus group.
    * - ``-ps/--plot_snap_ogs``
      - Write one color-coded full-tree plot with subgroup labels (default: false).
    * - ``-pf/--plot_format``

@@ -91,6 +91,7 @@ class TestNewWorkflows:
                 str(bootstrap),
                 "--consensus-min-frequency",
                 "0.5",
+                "--consensus-trees",
                 "--structured-output",
                 "-op",
                 str(tmp_path),
@@ -99,9 +100,41 @@ class TestNewWorkflows:
 
         consensus_tsv = tmp_path / f"{SAMPLE_FASTA.name}.orthosnap.consensus.tsv"
         consensus_fa = list(tmp_path.glob(f"{SAMPLE_FASTA.name}.orthosnap.consensus_*.fa"))
+        consensus_tre = list(tmp_path.glob(f"{SAMPLE_FASTA.name}.orthosnap.consensus_*.tre"))
 
         assert consensus_tsv.exists()
         assert len(consensus_fa) > 0
+        assert len(consensus_tre) > 0
+
+    def test_bootstrap_consensus_ids_are_stable(self, tmp_path):
+        bootstrap = tmp_path / "bootstrap_trees.txt"
+        bootstrap.write_text(f"{SAMPLE_TREE}\n{SAMPLE_TREE}\n")
+
+        out_a = tmp_path / "run_a"
+        out_b = tmp_path / "run_b"
+
+        args = [
+            "-t",
+            str(SAMPLE_TREE),
+            "-f",
+            str(SAMPLE_FASTA),
+            "--bootstrap-trees",
+            str(bootstrap),
+            "--consensus-min-frequency",
+            "0.5",
+            "--consensus-trees",
+        ]
+
+        main(args + ["-op", str(out_a)])
+        main(args + ["-op", str(out_b)])
+
+        ids_a = sorted(path.name for path in out_a.glob(f"{SAMPLE_FASTA.name}.orthosnap.consensus_*.fa"))
+        ids_b = sorted(path.name for path in out_b.glob(f"{SAMPLE_FASTA.name}.orthosnap.consensus_*.fa"))
+        trees_a = sorted(path.name for path in out_a.glob(f"{SAMPLE_FASTA.name}.orthosnap.consensus_*.tre"))
+        trees_b = sorted(path.name for path in out_b.glob(f"{SAMPLE_FASTA.name}.orthosnap.consensus_*.tre"))
+
+        assert ids_a == ids_b
+        assert trees_a == trees_b
 
     def test_occupancy_fraction_and_count_modes(self, tmp_path):
         out_fraction = tmp_path / "fraction"

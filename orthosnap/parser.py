@@ -295,6 +295,13 @@ def create_parser():
     )
 
     optional.add_argument(
+        "--consensus-trees",
+        action="store_true",
+        required=False,
+        help=SUPPRESS,
+    )
+
+    optional.add_argument(
         "-ps",
         "--plot_snap_ogs",
         action="store_true",

@@ -8,6 +8,7 @@ import re
 import sys
 import time
 from collections import Counter
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -297,6 +298,9 @@ def _write_consensus_outputs(
     support_counts: Counter,
     num_trees: int,
     min_frequency: float,
+    consensus_trees: bool,
+    reference_tree_path: str,
+    rooted: bool,
 ):
     fasta_path_stripped = re.sub("^.*/", "", fasta)
     tsv_path = f"{output_path}{fasta_path_stripped}.orthosnap.consensus.tsv"
@@ -309,14 +313,15 @@ def _write_consensus_outputs(
     with open(tsv_path, "w", newline="") as handle:
         writer = csv.writer(handle, delimiter="\t")
         writer.writerow(["consensus_id", "count", "frequency", "tip_count", "taxa_count", "tips"])
-        for idx, (tips_set, count) in enumerate(sorted_items):
+        for tips_set, count in sorted_items:
             frequency = count / num_trees
             if frequency < min_frequency:
                 continue
             emitted += 1
             tips = sorted(tips_set)
             taxa_count = len({tip.split(delimiter, 1)[0] for tip in tips})
-            consensus_id = f"consensus_{idx}"
+            digest = hashlib.sha1(";".join(tips).encode("utf-8")).hexdigest()[:12]
+            consensus_id = f"consensus_{digest}"
             writer.writerow([consensus_id, count, round(frequency, 6), len(tips), taxa_count, ";".join(tips)])
 
             fasta_out = f"{output_path}{fasta_path_stripped}.orthosnap.{consensus_id}.fa"
@@ -324,6 +329,17 @@ def _write_consensus_outputs(
                 for tip in tips:
                     if tip in fasta_dict:
                         SeqIO.write(fasta_dict[tip], out_handle, "fasta")
+            if consensus_trees:
+                reference_tree = Phylo.read(reference_tree_path, "newick")
+                if not rooted:
+                    reference_tree.root_at_midpoint()
+                pruned_tree = deepcopy(reference_tree)
+                keep_tips = set(tips)
+                for terminal in list(pruned_tree.get_terminals()):
+                    if terminal.name not in keep_tips:
+                        pruned_tree.prune(terminal)
+                tree_out = f"{output_path}{fasta_path_stripped}.orthosnap.{consensus_id}.tre"
+                Phylo.write(pruned_tree, tree_out, "newick")
 
     return tsv_path, emitted
 
@@ -349,6 +365,7 @@ def execute(
     structured_output: bool = False,
     bootstrap_trees: str = None,
     consensus_min_frequency: float = 0.5,
+    consensus_trees: bool = False,
     total_taxa: int = None,
 ):
     """
@@ -484,6 +501,9 @@ def execute(
             support_counts=support_counts,
             num_trees=len(tree_paths),
             min_frequency=consensus_min_frequency,
+            consensus_trees=consensus_trees,
+            reference_tree_path=tree,
+            rooted=rooted,
         )
         end_time = time.time()
 
@@ -508,6 +528,7 @@ def execute(
                     "delimiter": delimiter,
                     "bootstrap_trees": bootstrap_trees,
                     "consensus_min_frequency": consensus_min_frequency,
+                    "consensus_trees": consensus_trees,
                 },
                 status="completed",
                 extra={

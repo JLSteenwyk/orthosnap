@@ -48,6 +48,24 @@ If you found OrthoSNAP useful, please cite:
 Full usage documentation and tutorial:
 [https://jlsteenwyk.com/orthosnap/](https://jlsteenwyk.com/orthosnap/)
 
+## What's new in v1.6.0
+
+Compared to v1.5.0 (plotting + performance improvements), v1.6.0 adds workflow-scale and reproducibility features:
+
+- `--manifest`: batch execution from TSV/CSV manifests.
+- `--validate-only`: preflight input concordance checks without extraction.
+- `--structured-output`: machine-readable run metadata (`.run.json`) and subgroup summaries (`.subgroups.tsv`).
+- `--occupancy-count` / `--occupancy-fraction`: explicit occupancy semantics.
+- `--resume`: skip rerunning completed analyses.
+- `--bootstrap-trees` + `--consensus-min-frequency` + `--consensus-trees`: consensus subgrouping across bootstrap tree uncertainty.
+
+Compared to older releases:
+
+- v1.5.0 focused on plotting and runtime optimization.
+- v1.3.2 introduced configurable delimiters.
+- v1.2.0 added inparalog handling reports.
+- v1.0.0 and earlier focused on core pruning behavior.
+
 ## Installation
 
 ### Install with pip (recommended)
@@ -136,6 +154,12 @@ Run bootstrap consensus mode using a file of tree paths (one per line):
 
 ```shell
 orthosnap -f orthogroup_of_genes.faa -t reference.treefile --bootstrap-trees bootstrap_paths.txt --consensus-min-frequency 0.5
+```
+
+Also write consensus Newick trees:
+
+```shell
+orthosnap -f orthogroup_of_genes.faa -t reference.treefile --bootstrap-trees bootstrap_paths.txt --consensus-trees
 ```
 
 ## Support
