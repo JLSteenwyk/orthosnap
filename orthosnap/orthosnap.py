@@ -383,6 +383,16 @@ def execute(
         print("Input validation failed:")
         for error in validation_summary["errors"]:
             print(f"- {error}")
+        # Backward compatibility for tests and downstream log parsers that
+        # rely on the historical delimiter error string.
+        delimiter_errors = [
+            err for err in validation_summary["errors"] if "missing from" in err and "Delimiter" in err
+        ]
+        if delimiter_errors:
+            print(
+                f"\nERROR: Delimiter does not exist in FASTA headers.\n"
+                f"Specify the delimiter using the -d argument."
+            )
         if structured_output:
             now = time.time()
             _write_structured_outputs(
