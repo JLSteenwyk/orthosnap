@@ -148,3 +148,6 @@ submitting_to_conda.txt
 # codex audit helper and generated artifacts
 scripts/codex_audit.sh
 audits/
+
+# social media content
+social_content/
