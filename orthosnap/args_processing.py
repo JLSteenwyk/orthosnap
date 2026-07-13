@@ -10,7 +10,7 @@ from .helper import InparalogToKeep
 logger = logging.getLogger(__name__)
 
 
-def process_args(args) -> dict:
+def process_args(args, resolve_occupancy: bool = True) -> dict:
     """
     Process args from argparser and set defaults
     """
@@ -109,7 +109,7 @@ def process_args(args) -> dict:
     elif occupancy_fraction is not None:
         occupancy_mode = "fraction"
 
-    if fasta is not None:
+    if resolve_occupancy and fasta is not None:
         total_taxa = count_unique_taxa_in_fasta(fasta, delimiter)
     else:
         total_taxa = None
@@ -117,15 +117,15 @@ def process_args(args) -> dict:
     resolved_occupancy = None
     if occupancy_mode == "count":
         resolved_occupancy = int(occupancy_count)
-    elif occupancy_mode == "fraction":
+    elif occupancy_mode == "fraction" and resolve_occupancy:
         if total_taxa is None:
             logger.warning("Cannot resolve occupancy fraction without a FASTA input.")
             sys.exit()
         resolved_occupancy = max(1, int(math.ceil(occupancy_fraction * total_taxa)))
     elif occupancy is not None:
         resolved_occupancy = occupancy
-    elif fasta is not None:
-        resolved_occupancy = determine_occupancy_threshold(fasta, delimiter)
+    elif total_taxa is not None:
+        resolved_occupancy = proper_round(total_taxa / 2)
 
     if resolved_occupancy is not None and resolved_occupancy <= 0:
         logger.warning("Occupancy threshold must be greater than 0.")
@@ -160,12 +160,10 @@ def process_args(args) -> dict:
 
 def determine_occupancy_threshold(fasta: str, delimiter: str) -> int:
     fasta = SeqIO.parse(fasta, "fasta")
-    unique_names = []
+    unique_names = set()
 
     for i in fasta:
-        i = i.id.split(delimiter, 1)[0]
-        if i not in unique_names:
-            unique_names.append(i)
+        unique_names.add(i.id.split(delimiter, 1)[0])
 
     occupancy_threshold = proper_round(len(unique_names) / 2)
 

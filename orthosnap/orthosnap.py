@@ -16,14 +16,13 @@ from Bio import Phylo
 from Bio import SeqIO
 from tqdm import tqdm
 
-from .args_processing import determine_occupancy_threshold, process_args
+from .args_processing import process_args, proper_round
 from .helper import (
     build_subtree_taxa_cache,
     check_if_single_copy,
     get_all_tips_and_taxa_names,
     handle_multi_copy_subtree,
     handle_single_copy_subtree,
-    read_input_files,
 )
 from .helper import InparalogToKeep
 from .parser import create_parser
@@ -48,13 +47,21 @@ def _parse_bool(value, default=False):
     return str(value).strip().lower() in {"1", "true", "yes", "y", "on"}
 
 
-def _validate_inputs(tree_path: str, fasta_path: str, delimiter: str):
+def _validate_inputs(
+    tree_path: str,
+    fasta_path: str,
+    delimiter: str,
+    return_parsed: bool = False,
+):
     errors = []
 
     try:
         tree = Phylo.read(tree_path, "newick")
     except Exception as exc:  # pragma: no cover - defensive
-        return False, {"errors": [f"Failed to parse tree: {exc}"]}
+        result = (False, {"errors": [f"Failed to parse tree: {exc}"]})
+        if return_parsed:
+            return (*result, None, [])
+        return result
 
     fasta_records = list(SeqIO.parse(fasta_path, "fasta"))
     if not fasta_records:
@@ -67,8 +74,9 @@ def _validate_inputs(tree_path: str, fasta_path: str, delimiter: str):
             "Duplicate FASTA IDs detected: " + ", ".join(sorted(duplicate_ids)[:10])
         )
 
-    tree_tips = [tip.name for tip in tree.get_terminals() if tip.name is not None]
-    missing_tree_names = ["<unnamed tip>"] if len(tree_tips) != len(tree.get_terminals()) else []
+    tree_terminals = tree.get_terminals()
+    tree_tips = [tip.name for tip in tree_terminals if tip.name is not None]
+    missing_tree_names = ["<unnamed tip>"] if len(tree_tips) != len(tree_terminals) else []
     if missing_tree_names:
         errors.append("Tree contains unnamed tips.")
 
@@ -110,7 +118,10 @@ def _validate_inputs(tree_path: str, fasta_path: str, delimiter: str):
         "missing_in_fasta": len(missing_in_fasta),
         "errors": errors,
     }
-    return len(errors) == 0, summary
+    result = (len(errors) == 0, summary)
+    if return_parsed:
+        return (*result, tree, fasta_records)
+    return result
 
 
 def _write_structured_outputs(
@@ -378,7 +389,12 @@ def execute(
 
     os.makedirs(output_path, exist_ok=True)
 
-    valid, validation_summary = _validate_inputs(tree, fasta, delimiter)
+    (
+        valid,
+        validation_summary,
+        parsed_tree,
+        fasta_records,
+    ) = _validate_inputs(tree, fasta, delimiter, return_parsed=True)
     if not valid:
         print("Input validation failed:")
         for error in validation_summary["errors"]:
@@ -409,6 +425,15 @@ def execute(
                 extra={"validation": validation_summary},
             )
         sys.exit(1)
+
+    if total_taxa is None:
+        total_taxa = validation_summary["unique_taxa"]
+    if occupancy_mode == "fraction":
+        occupancy = max(1, int((occupancy_fraction * total_taxa) + 0.999999))
+    elif occupancy_mode == "count":
+        occupancy = occupancy_count
+    elif occupancy is None:
+        occupancy = proper_round(total_taxa / 2)
 
     print("Input validation summary:")
     print(f"- Tree tips: {validation_summary['tree_tips']}")
@@ -479,10 +504,12 @@ def execute(
             print("No bootstrap tree paths were provided.")
             sys.exit(1)
 
-        fasta_dict = SeqIO.to_dict(SeqIO.parse(fasta, "fasta"))
+        fasta_dict = {record.id: record for record in fasta_records}
         support_counts = Counter()
         for tree_path in tree_paths:
-            tree_obj, _ = read_input_files(tree_path, fasta, rooted)
+            tree_obj = Phylo.read(tree_path, "newick")
+            if not rooted:
+                tree_obj.root_at_midpoint()
             extraction = _extract_subgroups(
                 tree=tree_obj,
                 fasta=fasta,
@@ -551,7 +578,10 @@ def execute(
             "subgroup_records": [],
         }
 
-    tree_obj, fasta_dict = read_input_files(tree, fasta, rooted)
+    tree_obj = parsed_tree
+    if not rooted:
+        tree_obj.root_at_midpoint()
+    fasta_dict = {record.id: record for record in fasta_records}
 
     extraction = _extract_subgroups(
         tree=tree_obj,
@@ -690,23 +720,10 @@ def _execute_manifest_runs(config: dict):
 
             if run_cfg.get("occupancy_fraction") is not None:
                 run_cfg["occupancy_mode"] = "fraction"
-                unique_taxa = len(
-                    {
-                        rec.id.split(run_cfg["delimiter"], 1)[0]
-                        for rec in SeqIO.parse(fasta, "fasta")
-                    }
-                )
-                run_cfg["occupancy"] = max(
-                    1,
-                    int((run_cfg["occupancy_fraction"] * unique_taxa) + 0.999999),
-                )
+                run_cfg["occupancy"] = None
             elif run_cfg.get("occupancy_count") is not None:
                 run_cfg["occupancy_mode"] = "count"
                 run_cfg["occupancy"] = run_cfg["occupancy_count"]
-            elif run_cfg.get("occupancy") is None:
-                run_cfg["occupancy"] = determine_occupancy_threshold(
-                    fasta, run_cfg["delimiter"]
-                )
 
             run_cfg.pop("manifest", None)
             result = execute(**run_cfg)
@@ -753,7 +770,7 @@ def main(argv=None):
         sys.exit(2)
 
     args = parser.parse_args(argv)
-    config = process_args(args)
+    config = process_args(args, resolve_occupancy=False)
 
     if config.get("manifest"):
         _execute_manifest_runs(config)
