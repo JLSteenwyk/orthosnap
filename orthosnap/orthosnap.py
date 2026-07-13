@@ -20,7 +20,6 @@ from .helper import (
     build_subtree_taxa_cache,
     check_if_single_copy,
     clone_induced_tree,
-    get_all_tips_and_taxa_names,
     handle_multi_copy_subtree,
     handle_single_copy_subtree,
 )
@@ -209,7 +208,9 @@ def _extract_subgroups(
     delimiter: str,
     write_outputs: bool,
 ):
-    taxa, all_tips = get_all_tips_and_taxa_names(tree, delimiter)
+    subtree_cache = build_subtree_taxa_cache(tree, delimiter)
+    all_tips = subtree_cache.terminal_names
+    taxa = set(subtree_cache.taxon_names)
 
     if check_if_single_copy(taxa, all_tips):
         return {
@@ -224,7 +225,6 @@ def _extract_subgroups(
     inparalog_handling = dict()
     inparalog_handling_summary = dict()
     subgroup_records = []
-    subtree_cache = build_subtree_taxa_cache(tree, delimiter)
     sequence_lengths = {}
 
     for inter in tqdm(subtree_cache.internal_clades[1:]):

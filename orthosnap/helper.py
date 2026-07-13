@@ -425,6 +425,21 @@ class SubtreeTaxaCache(Mapping):
         )
         return (end - start - pruned_in_clade) == len(duplicate_tips)
 
+    def distance_from(self, ancestor, terminal_name: str):
+        """Return an exact ancestor-to-tip distance using cached parent links."""
+        clade = self.terminal_clades[terminal_name]
+        path_branch_lengths = []
+        while clade is not ancestor:
+            path_branch_lengths.append(clade.branch_length)
+            clade = self.parent_lookup.get(clade)
+            if clade is None:
+                raise ValueError("terminal is not below the requested ancestor")
+        return sum(
+            branch_length
+            for branch_length in reversed(path_branch_lengths)
+            if branch_length
+        )
+
 
 def build_subtree_taxa_cache(tree, delimiter: str):
     """
@@ -563,6 +578,7 @@ def _select_inparalog_to_keep(
     dups: list,
     inparalog_to_keep: InparalogToKeep,
     sequence_lengths: dict = None,
+    distance_lookup=None,
 ):
     """Select one inparalog with the historical ordering and tie behavior."""
     values = {}
@@ -580,7 +596,11 @@ def _select_inparalog_to_keep(
             values[dup] = sequence_lengths[dup]
     else:
         for dup in dups:
-            values[dup] = TreeMixin.distance(tree, dup)
+            values[dup] = (
+                distance_lookup(dup)
+                if distance_lookup is not None
+                else TreeMixin.distance(tree, dup)
+            )
 
     if inparalog_to_keep.value in ["shortest_seq_len", "shortest_branch_len"]:
         return min(values, key=values.get)
@@ -621,8 +641,6 @@ def _handle_multi_copy_subtree_indexed(
     pruned_indices = []
     pruned_tips = []
     resolved_duplicate_taxa = set()
-    distance_tree = Tree(root=subtree)
-
     for name, count in counts_of_taxa_from_terms.items():
         if count <= 1:
             continue
@@ -636,11 +654,12 @@ def _handle_multi_copy_subtree_indexed(
             continue
 
         seq_to_keep = _select_inparalog_to_keep(
-            distance_tree,
+            None,
             fasta_dict,
             dups,
             inparalog_to_keep,
             sequence_lengths,
+            distance_lookup=lambda tip: subtree_cache.distance_from(subtree, tip),
         )
         trimmed = [dup for dup in dups if dup != seq_to_keep]
         inparalog_handling[seq_to_keep] = trimmed

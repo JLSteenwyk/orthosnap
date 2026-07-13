@@ -6,6 +6,8 @@ import pytest
 from Bio import Phylo
 from Bio.Phylo.BaseTree import Clade, Tree
 from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 from orthosnap.helper import (
     InparalogToKeep,
@@ -14,7 +16,7 @@ from orthosnap.helper import (
     handle_multi_copy_subtree,
     handle_single_copy_subtree,
 )
-from orthosnap.orthosnap import _extract_subgroups
+from orthosnap.orthosnap import _extract_subgroups, main
 
 
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
@@ -142,6 +144,37 @@ def _unbalanced_tree(tip_count):
     return Tree(root=root)
 
 
+def _multi_group_tree(group_count, taxa_per_group, shape):
+    subgroup_clades = []
+    fasta_dict = {}
+    expected_groups = []
+    for group_index in range(group_count):
+        names = [
+            f"taxon_{taxon_index}|gene_{group_index}"
+            for taxon_index in range(taxa_per_group)
+        ]
+        expected_groups.append(names)
+        tips = []
+        for name in names:
+            tips.append(Clade(name=name, branch_length=0.1))
+            fasta_dict[name] = SeqRecord(Seq("MAAAAA"), id=name, description="")
+        subgroup_clades.append(Clade(confidence=100, clades=tips))
+
+    if shape == "balanced":
+        current = subgroup_clades
+        while len(current) > 1:
+            current = [
+                Clade(confidence=100, clades=current[index : index + 2])
+                for index in range(0, len(current), 2)
+            ]
+        root = current[0]
+    else:
+        root = subgroup_clades[0]
+        for subgroup in subgroup_clades[1:]:
+            root = Clade(confidence=100, clades=[root, subgroup])
+    return Tree(root=root), fasta_dict, expected_groups
+
+
 @pytest.mark.parametrize("tree_factory", [_balanced_tree, _unbalanced_tree])
 def test_compact_cache_preserves_order_and_linear_metadata(tree_factory):
     tree = tree_factory(256)
@@ -159,6 +192,62 @@ def test_compact_cache_preserves_order_and_linear_metadata(tree_factory):
         assert terms_set == set(expected_terms)
         assert sum(taxa_counts.values()) == len(expected_terms)
         assert counts == list(taxa_counts.values())
+
+
+def test_compact_cache_handles_tree_deeper_than_python_recursion_limit():
+    tree = _unbalanced_tree(1500)
+    cache = build_subtree_taxa_cache(tree, "|")
+
+    assert len(cache.terminal_names) == 1500
+    assert len(cache.internal_clades) == 1499
+
+
+@pytest.mark.parametrize("shape", ["balanced", "unbalanced"])
+def test_indexed_extraction_on_synthetic_tree_shapes(shape):
+    tree, fasta_dict, expected_groups = _multi_group_tree(24, 6, shape)
+    result = _extract_subgroups(
+        tree=tree,
+        fasta="synthetic.fasta",
+        fasta_dict=fasta_dict,
+        support=80,
+        occupancy=6,
+        snap_trees=False,
+        inparalog_to_keep=InparalogToKeep.longest_seq_len,
+        output_path="",
+        report_inparalog_handling=False,
+        delimiter="|",
+        write_outputs=False,
+    )
+
+    assert result["subgroup_counter"] == 24
+    assert [record["tips"] for record in result["subgroup_records"]] == expected_groups
+
+
+def test_cli_reuses_tree_and_fasta_parsed_during_validation(tmp_path, mocker):
+    original_tree_read = Phylo.read
+    original_fasta_parse = SeqIO.parse
+    tree_read = mocker.patch(
+        "orthosnap.orthosnap.Phylo.read",
+        side_effect=original_tree_read,
+    )
+    fasta_parse = mocker.patch(
+        "orthosnap.orthosnap.SeqIO.parse",
+        side_effect=original_fasta_parse,
+    )
+
+    main(
+        [
+            "-t",
+            str(SAMPLE_TREE),
+            "-f",
+            str(SAMPLE_FASTA),
+            "-op",
+            str(tmp_path),
+        ]
+    )
+
+    assert tree_read.call_count == 1
+    assert fasta_parse.call_count == 1
 
 
 @pytest.mark.parametrize("selection", ["prefix", "alternating", "singleton"])
