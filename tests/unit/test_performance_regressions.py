@@ -249,6 +249,35 @@ def test_cli_reuses_tree_and_fasta_parsed_during_validation(tmp_path):
     assert fasta_parse.call_count == 1
 
 
+def test_bootstrap_reuses_fasta_and_parses_each_tree_once(tmp_path):
+    bootstrap_path = tmp_path / "bootstrap_trees.txt"
+    bootstrap_path.write_text(f"{SAMPLE_TREE}\n{SAMPLE_TREE}\n")
+    original_tree_read = Phylo.read
+    original_fasta_parse = SeqIO.parse
+    with patch(
+        "orthosnap.orthosnap.Phylo.read",
+        side_effect=original_tree_read,
+    ) as tree_read, patch(
+        "orthosnap.orthosnap.SeqIO.parse",
+        side_effect=original_fasta_parse,
+    ) as fasta_parse:
+        main(
+            [
+                "-t",
+                str(SAMPLE_TREE),
+                "-f",
+                str(SAMPLE_FASTA),
+                "-op",
+                str(tmp_path / "output"),
+                "--bootstrap-trees",
+                str(bootstrap_path),
+            ]
+        )
+
+    assert tree_read.call_count == 3
+    assert fasta_parse.call_count == 1
+
+
 @pytest.mark.parametrize("selection", ["prefix", "alternating", "singleton"])
 def test_induced_clone_matches_sequential_pruning(selection):
     tree = Phylo.read(SAMPLE_TREE, "newick")
