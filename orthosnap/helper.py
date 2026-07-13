@@ -1,5 +1,7 @@
 from collections import Counter
+from collections.abc import Mapping
 from enum import Enum
+from bisect import bisect_left, bisect_right, insort
 import re
 import sys
 
@@ -189,6 +191,7 @@ def get_all_tips_and_taxa_names(tree, delimiter: str):
     return lists with information from each
     """
     taxa = []
+    seen_taxa = set()
     all_tips = []
 
     # loop through the tree and collect terminal names
@@ -198,7 +201,8 @@ def get_all_tips_and_taxa_names(tree, delimiter: str):
         except ValueError:
             print("\nERROR: Delimiter does not exist in FASTA headers.\nSpecify the delimiter using the -d argument.")
             sys.exit()
-        if taxa_name not in taxa:
+        if taxa_name not in seen_taxa:
+            seen_taxa.add(taxa_name)
             taxa.append(taxa_name)
         all_tips.append(term.name)
 
@@ -248,39 +252,138 @@ def get_tips_and_taxa_names_and_taxa_counts_from_subtrees(inter, delimiter: str)
     return taxa_from_terms, terms, counts_of_taxa_from_terms, counts
 
 
+class SubtreeTaxaCache(Mapping):
+    """Compact, lazily materialized terminal and taxon data for clades."""
+
+    def __init__(self, tree, delimiter: str):
+        self.delimiter = delimiter
+        self.terminal_names = []
+        self.taxon_names = []
+        self.terminal_indices = {}
+        self.terminal_clades = {}
+        self.internal_clades = []
+        self.parent_lookup = {}
+        self._intervals = {}
+        self._summaries = {}
+
+        stack = [tree.root]
+        while stack:
+            clade = stack.pop()
+            if clade.is_terminal():
+                index = len(self.terminal_names)
+                self.terminal_names.append(clade.name)
+                self.taxon_names.append(clade.name.split(delimiter, 1)[0])
+                self.terminal_indices[clade.name] = index
+                self.terminal_clades[clade.name] = clade
+                self._intervals[clade] = (index, index + 1)
+                continue
+
+            self.internal_clades.append(clade)
+            for child in clade.clades:
+                self.parent_lookup[child] = clade
+            stack.extend(reversed(clade.clades))
+
+        taxa_sets = {}
+        stack = [(tree.root, False)]
+        while stack:
+            clade, visited = stack.pop()
+            if clade.is_terminal():
+                index = self._intervals[clade][0]
+                taxa_sets[clade] = {self.taxon_names[index]}
+                continue
+            if not visited:
+                stack.append((clade, True))
+                stack.extend((child, False) for child in reversed(clade.clades))
+                continue
+
+            child_sets = [taxa_sets.pop(child) for child in clade.clades]
+            largest_index = max(range(len(child_sets)), key=lambda i: len(child_sets[i]))
+            taxa = child_sets[largest_index]
+            for index, child_taxa in enumerate(child_sets):
+                if index != largest_index:
+                    taxa.update(child_taxa)
+
+            start = self._intervals[clade.clades[0]][0]
+            end = self._intervals[clade.clades[-1]][1]
+            terminal_count = end - start
+            self._intervals[clade] = (start, end)
+            self._summaries[clade] = (start, end, len(taxa), terminal_count)
+            taxa_sets[clade] = taxa
+
+        taxa_sets.clear()
+
+    def __getitem__(self, clade):
+        terms, terms_set, counts_of_taxa = self.details(clade)
+        return terms, terms_set, counts_of_taxa, list(counts_of_taxa.values())
+
+    def __iter__(self):
+        return iter(self._summaries)
+
+    def __len__(self):
+        return len(self._summaries)
+
+    def summary(self, clade):
+        """Return start, end, unique-taxon count, and terminal count."""
+        return self._summaries[clade]
+
+    def details(self, clade):
+        """Materialize the legacy cache values for one clade only."""
+        start, end, _, _ = self._summaries[clade]
+        terms = self.terminal_names[start:end]
+        counts_of_taxa = Counter(self.taxon_names[start:end])
+        return terms, set(terms), counts_of_taxa
+
+    def taxon_tip_groups(self, clade):
+        """Return terminal names grouped by taxon in terminal traversal order."""
+        start, end, _, _ = self._summaries[clade]
+        groups = {}
+        for index in range(start, end):
+            groups.setdefault(self.taxon_names[index], []).append(
+                self.terminal_names[index]
+            )
+        return groups
+
+    def duplicates_are_sister(
+        self,
+        candidate,
+        duplicate_tips: list,
+        pruned_indices: list,
+        support: float,
+    ):
+        """Test sisterhood after support collapse and earlier logical pruning."""
+        positions = [self.terminal_indices[name] for name in duplicate_tips]
+        first_position = min(positions)
+        last_position = max(positions)
+        clade = self.terminal_clades[duplicate_tips[0]]
+
+        while True:
+            start, end = self._intervals[clade]
+            contains_duplicates = start <= first_position and last_position < end
+            survives_collapse = (
+                clade is candidate
+                or clade.confidence is None
+                or clade.confidence >= support
+            )
+            if contains_duplicates and survives_collapse:
+                break
+            if clade is candidate:
+                return False
+            clade = self.parent_lookup.get(clade)
+            if clade is None:
+                return False
+
+        pruned_in_clade = bisect_right(pruned_indices, end - 1) - bisect_left(
+            pruned_indices, start
+        )
+        return (end - start - pruned_in_clade) == len(duplicate_tips)
+
+
 def build_subtree_taxa_cache(tree, delimiter: str):
     """
     Cache subtree term and taxa-count data for each internal clade.
     """
 
-    term_cache = dict()
-    taxa_count_cache = dict()
-    subtree_cache = dict()
-
-    for clade in tree.find_clades(order="postorder"):
-        if clade.is_terminal():
-            term_name = clade.name
-            term_cache[clade] = [term_name]
-            taxa_count_cache[clade] = Counter([term_name.split(delimiter, 1)[0]])
-            continue
-
-        terms = []
-        counts_of_taxa_from_terms = Counter()
-
-        for child in clade.clades:
-            terms.extend(term_cache[child])
-            counts_of_taxa_from_terms.update(taxa_count_cache[child])
-
-        term_cache[clade] = terms
-        taxa_count_cache[clade] = counts_of_taxa_from_terms
-        subtree_cache[clade] = (
-            terms,
-            set(terms),
-            counts_of_taxa_from_terms,
-            list(counts_of_taxa_from_terms.values()),
-        )
-
-    return subtree_cache
+    return SubtreeTaxaCache(tree, delimiter)
 
 
 def get_subtree_tips(terms: list, name: str, delimiter: str):
@@ -312,10 +415,36 @@ def handle_multi_copy_subtree(
     delimiter: str,
     subgroup_records: list = None,
     write_outputs: bool = True,
+    subtree_cache: SubtreeTaxaCache = None,
+    taxon_tip_groups: dict = None,
+    sequence_lengths: dict = None,
 ):
     """
     handling case where subtree contains all single copy genes
     """
+    if subtree_cache is not None:
+        return _handle_multi_copy_subtree_indexed(
+            subtree=subtree,
+            terms=terms,
+            subgroup_counter=subgroup_counter,
+            fasta=fasta,
+            support=support,
+            fasta_dict=fasta_dict,
+            assigned_tips=assigned_tips,
+            counts_of_taxa_from_terms=counts_of_taxa_from_terms,
+            snap_trees=snap_trees,
+            inparalog_to_keep=inparalog_to_keep,
+            output_path=output_path,
+            inparalog_handling=inparalog_handling,
+            inparalog_handling_summary=inparalog_handling_summary,
+            report_inparalog_handling=report_inparalog_handling,
+            subgroup_records=subgroup_records,
+            write_outputs=write_outputs,
+            subtree_cache=subtree_cache,
+            taxon_tip_groups=taxon_tip_groups,
+            sequence_lengths=sequence_lengths,
+        )
+
     newtree = clone_subtree_as_tree(subtree)
 
     # collapse bipartition with low support
@@ -380,6 +509,141 @@ def handle_multi_copy_subtree(
         inparalog_handling, inparalog_handling_summary
 
 
+def _select_inparalog_to_keep(
+    tree,
+    fasta_dict: dict,
+    dups: list,
+    inparalog_to_keep: InparalogToKeep,
+    sequence_lengths: dict = None,
+):
+    """Select one inparalog with the historical ordering and tie behavior."""
+    values = {}
+
+    if inparalog_to_keep.value in [
+        "shortest_seq_len",
+        "median_seq_len",
+        "longest_seq_len",
+    ]:
+        if sequence_lengths is None:
+            sequence_lengths = {}
+        for dup in dups:
+            if dup not in sequence_lengths:
+                sequence_lengths[dup] = len(re.sub("-", "", str(fasta_dict[dup].seq)))
+            values[dup] = sequence_lengths[dup]
+    else:
+        for dup in dups:
+            values[dup] = TreeMixin.distance(tree, dup)
+
+    if inparalog_to_keep.value in ["shortest_seq_len", "shortest_branch_len"]:
+        return min(values, key=values.get)
+    if inparalog_to_keep.value in ["longest_seq_len", "longest_branch_len"]:
+        return max(values, key=values.get)
+    if len(values) == 2:
+        return max(values, key=values.get)
+
+    sorted_items = sorted(values.items(), key=lambda item: (item[1], item[0]))
+    return sorted_items[len(sorted_items) // 2][0]
+
+
+def _handle_multi_copy_subtree_indexed(
+    subtree,
+    terms: list,
+    subgroup_counter: int,
+    fasta: str,
+    support: float,
+    fasta_dict: dict,
+    assigned_tips: set,
+    counts_of_taxa_from_terms,
+    snap_trees: bool,
+    inparalog_to_keep: InparalogToKeep,
+    output_path: str,
+    inparalog_handling: dict,
+    inparalog_handling_summary: dict,
+    report_inparalog_handling: bool,
+    subgroup_records: list,
+    write_outputs: bool,
+    subtree_cache: SubtreeTaxaCache,
+    taxon_tip_groups: dict,
+    sequence_lengths: dict,
+):
+    """Process a multi-copy candidate using the shared topology index."""
+    if taxon_tip_groups is None:
+        taxon_tip_groups = subtree_cache.taxon_tip_groups(subtree)
+
+    pruned_indices = []
+    pruned_tips = []
+    resolved_duplicate_taxa = set()
+    distance_tree = Tree(root=subtree)
+
+    for name, count in counts_of_taxa_from_terms.items():
+        if count <= 1:
+            continue
+        dups = taxon_tip_groups[name]
+        if not subtree_cache.duplicates_are_sister(
+            subtree,
+            dups,
+            pruned_indices,
+            support,
+        ):
+            continue
+
+        seq_to_keep = _select_inparalog_to_keep(
+            distance_tree,
+            fasta_dict,
+            dups,
+            inparalog_to_keep,
+            sequence_lengths,
+        )
+        trimmed = [dup for dup in dups if dup != seq_to_keep]
+        inparalog_handling[seq_to_keep] = trimmed
+        resolved_duplicate_taxa.add(name)
+        pruned_tips.extend(trimmed)
+        for tip in trimmed:
+            insort(pruned_indices, subtree_cache.terminal_indices[tip])
+
+    duplicate_taxa = {
+        name for name, count in counts_of_taxa_from_terms.items() if count > 1
+    }
+    if resolved_duplicate_taxa == duplicate_taxa:
+        pruned_tip_set = set(pruned_tips)
+        kept_terms = [term for term in terms if term not in pruned_tip_set]
+        newtree = None
+
+        if write_outputs and snap_trees:
+            newtree = clone_subtree_as_tree(subtree)
+            collapse_low_support_bipartitions(newtree, support)
+            terminal_lookup, parent_lookup = build_terminal_parent_maps(newtree)
+            for tip in pruned_tips:
+                prune_terminal_fast(newtree, tip, terminal_lookup, parent_lookup)
+
+        (
+            subgroup_counter,
+            assigned_tips,
+            inparalog_handling_summary,
+        ) = write_output_fasta_and_account_for_assigned_tips_single_copy_case(
+            fasta,
+            subgroup_counter,
+            kept_terms,
+            fasta_dict,
+            assigned_tips,
+            snap_trees,
+            newtree,
+            output_path,
+            inparalog_handling,
+            inparalog_handling_summary,
+            report_inparalog_handling,
+            subgroup_records,
+            write_outputs,
+        )
+
+    return (
+        subgroup_counter,
+        assigned_tips,
+        inparalog_handling,
+        inparalog_handling_summary,
+    )
+
+
 def handle_single_copy_subtree(
     subtree,
     terms: list,
@@ -399,10 +663,10 @@ def handle_single_copy_subtree(
     """
     handling case where subtree contains all single copy genes
     """
-    newtree = clone_subtree_as_tree(subtree)
-
-    # collapse bipartition with low support
-    newtree = collapse_low_support_bipartitions(newtree, support)
+    newtree = None
+    if write_outputs and snap_trees:
+        newtree = clone_subtree_as_tree(subtree)
+        collapse_low_support_bipartitions(newtree, support)
 
     # add list of terms to assigned_tips list
     # and create subgroup fasta files
@@ -442,48 +706,17 @@ def inparalog_to_keep_determination(
     """
     remove_short_sequences_among_duplicates_that_are_sister
     """
-    lengths = dict()
     pruned_tips = []
-    def _select_median_key(values: dict):
-        """Select deterministic median key by value, tie-broken by key."""
-        sorted_items = sorted(values.items(), key=lambda item: (item[1], item[0]))
-        return sorted_items[len(sorted_items) // 2][0]
-
-    # keep inparalog based on sequence length
-    if inparalog_to_keep.value in [
-        "shortest_seq_len",
-        "median_seq_len",
-        "longest_seq_len",
-    ]:
-        for dup in dups:
-            lengths[dup] = len(re.sub("-", "", str(fasta_dict[dup].seq)))
-        # determine which sequences to keep
-        if inparalog_to_keep.value == "shortest_seq_len":
-            seq_to_keep = min(lengths, key=lengths.get)
-        elif len(lengths) > 2 and inparalog_to_keep.value == "median_seq_len":
-            seq_to_keep = _select_median_key(lengths)
-        elif len(lengths) == 2 and inparalog_to_keep.value == "median_seq_len":
-            seq_to_keep = max(lengths, key=lengths.get)
-        elif inparalog_to_keep.value == "longest_seq_len":
-            seq_to_keep = max(lengths, key=lengths.get)
-    # keep inparalog based on tip to root length
-    else:
-        for dup in dups:
-            lengths[dup] = TreeMixin.distance(newtree, dup)
-        if inparalog_to_keep.value == "shortest_branch_len":
-            seq_to_keep = min(lengths, key=lengths.get)
-        elif len(lengths) > 2 and \
-                inparalog_to_keep.value == "median_branch_len":
-            seq_to_keep = _select_median_key(lengths)
-        elif len(lengths) == 2 and \
-                inparalog_to_keep.value == "median_branch_len":
-            seq_to_keep = max(lengths, key=lengths.get)
-        elif inparalog_to_keep.value == "longest_branch_len":
-            seq_to_keep = max(lengths, key=lengths.get)
+    seq_to_keep = _select_inparalog_to_keep(
+        newtree,
+        fasta_dict,
+        dups,
+        inparalog_to_keep,
+    )
 
     # trim unwanted species-specific
     # paralogous sequences from the tree
-    for seq_name in lengths:
+    for seq_name in dups:
         if seq_name != seq_to_keep:
             pruned_tips.append(seq_name)
 
@@ -554,8 +787,7 @@ def write_output_fasta_and_account_for_assigned_tips_single_copy_case(
             f"{output_path}/{fasta_path_stripped}.orthosnap.{subgroup_counter}.fa"
         )
         with open(output_file_name, "w") as output_handle:
-            for term in terms:
-                SeqIO.write(fasta_dict[term], output_handle, "fasta")
+            SeqIO.write((fasta_dict[term] for term in terms), output_handle, "fasta")
 
         if snap_tree:
             output_file_name = (

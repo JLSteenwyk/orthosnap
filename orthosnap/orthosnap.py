@@ -225,17 +225,20 @@ def _extract_subgroups(
     inparalog_handling_summary = dict()
     subgroup_records = []
     subtree_cache = build_subtree_taxa_cache(tree, delimiter)
+    sequence_lengths = {}
 
-    for inter in tqdm(tree.get_nonterminals()[1:]):
-        (
-            terms,
-            terms_set,
-            counts_of_taxa_from_terms,
-            counts,
-        ) = subtree_cache[inter]
+    for inter in tqdm(subtree_cache.internal_clades[1:]):
+        start, _, unique_taxa_count, terminal_count = subtree_cache.summary(inter)
 
-        if len(counts_of_taxa_from_terms) >= occupancy:
-            if set([1]) == set(counts) and assigned_tips.isdisjoint(terms_set):
+        # Accepted clades are encountered before their descendants in preorder.
+        # A single representative terminal therefore avoids materializing every
+        # descendant's complete terminal set after assignment.
+        if subtree_cache.terminal_names[start] in assigned_tips:
+            continue
+
+        if unique_taxa_count >= occupancy:
+            terms, terms_set, counts_of_taxa_from_terms = subtree_cache.details(inter)
+            if terminal_count == unique_taxa_count and assigned_tips.isdisjoint(terms_set):
                 (
                     subgroup_counter,
                     assigned_tips,
@@ -258,6 +261,7 @@ def _extract_subgroups(
                     write_outputs,
                 )
             elif assigned_tips.isdisjoint(terms_set):
+                taxon_tip_groups = subtree_cache.taxon_tip_groups(inter)
                 (
                     subgroup_counter,
                     assigned_tips,
@@ -281,6 +285,9 @@ def _extract_subgroups(
                     delimiter,
                     subgroup_records,
                     write_outputs,
+                    subtree_cache=subtree_cache,
+                    taxon_tip_groups=taxon_tip_groups,
+                    sequence_lengths=sequence_lengths,
                 )
 
     return {
