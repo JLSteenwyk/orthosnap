@@ -28,7 +28,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from orthosnap.helper import InparalogToKeep
-from orthosnap.orthosnap import _extract_subgroups, _write_consensus_outputs
+from orthosnap.orthosnap import _extract_subgroups, _write_consensus_outputs, execute
 
 
 def _combine_balanced(clades):
@@ -157,7 +157,7 @@ def benchmark_core(args):
         digest = hashlib.sha256(groups.encode("utf-8")).hexdigest()[:16]
         return result["subgroup_counter"], digest
 
-    return _measure(run, args.warmups, args.runs)
+    return _measure(run, args.warmups, args.runs, measure_memory=not args.skip_memory)
 
 
 def _write_reference_inputs(directory, tree, fasta_dict):
@@ -203,7 +203,48 @@ def benchmark_consensus(args):
         return emitted, tree_outputs
 
     try:
-        return _measure(run, args.warmups, args.runs)
+        return _measure(run, args.warmups, args.runs, measure_memory=not args.skip_memory)
+    finally:
+        temporary_directory.cleanup()
+
+
+def benchmark_bootstrap(args):
+    tree, fasta_dict, _ = build_dataset(
+        args.groups, args.taxa_per_group, args.shape
+    )
+    temporary_directory = tempfile.TemporaryDirectory()
+    root = Path(temporary_directory.name)
+    tree_path, fasta_path = _write_reference_inputs(root, tree, fasta_dict)
+    bootstrap_path = root / "bootstrap_trees.txt"
+    bootstrap_path.write_text(
+        "".join(f"{tree_path}\n" for _ in range(args.bootstrap_count))
+    )
+    run_number = 0
+
+    def run():
+        nonlocal run_number
+        output_path = root / f"bootstrap_run_{run_number}"
+        run_number += 1
+        with open(os.devnull, "w") as devnull:
+            with redirect_stdout(devnull), redirect_stderr(devnull):
+                result = execute(
+                    tree=str(tree_path),
+                    fasta=str(fasta_path),
+                    support=80,
+                    occupancy=args.taxa_per_group,
+                    rooted=True,
+                    snap_trees=False,
+                    inparalog_to_keep=InparalogToKeep.longest_seq_len,
+                    report_inparalog_handling=False,
+                    output_path=str(output_path),
+                    delimiter="|",
+                    bootstrap_trees=str(bootstrap_path),
+                    consensus_trees=False,
+                )
+        return result["subgroup_counter"]
+
+    try:
+        return _measure(run, args.warmups, args.runs, measure_memory=not args.skip_memory)
     finally:
         temporary_directory.cleanup()
 
@@ -228,14 +269,16 @@ def create_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--mode",
-        choices=("core", "consensus", "startup", "all"),
+        choices=("core", "bootstrap", "consensus", "startup", "all"),
         default="all",
     )
     parser.add_argument("--shape", choices=("balanced", "unbalanced"), default="unbalanced")
     parser.add_argument("--groups", type=int, default=80)
     parser.add_argument("--taxa-per-group", type=int, default=8)
+    parser.add_argument("--bootstrap-count", type=int, default=5)
     parser.add_argument("--warmups", type=int, default=1)
     parser.add_argument("--runs", type=int, default=3)
+    parser.add_argument("--skip-memory", action="store_true")
     return parser
 
 
@@ -243,6 +286,7 @@ def main(argv=None):
     args = create_parser().parse_args(argv)
     benchmarks = {
         "core": benchmark_core,
+        "bootstrap": benchmark_bootstrap,
         "consensus": benchmark_consensus,
         "startup": benchmark_startup,
     }
@@ -252,6 +296,7 @@ def main(argv=None):
             "groups": args.groups,
             "taxa_per_group": args.taxa_per_group,
             "tips": args.groups * args.taxa_per_group,
+            "bootstrap_count": args.bootstrap_count,
             "shape": args.shape,
             "warmups": args.warmups,
             "runs": args.runs,
