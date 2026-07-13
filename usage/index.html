@@ -283,6 +283,12 @@ Default plot format is PNG; choose PDF or SVG with <cite>-pf/–plot_format</cit
 <h2>Performance Benchmark<a class="headerlink" href="#performance-benchmark" title="Link to this heading"></a></h2>
 <p>The chart below summarizes benchmarked runtime across selected PyPI releases and the current local version.
 Runs used a rooted input tree (<cite>-r</cite>), one warm-up run per version, and three measured runs per version on the same dataset.</p>
+<p>The current implementation also includes a deterministic synthetic benchmark for large balanced and
+pectinate multi-copy trees. On the documented 640-tip pectinate workload, core extraction is 45.7 times
+faster and peak traced Python allocations are 85.6% lower than the pre-optimization baseline. Bootstrap
+processing and consensus-tree generation are 9.9 and 18.7 times faster, respectively. The benchmark
+generator, exact commands, environment, scaling results, and full tables are maintained in
+<code class="docutils literal notranslate"><span class="pre">benchmarks/README.md</span></code> in the source repository.</p>
 <p>Compared versions:</p>
 <ul class="simple">
 <li><p><cite>1.1.0</cite> (PyPI baseline)</p></li>
