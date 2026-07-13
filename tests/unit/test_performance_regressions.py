@@ -1,6 +1,7 @@
 from collections import Counter
 from copy import deepcopy
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from Bio import Phylo
@@ -223,28 +224,26 @@ def test_indexed_extraction_on_synthetic_tree_shapes(shape):
     assert [record["tips"] for record in result["subgroup_records"]] == expected_groups
 
 
-def test_cli_reuses_tree_and_fasta_parsed_during_validation(tmp_path, mocker):
+def test_cli_reuses_tree_and_fasta_parsed_during_validation(tmp_path):
     original_tree_read = Phylo.read
     original_fasta_parse = SeqIO.parse
-    tree_read = mocker.patch(
+    with patch(
         "orthosnap.orthosnap.Phylo.read",
         side_effect=original_tree_read,
-    )
-    fasta_parse = mocker.patch(
+    ) as tree_read, patch(
         "orthosnap.orthosnap.SeqIO.parse",
         side_effect=original_fasta_parse,
-    )
-
-    main(
-        [
-            "-t",
-            str(SAMPLE_TREE),
-            "-f",
-            str(SAMPLE_FASTA),
-            "-op",
-            str(tmp_path),
-        ]
-    )
+    ) as fasta_parse:
+        main(
+            [
+                "-t",
+                str(SAMPLE_TREE),
+                "-f",
+                str(SAMPLE_FASTA),
+                "-op",
+                str(tmp_path),
+            ]
+        )
 
     assert tree_read.call_count == 1
     assert fasta_parse.call_count == 1
