@@ -8,7 +8,6 @@ import re
 import sys
 import time
 from collections import Counter
-from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,6 +19,7 @@ from .args_processing import process_args, proper_round
 from .helper import (
     build_subtree_taxa_cache,
     check_if_single_copy,
+    clone_induced_tree,
     get_all_tips_and_taxa_names,
     handle_multi_copy_subtree,
     handle_single_copy_subtree,
@@ -319,6 +319,7 @@ def _write_consensus_outputs(
     consensus_trees: bool,
     reference_tree_path: str,
     rooted: bool,
+    reference_tree=None,
 ):
     fasta_path_stripped = re.sub("^.*/", "", fasta)
     tsv_path = f"{output_path}{fasta_path_stripped}.orthosnap.consensus.tsv"
@@ -328,6 +329,12 @@ def _write_consensus_outputs(
     )
 
     emitted = 0
+    if consensus_trees:
+        if reference_tree is None:
+            reference_tree = Phylo.read(reference_tree_path, "newick")
+        if not rooted:
+            reference_tree.root_at_midpoint()
+
     with open(tsv_path, "w", newline="") as handle:
         writer = csv.writer(handle, delimiter="\t")
         writer.writerow(["consensus_id", "count", "frequency", "tip_count", "taxa_count", "tips"])
@@ -344,18 +351,13 @@ def _write_consensus_outputs(
 
             fasta_out = f"{output_path}{fasta_path_stripped}.orthosnap.{consensus_id}.fa"
             with open(fasta_out, "w") as out_handle:
-                for tip in tips:
-                    if tip in fasta_dict:
-                        SeqIO.write(fasta_dict[tip], out_handle, "fasta")
+                SeqIO.write(
+                    (fasta_dict[tip] for tip in tips if tip in fasta_dict),
+                    out_handle,
+                    "fasta",
+                )
             if consensus_trees:
-                reference_tree = Phylo.read(reference_tree_path, "newick")
-                if not rooted:
-                    reference_tree.root_at_midpoint()
-                pruned_tree = deepcopy(reference_tree)
-                keep_tips = set(tips)
-                for terminal in list(pruned_tree.get_terminals()):
-                    if terminal.name not in keep_tips:
-                        pruned_tree.prune(terminal)
+                pruned_tree = clone_induced_tree(reference_tree, set(tips))
                 tree_out = f"{output_path}{fasta_path_stripped}.orthosnap.{consensus_id}.tre"
                 Phylo.write(pruned_tree, tree_out, "newick")
 
@@ -545,6 +547,7 @@ def execute(
             consensus_trees=consensus_trees,
             reference_tree_path=tree,
             rooted=rooted,
+            reference_tree=parsed_tree,
         )
         end_time = time.time()
 

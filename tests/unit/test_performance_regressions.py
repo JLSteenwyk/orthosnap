@@ -10,6 +10,7 @@ from Bio import SeqIO
 from orthosnap.helper import (
     InparalogToKeep,
     build_subtree_taxa_cache,
+    clone_induced_tree,
     handle_multi_copy_subtree,
     handle_single_copy_subtree,
 )
@@ -158,3 +159,24 @@ def test_compact_cache_preserves_order_and_linear_metadata(tree_factory):
         assert terms_set == set(expected_terms)
         assert sum(taxa_counts.values()) == len(expected_terms)
         assert counts == list(taxa_counts.values())
+
+
+@pytest.mark.parametrize("selection", ["prefix", "alternating", "singleton"])
+def test_induced_clone_matches_sequential_pruning(selection):
+    tree = Phylo.read(SAMPLE_TREE, "newick")
+    tree.root_at_midpoint()
+    terminal_names = [tip.name for tip in tree.get_terminals()]
+    if selection == "prefix":
+        keep_tips = set(terminal_names[:8])
+    elif selection == "alternating":
+        keep_tips = set(terminal_names[::3])
+    else:
+        keep_tips = {terminal_names[len(terminal_names) // 2]}
+
+    sequential = deepcopy(tree)
+    for terminal in list(sequential.get_terminals()):
+        if terminal.name not in keep_tips:
+            sequential.prune(terminal)
+
+    induced = clone_induced_tree(tree, keep_tips)
+    assert induced.format("newick") == sequential.format("newick")

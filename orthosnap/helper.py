@@ -19,28 +19,76 @@ class InparalogToKeep(Enum):
     longest_branch_len = "longest_branch_len"
 
 
+def _clone_clade_without_children(clade):
+    clone = clade.__class__()
+    for key, value in clade.__dict__.items():
+        if key != "clades":
+            setattr(clone, key, value)
+    clone.clades = []
+    return clone
+
+
 def clone_subtree_as_tree(subtree):
     """Clone a clade subtree into a standalone Bio.Phylo Tree."""
-
-    def _clone_clade(clade):
-        clone = clade.__class__()
-        for key, value in clade.__dict__.items():
-            if key != "clades":
-                setattr(clone, key, value)
-        clone.clades = []
-        return clone
-
-    root_clone = _clone_clade(subtree)
+    root_clone = _clone_clade_without_children(subtree)
     stack = [(subtree, root_clone)]
 
     while stack:
         source, target = stack.pop()
         for child in source.clades:
-            child_clone = _clone_clade(child)
+            child_clone = _clone_clade_without_children(child)
             target.clades.append(child_clone)
             stack.append((child, child_clone))
 
     return Tree(root=root_clone)
+
+
+def clone_induced_tree(tree, keep_tips: set):
+    """Clone the minimal tree induced by ``keep_tips`` without a full copy."""
+    cloned_clades = {}
+    stack = [(tree.root, False)]
+
+    while stack:
+        clade, visited = stack.pop()
+        if clade.is_terminal():
+            cloned_clades[clade] = (
+                _clone_clade_without_children(clade)
+                if clade.name in keep_tips
+                else None
+            )
+            continue
+        if not visited:
+            stack.append((clade, True))
+            stack.extend((child, False) for child in reversed(clade.clades))
+            continue
+
+        selected_children = []
+        for child in clade.clades:
+            child_clone = cloned_clades.pop(child)
+            if child_clone is not None:
+                selected_children.append(child_clone)
+        if not selected_children:
+            cloned_clades[clade] = None
+        elif len(selected_children) == 1 and len(clade.clades) > 1:
+            child = selected_children[0]
+            if child.branch_length is not None:
+                child.branch_length += clade.branch_length or 0.0
+            cloned_clades[clade] = child
+        else:
+            clone = _clone_clade_without_children(clade)
+            clone.clades = selected_children
+            cloned_clades[clade] = clone
+
+    root_clone = cloned_clades[tree.root]
+    if root_clone is None:
+        raise ValueError("none of the requested tips exist in the reference tree")
+
+    tree_clone = tree.__class__()
+    for key, value in tree.__dict__.items():
+        if key != "root":
+            setattr(tree_clone, key, value)
+    tree_clone.root = root_clone
+    return tree_clone
 
 
 def collapse_low_support_bipartitions(newtree, support: float):
