@@ -119,6 +119,13 @@ Show all CLI options:
 orthosnap -h
 ```
 
+## Performance development
+
+The repository includes a deterministic benchmark for balanced and highly
+unbalanced multi-copy orthogroups, bootstrap processing, consensus-tree output,
+and CLI startup. See [benchmarks/README.md](benchmarks/README.md) for reproducible
+commands and current before/after runtime and memory results.
+
 Run validation checks only (no subgroup extraction):
 
 ```shell

@@ -223,6 +223,13 @@ Performance Benchmark
 The chart below summarizes benchmarked runtime across selected PyPI releases and the current local version.
 Runs used a rooted input tree (`-r`), one warm-up run per version, and three measured runs per version on the same dataset.
 
+The current implementation also includes a deterministic synthetic benchmark for large balanced and
+pectinate multi-copy trees. On the documented 640-tip pectinate workload, core extraction is 45.7 times
+faster and peak traced Python allocations are 85.6% lower than the pre-optimization baseline. Bootstrap
+processing and consensus-tree generation are 9.9 and 18.7 times faster, respectively. The benchmark
+generator, exact commands, environment, scaling results, and full tables are maintained in
+``benchmarks/README.md`` in the source repository.
+
 Compared versions:
 
 - `1.1.0` (PyPI baseline)

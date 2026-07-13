@@ -21,6 +21,9 @@ test:
 	# integration tests
 	python -m pytest --basetemp=output -m "integration"
 
+benchmark.performance:
+	python benchmarks/benchmark_performance.py --mode all
+
 
 # used by GitHub actions during CI workflow
 test.coverage: coverage.unit coverage.integration
